@@ -89,5 +89,54 @@ function xmldb_socialwiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013071600, 'socialwiki');
     }
 
+    if ($oldversion < 201401012600) {
+
+        // Define user views table
+        $views_table = new xmldb_table('socialwiki_user_views');
+        $userid_field = new xmldb_field(
+            'userid',
+            XMLDB_TYPE_INTEGER,
+            '10'
+        );
+        $pageid_field = new xmldb_field(
+            'pageid',
+            XMLDB_TYPE_INTEGER,
+            '10'
+        );
+        $count_field = new xmldb_field(
+            'count',
+            XMLDB_TYPE_INTEGER,
+            '10'
+        );
+        $latest = new xmldb_field(
+            'latest',
+            XMLDB_TYPE_DATETIME
+        );
+
+        if (!$dbman->table_exists($views_table)) {
+            $dbman->add_table($views_table);
+        }
+
+        // Conditionally launch add fields.
+        if (!$dbman->field_exists($views_table, $userid_field)) {
+            $dbman->add_field($views_table, $userid_field);
+        }
+        
+        if (!$dbman->field_exists($views_table, $pageid_field)) {
+            $dbman->add_field($views_table, $pageid_field);
+        }
+        
+        if (!$dbman->field_exists($views_table, $count_field)) {
+            $dbman->add_field($views_table, $count_field);
+        }
+
+        if (!$dbman->field_exists($views_table, $latest)) {
+            $dbman->add_field($views_table, $latest);
+        }
+
+        // Socialwiki savepoint reached.
+        upgrade_mod_savepoint(true, 201401012600, 'socialwiki');
+    }
+
     return true;
 }

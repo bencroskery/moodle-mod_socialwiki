@@ -14,9 +14,24 @@
  along with Moodle. If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import url("bootstrap.css");
+
+.tabtree ul {
+    text-align: left;
+}
+
+.socialwiki_headingtitle {
+    text-align: left;
+}
+
+
 .tree_node
 {
 color:black !important;
+}
+
+.socialwiki_liketable {
+	width: 100%
 }
 
 .relation_line
@@ -49,9 +64,18 @@ font-style:italic;
     margin-left:20px;
 }
 
+.socialwiki_likebutton
+{
+line-height: 20px;
+font-size: 2em;
+font-weight: bold;
+color:blue;
+}
+
+/*this is in fact used just to display the author in the bottom of a page (should be renamed)*/
 .wikititle
 {
-text-align:center;
+text-align:right;
 }
 
 #socialwiki_container

@@ -215,7 +215,18 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $this->output->box(format_module_intro('socialwiki', $this->page->activityrecord, $PAGE->cm->id), 'generalbox', 'intro');
     }
 
-    public function tabs($page, $tabitems, $options) {
+
+
+
+
+   /* public function tabsAndLike($page, $tabitems, $options){ //tabs in a table on the left with the like button on the right
+	global $PAGE;
+		return this->tabs($page, $tabitems, $options); //calling the one below for now
+	}*/
+
+
+
+    public function tabs($page, $tabitems, $options) { //TODO: pass current tab as inactive
         global $PAGE;
         $tabs = array();
         $context = context_module::instance($this->page->cm->id);
@@ -228,11 +239,11 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $selected = $options['activetab'];
 
         // make specific tab linked even it is active
-        if (!empty($options['linkedwhenactive'])) {
-            $linked = $options['linkedwhenactive'];
-        } else {
+       // if (!empty($options['linkedwhenactive'])) {
+       //     $linked = $options['linkedwhenactive'];
+      //  } else {
             $linked = '';
-        }
+      //  }
 
         if (!empty($options['inactivetabs'])) {
             $inactive = $options['inactivetabs'];
@@ -273,11 +284,15 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
             if ($tab == 'follow')
             {
                 $link = new moodle_url('/mod/socialwiki/'. $tab. '.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));
-            }elseif ($tab == 'follow')
+            }elseif ($tab == 'unfollow')
             {
                 $link = new moodle_url('/mod/socialwiki/follow.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));   
             }
             
+	    if ($tab == 'versions')
+            {
+                $link = new moodle_url('/mod/socialwiki/history.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));   
+            }
             
             
             if ($linked == $tab) {
@@ -484,21 +499,21 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $this->output->container($this->output->render($select), 'midpad colourtext');
     }
 
-    function menu_home($cmid, $currentselect) {
-        $options = array('userpages', 'orphaned','pagelist', 'updatedpages','teacherpages','recommended');
-        $items = array();
-        foreach ($options as $opt) {
-            $items[] = get_string($opt, 'socialwiki');
-        }
-        $selectoptions = array();
-        foreach ($items as $key => $item) {
-            $selectoptions[$key + 1] = $item;
-        }
-        $select = new single_select(new moodle_url('/mod/socialwiki/home.php', array('id' => $cmid)), 'option', $selectoptions, $currentselect);
-        $select->label = get_string('homemenu', 'socialwiki') . ': ';
-        return $this->output->container($this->output->render($select), 'midpad colourtext');
-    }
-	
+    // function menu_home($cmid, $currentselect) {
+    //     $options = array('userpages', 'orphaned','pagelist', 'updatedpages','teacherpages','recommended');
+    //     $items = array();
+    //     foreach ($options as $opt) {
+    //         $items[] = get_string($opt, 'socialwiki');
+    //     }
+    //     $selectoptions = array();
+    //     foreach ($items as $key => $item) {
+    //         $selectoptions[$key + 1] = $item;
+    //     }
+    //     $select = new single_select(new moodle_url('/mod/socialwiki/home.php', array('id' => $cmid)), 'option', $selectoptions, $currentselect);
+    //     $select->label = get_string('homemenu', 'socialwiki') . ': ';
+    //     return $this->output->container($this->output->render($select), 'midpad colourtext');
+    // }
+
     public function socialwiki_files_tree($context, $subwiki) {
         return $this->render(new socialwiki_files_tree($context, $subwiki));
     }
@@ -607,7 +622,8 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 		}
 		$html .= html_writer::end_tag('li');
 		$html .= html_writer::end_tag('li');
-		$html .= html_writer::start_tag('li', array('class' => 'socialwiki_navlistitem'));
+		//todo: why does this stuff not disappear?
+		/*$html .= html_writer::start_tag('li', array('class' => 'socialwiki_navlistitem'));
 		$html .= html_writer::link($CFG->wwwroot.'/mod/socialwiki/manage.php?pageid='.$pageid,'', array('class' => 'socialwiki_toolbarlink','id' => 'socialwiki_managebutton', 'title' => get_string('managetooltip', 'mod_socialwiki')));
 		$html .= html_writer::end_tag('li');
 		
@@ -616,6 +632,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 		$html .= html_writer::link($CFG->wwwroot.'/mod/socialwiki/comments.php?pageid='.$pageid,'', array('class' => 'socialwiki_toolbarlink','id' => 'socialwiki_commentsbutton', 'title' => get_string('commentstooltip', 'mod_socialwiki')));
 		$html .= html_writer::end_span();
 		$html .= html_writer::end_tag('li');
+		*/
 		$html .= html_writer::end_tag('ul');
 		$html .= html_writer::end_div();
 		
@@ -656,6 +673,37 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 			return $html;
 	}
 
+/**
+* a function to make an html table
+*/
+public function testtable(){
+	
+	$harry = html_writer::start_tag('h1');
+	$harry .='HARRY';
+	$harry .= html_writer::end_tag('h1');
+
+	/*$icon = new moodle_action_icon();
+	$icon->image->src = 'http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png';
+	//$icon->image->alt = 'What is moodle?';
+	$icon->link->url = new moodle_url('http://domain.com/index.php');
+	//$icon->add_confirm_action('Are you sure?');
+ return $this->output->action_icon($icon);*/
+
+	$t = new html_table();
+	$row1 = array($harry, 'potter');
+	$t->data = array($row1);
+
+	$hh = $this->output->container(html_writer::table($t),'ba');
+        
+        
+//	$hh = 
+//	$hh .= $this->output->container_end();
+
+return $hh;
+
+
+}
+
 	
 	//Outputs the main socialwiki view area, under the toolbar
 	public function viewing_area($pagetitle, $pagecontent, $page)
@@ -666,21 +714,32 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 			
 			$html .= $this->content_area_begin();
 			$html .= html_writer::start_div('wikipage');
-			$html .= html_writer::start_div('wikititle');
-			$html .= html_writer::tag('h1', $pagetitle);
-			
-			$html .= html_writer::tag('p', "Likes: ".socialwiki_numlikes($page->id));
-			
-			
-			$user = socialwiki_get_user_info($page->userid);
-			$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid)); 
-			$html.=html_writer::link($userlink->out(false),fullname($user));
-			
-			$html .= html_writer::end_div();
 			$html .= html_writer::start_div('', array('id' => 'socialwiki_wikicontent'));
 			$html .= $pagecontent;
 			$html .= html_writer::end_div();
 			$html .= html_writer::end_div();
+			
+			
+	
+			$html .= html_writer::start_div('wikititle');
+			//$html .= $this->testtable();
+			//$html .= html_writer::tag('h1', $pagetitle);
+			
+			//$html .= html_writer::tag('p', "Likes: ".socialwiki_numlikes($page->id));
+			
+			//$html .= html_writer::starttag('p');
+			
+
+
+			$user = socialwiki_get_user_info($page->userid);
+			$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid)); 
+			
+			$html.='Latest contributions by: ';
+			$html.=html_writer::link($userlink->out(false),fullname($user));
+			//$html .= html_writer::endtag('p');
+			
+			$html .= html_writer::end_div();
+
 			$html .= $this->content_area_end();
 			return $html;
 	}

@@ -134,6 +134,18 @@ function socialwiki_get_page($pageid) {
 }
 
 /**
+ *Get all pages for a user
+ *@param int $pageid
+ *@param int $swid
+ *return object array 
+ */
+ function socialwiki_get_pages_from_userid($userid,$swid){
+	Global $DB;
+	$select= 'userid=? And subwikiid=?';
+	return $DB->get_records_select('socialwiki_pages',$select,array($userid,$swid));
+ }
+
+/**
  * Get latest version of wiki page
  * @param int $pageid
  * @return object
@@ -205,18 +217,37 @@ function socialwiki_get_version($versionid) {
  * Get first page of wiki instace
  * @param int $subwikiid
  * @param int $module, wiki instance object
+ * @return last version of first page edited by a teacher
  */
 function socialwiki_get_first_page($subwikid, $module = null) {
-    global $DB, $USER;
-
-    $sql = "SELECT p.*
-            FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
-            WHERE s.id = ? AND
-            s.wikiid = w.id AND
-            w.firstpagetitle = p.title AND
-            p.subwikiid = s.id ORDER BY id ASC";
-	$records = $DB->get_records_sql($sql, array($subwikid));
-    return $records[max(array_keys($records))];
+    global $DB, $USER,$COURSE;
+	$context=get_context_instance(CONTEXT_COURSE, $COURSE->id);
+	$teachers=socialwiki_get_teachers($context->id);
+	$toreturn=array();
+	foreach($teachers as $teacher){
+		$sql = "SELECT p.*
+				FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p, {socialwiki_versions} v
+				WHERE s.id = ? AND
+				s.wikiid = w.id AND
+				w.firstpagetitle = p.title AND
+				p.subwikiid = s.id AND	
+				v.version=0 AND v.userid=? 
+				AND v.pageid=p.id
+				ORDER BY id ASC";
+		$records= $DB->get_records_sql($sql, array($subwikid,$teacher->id));
+		
+		if($records){
+			//get the last edit of this page by the teacher
+			$toreturn[max(array_keys($records))]=$records[max(array_keys($records))];
+			
+		}
+	}
+	//if there are isn't a front page return false
+	if($toreturn){
+		return $toreturn[max(array_keys($toreturn))];
+	}else{
+		return false;
+	}
 }
 
 function socialwiki_save_section($wikipage, $sectiontitle, $sectioncontent, $userid) {
@@ -284,7 +315,6 @@ function socialwiki_refresh_cachedcontent($page, $newcontent = null) {
     $page->cachedcontent = $parseroutput['toc'] . $parseroutput['parsed_text'];
     $page->timerendered = time();
     $DB->update_record('socialwiki_pages', $page);
-
     socialwiki_refresh_page_links($page, $parseroutput['link_count']);
 
     return array('page' => $page, 'sections' => $parseroutput['repeated_sections'], 'version' => $version->version);
@@ -488,6 +518,24 @@ function socialwiki_get_page_list($swid) {
     return $records;
 }
 
+function get_topics($swid) {
+    $records = socialwiki_get_page_list($swid);
+    $pages = array();
+
+    foreach ($records as $r) {
+        if (!array_key_exists($r->title, $pages)) {
+            $pages[$r->title] = array();
+            $pages[$r->title]["Views"] = 0;
+            $pages[$r->title]["Likes"] = 0;
+            $pages[$r->title]["Versions"] = 0;
+        }
+        $pages[$r->title]["Views"] += intval($r->pageviews);
+        $pages[$r->title]["Likes"] += intval(socialwiki_numlikes($r->id));
+        $pages[$r->title]["Versions"]++;
+    }
+    return $pages;
+}
+
 /**
  * Return a list of orphaned wikis for one specific subwiki
  * @global object
@@ -514,8 +562,15 @@ function socialwiki_get_orphaned_pages($swid) {
  */
 function socialwiki_search_title($swid, $search) {
     global $DB;
+    
+    $sql = "SELECT {socialwiki_pages}.*, COUNT(pageid) AS total 
+    FROM  {socialwiki_pages}  
+    LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid 
+    WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title LIKE ?)  
+    GROUP BY {socialwiki_pages}.id 
+    ORDER BY total DESC";
 
-    return $DB->get_records_select('socialwiki_pages', "subwikiid = ? AND title LIKE ?", array($swid, '%'.$search.'%'));
+    return $DB->get_records_sql($sql, array($swid, '%'.$search.'%'));
 }
 
 /**
@@ -536,8 +591,15 @@ function socialwiki_search_content($swid, $search) {
  */
 function socialwiki_search_all($swid, $search) {
     global $DB;
+    
+    $sql = "SELECT *, COUNT(pageid) AS total 
+    FROM  {socialwiki_pages}  
+    LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid 
+    WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.cachedcontent LIKE ? OR {socialwiki_pages}.title LIKE ?)  
+    GROUP BY {socialwiki_pages}.id 
+    ORDER BY total DESC";
 
-    return $DB->get_records_select('socialwiki_pages', "subwikiid = ? AND (cachedcontent LIKE ? OR title LIKE ?)", array($swid, '%'.$search.'%', '%'.$search.'%'));
+    return $DB->get_records_sql($sql, array($swid, '%'.$search.'%', '%'.$search.'%'));
 }
 
 /**
@@ -563,11 +625,19 @@ function socialwiki_increment_pageviews($page) {
 //----------------------------------------------------------
 
 /**
+ * style formats
+ */
+ function socialwiki_get_styles(){
+	return array('classic','modern');
+ }
+
+/**
  * Text format supported by wiki module
  */
 function socialwiki_get_formats() {
     return array('html', 'creole', 'nwiki');
 }
+
 
 /**
  * Parses a string with the wiki markup language in $markup.
@@ -630,7 +700,7 @@ function socialwiki_parser_link($link, $options = null) {
     global $CFG, $COURSE, $PAGE;
 
 	$beforeSub = $link;
-	$matches = [];
+	$matches = array();
 
 
     if (is_object($link)) {
@@ -654,25 +724,26 @@ function socialwiki_parser_link($link, $options = null) {
         if ($page = socialwiki_get_page_by_title($swid, $link)) {
 			if ($specific == false)
 			{
-			$currentpage = optional_param('pageid',0,PARAM_INT);
-            $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot.'/mod/socialwiki/search.php?searchstring='.$link.'&pageid='.$currentpage.'&courseid='.$COURSE->id.'&cmid='.$PAGE->cm->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
+				$currentpage = optional_param('pageid',0,PARAM_INT);
+				$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot.'/mod/socialwiki/search.php?searchstring='.$link.'&pageid='.$currentpage.'&courseid='.$COURSE->id.'&cmid='.$PAGE->cm->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
 			}
 			else
 			{
 				if ($matches[1] == '.')
 				{
-									$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.$page->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
+					$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.$page->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
 				}
 			else
 				{
-				if (socialwiki_get_page($matches[1]))
-				{
-				$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.$matches[1], 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
-				}
-				else
-				{
-				$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.socialwiki_get_first_page(socialwiki_get_subwiki($swid)->wikiid), 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
-				}
+				
+					if (socialwiki_get_page($matches[1]))
+					{
+						$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.$matches[1], 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $matches[1], 'new' => false));
+					}
+					else
+					{
+						$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='.socialwiki_get_first_page(socialwiki_get_subwiki($swid)->wikiid)->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
+					}
 				}
 			}
 		
@@ -1229,7 +1300,7 @@ function socialwiki_get_wiki_page_id($pageid, $id) {
     global $DB;
     return $DB->get_record('socialwiki_versions', array('pageid' => $pageid, 'id' => $id));
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function socialwiki_print_page_content($page, $context, $subwikiid) {
     global $OUTPUT, $CFG, $PAGE;
 
@@ -1251,11 +1322,13 @@ function socialwiki_print_page_content($page, $context, $subwikiid) {
     $html = file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'mod_socialwiki', 'attachments', $subwikiid);
     $html = format_text($html, FORMAT_MOODLE, array('overflowdiv'=>true, 'allowid'=>true));
 	$wikioutput = $PAGE->get_renderer('mod_socialwiki');
-	
+	////////////////This is where the page content, from the title down, is rendered!!
 	echo $wikioutput->viewing_area($page->title, $html, $page);
-    //echo $OUTPUT->box($html);
+	////////
 
-    if (!empty($CFG->usetags)) {
+    //echo $OUTPUT->box($html);
+//remove tags
+ /*   if (!empty($CFG->usetags)) {
         $tags = tag_get_tags_array('socialwiki_pages', $page->id);
         echo $OUTPUT->container_start('socialwiki-tags');
         echo '<span class="socialwiki-tags-title">'.get_string('tags').': </span>';
@@ -1266,7 +1339,7 @@ function socialwiki_print_page_content($page, $context, $subwikiid) {
         }
         echo join($links, ", ");
         echo $OUTPUT->container_end();
-    }
+    }*/
 
     socialwiki_increment_pageviews($page);
 }
@@ -1460,12 +1533,27 @@ function socialwiki_is_following($userfromid,$usertoid,$subwikiid)
 	return $DB->record_exists_sql($sql,array($userfromid,$usertoid,$subwikiid));
 }
 
+//unfollow a user
 function socialwiki_unfollow($userfromid,$usertoid, $subwikiid){
 	Global $DB;
 	$select='userfromid=? AND usertoid=? AND subwikiid=?';
 	$DB->delete_records_select('socialwiki_follows',$select,array($userfromid,$usertoid, $subwikiid));
 }
 
+//retursn the number of poeple following the user
+function socialwiki_get_followers($userid,$subwikiid){
+	Global $DB;
+	$select='usertoid=? AND subwikiid=?';
+	return count($DB->get_records_select('socialwiki_follows',$select,array($userid, $subwikiid)));
+}
+
+function socialwiki_page_likes($pageid){
+    global $DB;
+    $sql = 'SELECT *
+            FROM {socialwiki_likes}
+            WHERE pageid=?';
+    return $DB->record_exists_sql($sql,array($pageid));
+}
 
 //returns true if the user likes the page
 function socialwiki_liked($userid,$pageid){
@@ -1476,6 +1564,7 @@ global $DB;
 		  
 	return $DB->record_exists_sql($sql,array($userid,$pageid));
 }
+
 //add a like
 function socialwiki_add_like($userid,$pageid,$subwikiid){
 	Global $DB;
@@ -1502,6 +1591,17 @@ function socialwiki_numlikes($pageid){
 	return count($DB->get_records_sql($sql,array($pageid)));
 }
 
+function socialwiki_get_liked_pages($userid, $subwikiid, $limit=1000) {
+    $likes = socialwiki_getlikes($userid, $subwikiid);
+
+    $pages = array();
+    foreach ($likes as $l) {
+        if($limit-- === 0) {break;}
+        array_push($pages, socialwiki_get_page($l->pageid));
+    }
+    return $pages;
+}
+
 //return all the pages the user likes
 function socialwiki_getlikes($userid,$subwikiid){
 global $DB;
@@ -1512,14 +1612,62 @@ global $DB;
 }
 
 //get page's author
-function socialwiki_get_author($pageid)
-{
+function socialwiki_get_author($pageid){
 	global $DB;
 		$sql='SELECT userid 
 		  FROM {socialwiki_pages}
 		  WHERE id=?';
 		  
 	return $DB->get_record_sql($sql,array($pageid));
+}
+
+<<<<<<< HEAD
+=======
+function socialwiki_get_user_favorites($userid, $swid) {
+    //return socialwiki_getlikes($userid, $swid);
+    $results = socialwiki_getlikes($userid,$swid);
+    $favorites = array();
+    foreach($results as $r) {
+        if(socialwiki_is_user_favorite($r->userid, $pageid, $swid)){
+            array_push($favorites, socialwiki_get_page($r->pageid));
+        }
+    }
+    return $favorites;
+}
+
+>>>>>>> ethan/master
+//return user ids of all users who favorite this page
+function socialwiki_get_favorites($pageid, $swid){
+    global $DB;
+    $sql='SELECT *
+          FROM {socialwiki_likes}
+          WHERE pageid=?';
+
+    $results = $DB->get_records_sql($sql,array($pageid),0,1000);
+    $favorites = array();
+    foreach($results as $r) {
+        if(socialwiki_is_user_favorite($r->userid, $pageid, $swid)){
+            array_push($favorites, socialwiki_get_user_info($r->userid));
+        }
+    }
+    return $favorites;
+}
+
+function socialwiki_is_user_favorite($userid, $pageid, $swid) {
+    $liked_pages = socialwiki_getlikes($userid, $swid);
+    $p = socialwiki_get_page($pageid);
+
+    foreach($liked_pages as $page_id) {
+        $page = socialwiki_get_page($page_id->pageid);
+        // echo "Created: $page->timecreated<br/>";
+        // echo "Name: $page->title<br/>";
+        if($page->title == $p->title) {
+            if($page->timemodified > $p->timemodified) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 //returns the id of the parent page
@@ -1540,7 +1688,18 @@ function socialwiki_get_children($pageid){
 	return $DB->get_records_sql($sql,array($pageid));
 }
 
-//returns an array with all the parent and child pages
+function socialwiki_get_subwiki_users($swid) {
+    Global $PAGE;
+    $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
+    $users=get_enrolled_users($context);
+    $uids = array();
+    foreach ($users as $u) {
+        array_push($uids, $u->id);
+    }
+    return $uids;
+}
+
+//returns an array with all the parent and child pages 
 function socialwiki_get_relations($pageid){
 	$relations=array();
 	$added=array();  //an array of page id's already added to $relations
@@ -1560,6 +1719,279 @@ function socialwiki_get_relations($pageid){
 			}
 		}
 	}
-	return $relations;
+	 sort($relations);
+	 return $relations;
 }
+
+//returns the current style of the socialwiki	
+function socialwiki_get_currentstyle($wikiid){
+
+	Global $DB;
+	$sql='SELECT style 
+	FROM {socialwiki}
+	WHERE id=?';
+	return $DB->get_record_sql($sql,array($wikiid));
+}
+
+//return the index of a page given page id and an array of pages
+//returns index if page is found -1 if the page isn't in the array
+function socialwiki_indexof_page($pageid,$pages){
+	for($i=0;$i<count($pages);$i++){
+		if($pages[$i]->id==$pageid){
+			return $i;
+		}
+	}
+	return -1;
+}
+
+//returns array of teachers as moodle allows multiple teachers per course
+function socialwiki_get_teachers($contextid){
+	Global $DB;
+	$sql='SELECT ra.userid AS id
+	FROM {role_assignments} ra 
+	JOIN {role} r ON r.id=ra.roleid
+	WHERE contextid=? AND (shortname="teacher" OR shortname="editingteacher")';
+	return $DB->get_records_sql($sql,array($contextid));
+}
+
+//checks if the user is a teacher
+function socialwiki_is_teacher($context,$uid){
+	$teachers=socialwiki_get_teachers($context);
+	foreach($teachers as $teacher){
+		if($uid==$teacher->id){
+			return true;
+		}
+	}
+	return false;
+}
+
+//returns an array of the users peers
+function socialwiki_get_peers($swid,$scale){
+	Global $PAGE,$USER;
+	$context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
+	$users=get_enrolled_users($context);
+	$peers= array();
+	$numusers=count($users)-1;
+	foreach ($users as $user){
+		if($user->id != $USER->id){
+			$peers[]=new peer($user->id,$swid,$USER->id,$numusers,$scale);
+		}
+	}
+	return $peers;
+}
+
+function socialwiki_get_user_count($swid) {
+    Global $PAGE,$USER;
+    $context = get_context_instance(CONTEXT_MODULE, $PAGE->cm->id);
+    $users=get_enrolled_users($context);
+    $numusers=count($users)-1;
+    return $numusers;
+}
+
+//returns an array of pages chosen based on peers likes and follows
+function socialwiki_get_recommended_pages($userid,$swid){
+	Global $PAGE;
+	$scale=array('follow'=>1,'like'=>1,'trust'=>1,'popular'=>1); //scale with weight for each peer category
+	$peers=socialwiki_get_peers($swid,$scale);
+	$pages = socialwiki_get_page_list($swid);
 	
+	foreach ($pages as $page){
+		if (socialwiki_liked($userid,$page->id)){
+			unset($pages[$page->id]);
+			continue;
+		}
+		$votes=$page->timecreated/time();
+		foreach ($peers as $peer){
+			if (socialwiki_liked($peer->id,$page->id)){
+				$votes+=$peer->score;
+			}
+		}
+		$page->votes=$votes;
+	}
+	//sort pages based on votes
+	usort($pages,"socialwiki_page_comp");
+	
+	//return top ten pages
+	if(count($pages)<=20){
+		return($pages);
+	}else{
+		return array_slice($pages,0,20);
+	}
+}
+
+//used to sort pages based on votes attribute
+function socialwiki_page_comp($p1,$p2){
+	if($p1->votes==$p2->votes){
+		return 0;
+	}
+	return ($p1->votes < $p2->votes) ? 1 : -1;
+}
+
+//sorts an array of pages by likes
+function socialwiki_order_by_likes($pages){
+	foreach($pages as $page){
+		$page->votes=socialwiki_numlikes($page->id);
+	}
+	usort($pages,"socialwiki_page_comp");
+	return $pages;
+}
+
+//merge sort for leaf nodes
+function socialwiki_merge_sort_nodes($array){
+	if(count($array)<=1){
+		return $array;
+	}
+	$left= array_slice($array,0,(int)(count($array)/2));
+	$right= array_slice($array,(int)(count($array)/2));
+	
+	$left = socialwiki_merge_sort_nodes($left);  
+	$right = socialwiki_merge_sort_nodes($right);  
+ 
+	$output = socialwiki_merge_nodes($left, $right);  
+ 
+	return $output;  
+}
+
+function socialwiki_merge_nodes($left,$right){
+	$result=array();
+	while(count($left)>0&&count($right)>0){
+		if($left[0]->priority>=$right[0]->priority){
+			array_push($result,array_shift($left));
+		}else{
+			array_push($result,array_shift($right));
+		}
+	}
+	
+	array_splice($result, count($result), 0, $left);  
+	array_splice($result, count($result), 0, $right);  
+ 
+	return $result;  
+}
+
+/**
+ *orders pages using the trust indicators from an array of peers also sends peers to JavaScript
+ *@param $peers an array of peer objects
+ *@param $pages an array of pages
+ **/
+function socialwiki_order_pages_using_peers($peers,$pages,$scale){
+	Global $USER;
+	foreach ($pages as $page){
+		$page->trust=0;
+		$page->time=$page->timecreated/time();
+		$page->likesim=0;
+		$page->followsim=0;
+		$page->peerpopular=0;
+		$page->votes=$page->time;
+		
+		foreach ($peers as $peer){
+			if (socialwiki_liked($peer->id,$page->id)){
+				$page->votes+=$peer->score;
+				$page->trust+=$peer->trust*$scale['trust'];
+				$page->likesim+=$peer->likesim*$scale['like'];
+				$page->followsim+=$peer->followsim*$scale['follow'];
+				$page->peerpopular+=$peer->popularity*$scale['popular'];
+			}
+		}
+	}
+	usort($pages,"socialwiki_page_comp");
+	return $pages;
+}
+
+/**
+ *finds the following depth for a user
+ * @param int userfrom 
+ * @param int userto
+ * @param int swid
+ * @param int depth 
+ * @param int array checked is an array of users that have already been checked
+ */ 
+ function socialwiki_follow_depth($userfrom,$userto,$swid,$depth=1,&$checked=array()){
+	if(socialwiki_is_following($userfrom,$userto,$swid)){
+		return $depth;
+	}
+	//get userfrom's follows 
+	$follows=socialwiki_get_follows($userfrom,$swid);
+	if(count($follows>0)){
+		//add the userfrom to checked array
+		$checked[]=$userfrom;
+		$depth++;
+		foreach($follows as $follow){
+			//keep checking until either all followers have been checked or a follower is following userto
+			if(!in_array($follow->usertoid,$checked)){
+				$fdepth=socialwiki_follow_depth($follow->usertoid,$userto,$swid,$depth,$checked);
+				if($fdepth!=0){
+					return $fdepth;
+				}
+			}
+		}
+
+	}
+	return 0;
+ }
+
+
+//class that describes the similarity between the current user and another student in the activity
+class peer{
+	public $trust=0; //trust indicator value
+	public $id; //the user id
+	public $likesim=0; //the similarity between likes of the peer and user
+	public $followsim=0; //the similarity between the people the user and peer are following
+	public $popularity;	//percent popularity
+	public $score;
+	function __construct($id,$swid,$currentuser,$numusers,$scale=null){
+		Global $USER;
+		$this->id=$id;
+		$depth=socialwiki_follow_depth($USER->id,$this->id,$swid);
+		if($depth ==0){
+			$this->trust=0;
+		}else{
+			$this->trust=1/$depth;
+		}
+		$this->popularity=socialwiki_get_followers($id,$swid)/$numusers;
+		$this->set_follow_sim($currentuser,$swid);
+		$this->set_like_sim($currentuser,$swid);
+        if($scale == null) {
+            $scale = array(
+                'trust' => 1,
+                'like' => 1,
+                'follow' => 1,
+                'popular' => 1
+            );
+        }
+		$this->set_score($scale);
+	}
+	
+	/*
+	 *sets the follow similarity to the 
+	 *@userid the current users id
+	 *@swid the subwikiid
+	 */
+	function set_follow_sim($userid,$swid){
+		Global $DB;
+		$sql='SELECT COUNT(usertoid) AS total, COUNT(DISTINCT usertoid) AS different
+		FROM {socialwiki_follows} 
+		WHERE (userfromid=? OR userfromid=?) AND subwikiid=?';
+		$data=$DB->get_record_sql($sql,array($this->id,$userid,$swid));
+		if($data->total>0){
+
+			//get the similarity between follows and divide by the number of unique likes  
+			$this->followsim=($data->total-$data->different)/$data->different;
+		}
+	}
+
+	function set_like_sim($userid,$swid){
+	Global $DB;
+		$sql='SELECT COUNT(pageid) AS total, COUNT(DISTINCT pageid) AS different
+		FROM {socialwiki_likes} 
+		WHERE (userid=? OR userid=?) AND subwikiid=?';
+		$data=$DB->get_record_sql($sql,array($this->id,$userid,$swid));
+
+		//get the similarity between follows and divide by unique follows 
+		$this->likesim=($data->total-$data->different)/$data->different;
+	}
+	//sets peer's score to sum of scores times there weight
+	function set_score($scale){
+		$this->score=$this->trust*$scale['trust']+$this->likesim*$scale['like']+$this->followsim*$scale['follow']+$this->popularity*$scale['popular'];
+	}
+
+}

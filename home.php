@@ -36,8 +36,8 @@ require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 
-	$id =optional_param('id',0,PARAM_INT); //course module ID
-$option = optional_param('option', 0, PARAM_INT); // Option ID
+	$id = optional_param('id',0,PARAM_INT); //course module ID
+    $tab = optional_param('tabid', 0, PARAM_INT); // Option ID
 
 //case 1 User that comes from a course
 if($id){
@@ -74,7 +74,7 @@ if($id){
 	$context = context_module::instance($cm->id);
 	if (!$page=socialwiki_get_first_page($subwiki->id)) {
 		//if the front page doesn't exist redirect a teacher to create it
-		if (has_capability('mod/socialwiki:managewiki', $context)) {
+		if (socialwiki_is_teacher($USER->id,$context)) {
 			$params = array('swid'=>$subwiki->id, 'title'=>$wiki->firstpagetitle);
 			$url = new moodle_url('/mod/socialwiki/create.php', $params);
 			redirect($url);
@@ -92,7 +92,7 @@ $wikipage = new page_socialwiki_home($wiki, $subwiki, $cm);
 add_to_log($course->id, "socialwiki", "home", "home.php?id=".$cm->id, $cm->id);
 
 // Print page header
-$wikipage->set_view($option);
+$wikipage->set_tab($tab);
 $wikipage->print_header();
 $wikipage->print_content();
 

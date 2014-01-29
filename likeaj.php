@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+// ajax version of like.php
+
 	require_once('../../config.php');
 	require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
 	$pageid=required_param('pageid', PARAM_INT);
-	$from=required_param('from',PARAM_RAW);
+	//$from=required_param('from',PARAM_RAW);
 	
 	if (!$page = socialwiki_get_page($pageid)) {
 		print_error('incorrectpageid', 'socialwiki');
@@ -67,3 +69,4 @@
 		socialwiki_add_like($USER->id,$pageid,$subwiki->id);
 	}
 	//redirect($from);
+	echo socialwiki_numlikes($pageid); //respond by giving the new number of likes!

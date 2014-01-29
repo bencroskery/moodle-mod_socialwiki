@@ -1,0 +1,3 @@
+[submodule "sortableTable"]
+	path = sortableTable
+	url = git@github.com:ethanaubuchon/sortableTable.git

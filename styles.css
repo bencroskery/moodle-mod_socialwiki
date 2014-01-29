@@ -32,7 +32,8 @@
  /*
  Starting here are the styles included by the regular wiki
  */
- 
+
+
 .socialwiki_contentbox {
     width: 80%;
     margin: auto;
@@ -276,8 +277,9 @@ a.socialwiki_newentry:link, a.socialwiki_newentry:visited {
     margin-right: 5%;
 }
 
+/*changed: alan 9-jan-2014*/
 .socialwiki_headingtitle {
-    text-align: center;
+    text-align: left;
 }
 
 .socialwiki_clear {

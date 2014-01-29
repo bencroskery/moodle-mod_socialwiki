@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% HEADER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[letterpaper,twoside,12pt]{report}
+\documentclass[letterpaper,twoside,11pt]{article}
 % Alternative Options:
 %	Paper Size: a4paper / a5paper / b5paper / letterpaper / legalpaper / executivepaper
 % Duplex: oneside / twoside
@@ -46,7 +46,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-\pagestyle{empty} %No headings for the first pages.
+%\pagestyle{empty} %No headings for the first pages.
 
 
 %% Title Page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,12 +58,12 @@
 \maketitle
 
 %% Inhaltsverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\tableofcontents %Table of contents
-\cleardoublepage %The first chapter should start on an odd page.
+%\tableofcontents %Table of contents
+%\cleardoublepage %The first chapter should start on an odd page.
 
-\pagestyle{plain} %Now display headings: headings / fancy / ...
+%\pagestyle{plain} %Now display headings: headings / fancy / ...
 
-\section{peer}
+\section{Peer}
  A peer has 6 attributes:
 	\begin{itemize}
 		\item id the userid of the user the peer represents
@@ -74,9 +74,9 @@
 		\item weight an associative array of the weights of each of the 4 scores
 	\end{itemize}
 
-\section{node}
+\section{Node}
 A node is used to describe a page in a tree.
-\subsection{attributes}
+\subsection{Attributes}
 \begin{itemize}
 	\item id: the nodes id
 	\item content: the title and author of the page
@@ -88,7 +88,7 @@ A node is used to describe a page in a tree.
 	\item added used in JavaScript to determine if the node has been added to the tree
 	\item priority: used to determine the order the socialwiki\_tree nodes
 \end{itemize}
-\subsection{methods}
+\subsection{Methods}
 	\begin{itemize}
 		\item \_\_construct: takes a page sets column, added, hidden and content then sets priority to the page's votes
 		\item set\_content: gets the page's author, title and creates the HTML for a link to the page.
@@ -98,7 +98,7 @@ A node is used to describe a page in a tree.
 
 
 
-\section{socialwiki\_tree}
+\section{Socialwiki\_tree}
 The socialwiki\_tree is used to show the relations between pages on the history and search pages.
 The socialwiki\_tree has 1 attribute an associative array of socialwiki\_nodes.
 	\subsection{methods}
@@ -132,10 +132,10 @@ The socialwiki\_tree has 1 attribute an associative array of socialwiki\_nodes.
 		\sum score_i\times weight_i
 	\]
 	
-	\section{pagescore}
+\section{Pagescore}
 	The page score is calculated as $(\sum peerscore)+\frac{time\ created}{current\ time} $
 	
-	 \section{New Database Tables}
+\section{New Database Tables}
 	\subsection{socialwiki\_follows}
 	The follows table has 4 columns:
 	\begin{itemize}
@@ -156,82 +156,89 @@ The socialwiki\_tree has 1 attribute an associative array of socialwiki\_nodes.
 	\subsection{socialwiki}
 	A style column was added to the socialwiki table to track which style the module is to use.
 	
-	\chapter{files and folders}
-	\section{backup folder}
+\section{Files and Folders}
+\subsection{Files in socialwiki root folder}
+\begin{itemize}
+	\item \textbf{admin.php}
+	This file is used for displaying the administration tab.
+	\item \textbf{ajax.php}
+	This file is used to process ajax calls from search.js
+	\item \textbf{classic\_style.css and modern\_style.css}
+	These files are used to format the output of the two different styles classic and modern.
+	\item \textbf{styles.css}
+	This file contains the css that is used in all styles
+	\item \textbf{comments.php}
+	This file is used for the comments page.
+	\item \textbf{create.php}
+	This file is used to create a new wiki page
+	\item \textbf{diff.php}
+	This file is  used to compare two different pages from the same tree.
+	\item \textbf{edit.php}
+	This file is used to edit a page
+	\item \textbf{follow.php}
+	This file is used to add or remove a follow.
+	\item \textbf{help.php}
+	This file is used to create the help tab
+	\item \textbf{history.js}
+	This file contains all of the JavaScript used for the history page.
+	\item \textbf{history.php}
+	This file is used to create the history page.
+	\item \textbf{home.php}
+	This file is used to create the home page.
+	\item \textbf{lib.php}
+	This file contains functions that are called by the moodle system
+	\item \textbf{locallib.php}
+	This is one of the more important files, it contains all the function definitions that are used within the activity.
+	\item \textbf{manage.php}
+	This file is used to create the manage page.
+	\item \textbf{pagelib.php}
+	This is one of the most important files in this module as it contains all of the class definitions for the pages used in the other php files.
+	\item \textbf{renderer.php}	
+	This file is used to create the HTML for certain functions.
+	\item \textbf{search.php}
+	This file is used for the search page.
+	\item \textbf{search.js}
+	This file contains all of the JavaScript for the search page. Creates both the tree for tree view and the weight sliders for tree view and list view.
+	\item \textbf{toolbar.js}
+	This file contains all the JavaScript for the toolbar used in the modern style.
+	\item \textbf{version.php}
+	This file is used to track the current version of socialwiki as well as the moodle version required to install the plug-in. The current moodle version required is 2.5.
+	\item \textbf{view.php}
+	This page is used to view a wiki page and is the first file called when the user enters the activity. However the file just redirects to the home page when this happens.
+	\item \textbf{viewuserpages.php}
+	This page is used to create the user profile page that gets called when a user clicks on the author of a page.
+\end{itemize}	
+	\subsection{backup folder}
 	this folder contains all the php files required to backup a socialwiki activity
 	currently only backup for moodle 2 is supported.
-	\section{db folder}
+	\subsection{db folder}
 	This folder has all the files that describe the database.
-	\subsection{access.php}
+\begin{itemize}	
+\item \textbf{access.php}
 	This file contains all of the permissions for different users for example if a user can view a page or not.
-	\subsection{install.xml}
+	\item \textbf{install.xml}
 	This file contains all of the XML to create the database for socialwiki.
-	\subsection{upgrade.php}
+	\item \textbf{upgrade.php}
 	This file tells moodle to update the database when a change has been made to the database in a previous version. For more on how upgrade.php works \url{http://docs.moodle.org/dev/Upgrade_API} 
-	\section{lang/en}
-	\subsection{socialwiki.php}
+\end{itemize}
+	\subsection{folders /lang/en/}
+\begin{itemize}
+	\item \textbf{socialwiki.php}
 	This file contains all the language strings used in the activity
-	\section{parser}
+	\item \textbf{parser}
 	This folder contains all of the class definitions that are used to parse the wiki pages.
-	\section{pix}
+\end{itemize}
+\subsection{pix folder}
 	This folder contains most of the pictures used in the activity
-	\section{tree\_jslib}
+	\subsection{tree\_jslib folder}
 	This folder contains the JavaScript and css for the trees used to view history and search results.
-	\section{admin.php}
-	This file is used for displaying the administration tab.
-	\section{ajax.php}
-	This file is used to process ajax calls from search.js
-	\section{classic\_style.css and modern\_style.css}
-	These files are used to format the output of the two different styles classic and modern.
-	\section{styles.css}
-	This file contains the css that is used in all styles
-	\section{comments.php}
-	This file is used for the comments page.
-	\section{create.php}
-	This file is used to create a new wiki page
-	\section{diff.php}
-	This file is  used to compare two different pages from the same tree.
-	\section{edit.php}
-	This file is used to edit a page
-	\section{follow.php}
-	This file is used to add or remove a follow.
-	\section{help.php}
-	This file is used to create the help tab
-	\section{history.js}
-	This file contains all of the JavaScript used for the history page.
-	\section{history.php}
-	This file is used to create the history page.
-	\section{home.php}
-	This file is used to create the home page.
-	\section{lib.php}
-	This file contains functions that are called by the moodle system
-	\section{locallib.php}
-	This is one of the more important files, it contains all the function definitions that are used within the activity.
-	\section{manage.php}
-	This file is used to create the manage page.
-	\section{pagelib.php}
-	This is one of the most important files in this module as it contains all of the class definitions for the pages used in the other php files.
-	\section{renderer.php}	
-	This file is used to create the HTML for certain functions.
-	\section{search.php}
-	This file is used for the search page.
-	\section{search.js}
-	This file contains all of the JavaScript for the search page. Creates both the tree for tree view and the weight sliders for tree view and list view.
-	\section{toolbar.js}
-	This file contains all the JavaScript for the toolbar used in the modern style.
-	\section{version.php}
-	This file is used to track the current version of socialwiki as well as the moodle version required to install the plug-in. The current moodle version required is 2.5.
-	\section{view.php}
-	This page is used to view a wiki page and is the first file called when the user enters the activity. However the file just redirects to the home page when this happens.
-	\section{viewuserpages.php}
-	This page is used to create the user profile page that gets called when a user clicks on the author of a page.
 	
 	
-	\chapter{users}
-	\section{Admin User and Teachers}
+	\section{Users}
+	\subsection{Admin User and Teachers}
 	As an admin user when you first create a socialwiki you must give the wiki a name, a description and give a title to the first page. You can also select the format of the wiki (HTML, creole or nwiki) as well as the style for the wiki (classic or modern). Once a socialwiki is created a teacher for the course must create the first page if they wish for the wiki to have a first page other wise every time a teacher views the socialwiki they will be prompted to create the first page. This however doesn't affect the general users for the course they will see the home page and will still be able to create and view pages they just won't have a link to the first page. 
 	Once a Socialwiki has been created the administrative user have a few extra options that general users don't. They can go to the socialwiki administration block and change the style of the wiki or they can go to the administration tab where they have the ability to delete pages.
-	\section{Enrolled Users}
+	\subsection{Enrolled Users}
 	When an enrolled user enters a socialwiki they are taken to the home page where the can view: updated pages from the last time they logged in, pages that they created, a list of orphaned pages, a list of all pages, a list of pages recommended for them and a list of all the teacher's pages. In the navigation block there are also links that allow them to view the help page or create a new page.
 	When a user views a page they can see how many likes a page has, they can like the page or follow the user who created the page. They can also click on the author and see pages the author has liked and see the authors peer scores. 
 	When a user searches for pages they can view a tree that shows the history and family for the pages or they can view a list of pages or a list of pages ordered by which pages have the most likes.
