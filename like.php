@@ -43,7 +43,7 @@
 		socialwiki_delete_like($USER->id,$pageid);
 		$likes=socialwiki_numlikes($pageid);
 		//delete pages with no likes as long as it's not the first page
-		if($likes==0){
+		/*if($likes==0){
 			$pagelist = socialwiki_get_linked_from_pages($pageid);
 			$parentid=socialwiki_get_parent($pageid);
 			$children=socialwiki_get_children($pageid);
@@ -62,7 +62,7 @@
 					}
 			}
 			// redirect($CFG->wwwroot .'/mod/socialwiki/home.php?id='.$cm->id);
-		}
+		}*/
 	}else{
 		socialwiki_add_like($USER->id,$pageid,$subwiki->id);
 	}

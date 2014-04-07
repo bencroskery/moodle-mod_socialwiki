@@ -173,6 +173,7 @@ $string['nohistory'] = 'There is no history for this page';
 $string['nomanagecommentpermission'] = 'Manage comments permission needed';
 $string['nomanagewikipermission'] = 'Manage wiki permission needed';
 $string['noorphanedpages'] = 'There are no orphaned pages';
+$string['norecentactivity'] = 'No recent activity';
 $string['nooverridelockpermission'] = 'Override lock permission needed';
 $string['norated']='This page has not been rated yet, be the first!';
 $string['norating'] = 'No rating';
@@ -312,9 +313,27 @@ $string['updated'] = 'Updated';
 $string['likes'] = "Likes";
 $string['views'] = "Views";
 $string['contributers'] = '# of Contributers';
+$string['networkdistance'] = 'Social Distance';
+$string['contributors'] = 'Contributors'; 
 
-$string['popularity'] = 'Author Popularity';
+$string['popularity'] = 'Followers';
 $string['trust'] = 'Trust Score';
 $string['likesim'] = 'Like Similarity';
 $string['followsim'] = 'Follow Similarity';
 $string['favorite'] = "Favorited By";
+$string['name'] = "Name";
+$string['distance'] = "Social Distance";
+
+$string['nofollowers']= "You Have no Followers.";
+$string['nofollowedusers']= "You don't follow anybody.";
+$string['nofaves']= "You don't have any favorite pages.";
+$string['noallusers']= "No other users.";
+$string['noallpageversions']= "No page versions.";
+$string['noalltopics']= "No pages.";
+$string['norecentlikes']= "You don't have any recent likes.";
+$string['nouserfaves']= "This user has no favorite pages.";
+$string['nonewpageversions']= "No new page versions.";
+$string['noversionsfollowed']= "No unseen page versions liked by the users you follow.";
+
+$string['nopagesfound']= "No Pages Found";
+$string['searchresultsfor']= 'Search results for';

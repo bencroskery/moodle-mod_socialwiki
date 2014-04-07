@@ -729,7 +729,7 @@ return $hh;
 			
 			//$html .= html_writer::starttag('p');
 			
-
+            //TODO: add other contributors of the page
 
 			$user = socialwiki_get_user_info($page->userid);
 			$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid)); 

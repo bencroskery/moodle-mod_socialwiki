@@ -405,12 +405,16 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
             $text = preg_replace('/\r/', "\n", $text);
             $text .= "\n\n";
         }
-
-        preg_match("/(.*?)(=\ *\Q$header\E\ *=*\n.*?)((?:\n=[^=]+.*)|$)/is", $text, $match);
-
+        
+        echo "header:".$header."::end";
+        preg_match("/(.*?)(=\ *\Q$header\E\ *=*\ *\n.*?)((?:\n=[^=]+.*)|$)/is", $text, $match);
+        //$text = preg_replace('/\n/', "#", $text);
+        echo "text:".$text."::end";
         if (!empty($match)) {
             return array($match[1], $match[2], $match[3]);
         } else {
+            echo "No Match!! wikimarkup l 414";
+            die();
             return false;
         }
     }

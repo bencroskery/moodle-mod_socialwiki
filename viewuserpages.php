@@ -33,8 +33,8 @@
 	
 	require_login($course, true, $cm);
 	
-	$viewuserpage=new page_socialwiki_viewuserpages($wiki,$subwiki,$cm);
-	$viewuserpage->set_uid($userid);
+	$viewuserpage=new page_socialwiki_viewuserpages($wiki,$subwiki,$cm, $userid);
+	//$viewuserpage->set_uid($userid);
 	$viewuserpage->print_header();
 	
 	$viewuserpage->print_content();

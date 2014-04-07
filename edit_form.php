@@ -46,6 +46,8 @@ class mod_socialwiki_edit_form extends moodleform {
         $version = $this->_customdata['version'];
         $format = $this->_customdata['format'];
 
+        
+
         if (empty($this->_customdata['contextid'])) {
             // Hack alert
             // This is being done ONLY to aid those who may have created there own wiki pages. It should be removed sometime
@@ -57,6 +59,7 @@ class mod_socialwiki_edit_form extends moodleform {
             $contextid = $this->_customdata['contextid'];
         }
 
+        //echo "ok 62";
         if (isset($this->_customdata['pagetitle'])) {
             // Page title must be formatted properly here as this is output and not an element.
             $pagetitle = get_string('editingpage', 'socialwiki', format_string($this->_customdata['pagetitle'], true, array('context' => context::instance_by_id($contextid, MUST_EXIST))));
@@ -86,7 +89,8 @@ class mod_socialwiki_edit_form extends moodleform {
                     }
                 }
             }
-
+            
+            
 	    //good here
             $mform->addElement('socialwikieditor', 'newcontent', $fieldname, array('cols' => 100, 'rows' => 20, 'socialwiki_format' => $format, 'files'=>$files));
             //not good here
@@ -105,16 +109,20 @@ class mod_socialwiki_edit_form extends moodleform {
             $mform->setType('version', PARAM_FLOAT);
         }
 	//ends here
+        
         $mform->addElement('hidden', 'contentformat', $format);
         $mform->setType('contentformat', PARAM_ALPHANUMEXT);
 
-       /* if (!empty($CFG->usetags)) {
+/*
+       if (!empty($CFG->usetags)) {
             $tags = !isset($this->_customdata['tags'])?"":$this->_customdata['tags'];
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
             $mform->addElement('tags', 'tags', get_string('tags'));
             $mform->setDefault('tags', $tags);
             $mform->setType('tags', PARAM_TEXT);
-        }*/
+        }///*/
+
+
 
         $buttongroup = array();
         $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('save', 'socialwiki'), array('id' => 'save'));
@@ -122,7 +130,8 @@ class mod_socialwiki_edit_form extends moodleform {
         $buttongroup[] = $mform->createElement('submit', 'editoption', get_string('cancel'), array('id' => 'cancel'));
 
         $mform->addGroup($buttongroup, 'buttonar', '', array(' '), false);
-        $mform->closeHeaderBefore('buttonar');
+        //die ("ok 131");
+       // $mform->closeHeaderBefore('buttonar'); //this screwed things up for some reason...
     }
 
 }

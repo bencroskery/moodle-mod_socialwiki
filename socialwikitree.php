@@ -20,19 +20,19 @@
 		//page title and authors name
 		public $content;
 		//boolean true if the node isn't a leaf
-		public $hidden;
+		//public $hidden;
 		//the column the node is in 
-		public $column;
-		//an array of children ids
+		//public $column;
+		//an array of children nodes
 		public $children=array();
 		//the parents id
 		public $parent;
 		//whether the mode has been added to the tree
-		public $added;
+		//public $added;
 		//the level of the tree the node is on
-		public $level;
+		//public $level;
 		//the rank of a node the higher the priority the higher it appears on the search page
-		public $priority=0;
+		//public $priority=0;
 		
 		
 		function __construct($page){
@@ -42,13 +42,13 @@
 			}else{
 				$this->parent='l'.$page->parent;
 			}
-			$this->column=-1;
-			$this->added=false;
-			$this->hidden = true;
+			//$this->column=-1;
+			//$this->added=false;
+			//$this->hidden = true;
 			$this->set_content($page);
-			if(isset($page->votes)){
+			/*if(isset($page->votes)){
 				$this->priority=$page->votes;
-			}
+			}*/
 		}
 	
 	function set_content($page){
@@ -56,10 +56,15 @@
 		$user = socialwiki_get_user_info($page->userid);
 		$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid));
 		$this->content=html_writer::link($CFG->wwwroot.'/mod/socialwiki/view.php?pageid='.$page->id,$page->title,array("class"=>"colourtext")).'<br/>'.html_writer::link($userlink->out(false),fullname($user),array("class"=>"colourtext")).'<br/>ID: '.$page->id;
-		if(isset($page->votes)){
+		/*if(isset($page->votes)){
 			//add page scores
-			$this->content.='<br/>Total Score: '.$page->votes.'<br/>Trust Score: '.$page->trust.'<br/>Follow Similarity Score: '.$page->followsim.'<br/>Like Similarity Score: '.$page->likesim.'<br/>Peer Popularity Score: '.$page->peerpopular.'<br/>Time Score: '.$page->time;
-		}
+			$this->content.='<br/>Total Score: '.$page->votes.
+							'<br/>Trust Score: '.$page->trust.
+							'<br/>Follow Similarity Score: '.$page->followsim.
+							'<br/>Like Similarity Score: '.$page->likesim.
+							'<br/>Peer Popularity Score: '.$page->peerpopular.
+							'<br/>Time Score: '.$page->time;
+		}*/
 	}
 	
 	
@@ -68,9 +73,19 @@
 	}
 	
 	
-	function display(){
-		Global $OUTPUT;
-		echo $OUTPUT->box($this->content,'socialwiki_treebox colourtext');
+	function to_HTML_List(){
+		//Global $OUTPUT;
+		$branch = '<li><div>'.$this->content.'</div>';
+		if (!empty($this->children)){
+			$branch .='<ul>';
+				foreach ($this->children as $child){ 
+					$branch .= $child->to_HTML_List(); // recursively display children
+				}
+			$branch .='</ul>';
+		}
+
+		$branch .='</li>';   //$OUTPUT->box($this->content,'socialwiki_treebox colourtext');
+		return $branch;
 	}
 }
 
@@ -78,13 +93,20 @@
 class socialwiki_tree{
 	//an array of socialwiki_nodes
 	public $nodes=array();
+
+	public $roots = array(); // all the nodes with no parent.
 	
 	//build an array of nodes
 	function build_tree($pages){
+		//echo 'building tree with pages =';
+		
+
 		foreach ($pages as $page){
 			$this->add_node($page);
 		}
+
 		$this->add_children();
+		//var_dump($this->roots);
 	
 	}
 	
@@ -100,17 +122,23 @@ class socialwiki_tree{
 			if($node->parent!=-1){
 				if(isset($this->nodes[$node->parent])){
 					$parent=$this->nodes[$node->parent];
-					$parent->add_child($node->id);
+					$parent->add_child($node);
 				}else{
-					print_error('nonode','socialwiki');
+					print_error('nonode','socialwiki'); //TODO: what to do if the parent node is absent: 
+					//TODO: include a fictitious node? problem: lineage is broken.
+					//for now: just create another root 
+					$this->roots[]= $node;
 				}
+			}
+			else { //root node
+				$this->roots[]= $node; // add to list of root nodes
 			}
 		}
 	}
 	
 	//sorts the nodes so that the family of the leaf with the highest priority is first
 	//the order is parents followed by children 
-	function sort(){
+	/*function sort(){
 		$leaves=$this->find_leaves();
 		$sorted=array();
 		//sort leaves in order of priority
@@ -136,9 +164,9 @@ class socialwiki_tree{
 				$this->add_levels($node->id,1);
 			}
 		}
-	}
+	}*/
 	
-	function add_levels($id,$level){
+	/*function add_levels($id,$level){
 		$this->nodes[$id]->level=$level;
 		$level++;
 		if(count($this->nodes[$id]->children)>0){
@@ -146,10 +174,10 @@ class socialwiki_tree{
 				$this->add_levels($childid,$level);
 			}
 		}
-	}
+	}*/
 	
 
-	function repos_children($node,&$ar){	
+	/*function repos_children($node,&$ar){	
 			$removed=array();
 			//remove node from array so doesn't affect find_index
 			unset($ar[$node->id]);
@@ -166,11 +194,11 @@ class socialwiki_tree{
 		for($i=0;$i<count($removed);$i++){
 			$this->repos_children($this->nodes[$removed[$i]],$ar);
 		}
-	}
+	}*/
 	
 
 	//recursively add parent nodes to an array
-	function add_parent($childid,$ar){
+	/*function add_parent($childid,$ar){
 		//get the child and parent nodes
 		$childnode=$this->nodes[$childid];
 		$node=$this->nodes[$childnode->parent];
@@ -191,11 +219,11 @@ class socialwiki_tree{
 			$ar=$this->add_parent($node->id,$ar);
 		}
 		return $ar;
-	}
+	}*/
 	
 	
 	//returns an array with all the leaves of the tree
-	function find_leaves(){
+	/*function find_leaves(){
 		$leaves=array();
 		foreach($this->nodes as $node){
 			if(count($node->children)==0){
@@ -203,10 +231,10 @@ class socialwiki_tree{
 			}
 		}
 		return $leaves;
-	}
+	}*/
 	
 	//finds the index a sibling node should be placed in according to priority 
-	function find_index($parentid,$ar){
+	/*function find_index($parentid,$ar){
 		$pos=array(); //tracks the positions of the child nodes
 		$parent=$this->nodes[$parentid];
 		foreach($parent->children as $id){
@@ -220,21 +248,19 @@ class socialwiki_tree{
 		}else{
 			return array_search($parentid,array_keys($ar))+1;;
 		}
-	}
+	}*/
 	
 	function display(){
 		Global $OUTPUT;
-		$this->sort();
-		echo $OUTPUT->heading('OLDEST--->NEWEST',1,'colourtext');
-		foreach($this->nodes as $node){
-			if($node->parent==-1){
-				echo'<br/><br/><br/>';
-			}
-			echo $OUTPUT->container_start();
-			echo str_repeat('&nbsp',($node->level-1)*8);
-			$node->display();
-			echo $OUTPUT->container_end();
+		//$this->sort();
+		//echo $OUTPUT->heading('OLDEST--->NEWEST',1,'colourtext');
+		$treeul = '<div class="tree" id="doublescroll"><ul>'; // doublescroll = hack to put scrollbars at top and bottom using JS
+
+		foreach($this->roots as $node){
+			$treeul .= $node->to_HTML_List(); //recusively descends tree
 		}
+		$treeul .= '</ul></div>';
+		echo $treeul;
 	}
 
 }

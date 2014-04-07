@@ -18,6 +18,8 @@
 
 	require_once('../../config.php');
 	require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
+	require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
+
 	$pageid=required_param('pageid', PARAM_INT);
 	//$from=required_param('from',PARAM_RAW);
 	
@@ -45,7 +47,7 @@
 		socialwiki_delete_like($USER->id,$pageid);
 		$likes=socialwiki_numlikes($pageid);
 		//delete pages with no likes as long as it's not the first page
-		if($likes==0){
+		/*if($likes==0){
 			$pagelist = socialwiki_get_linked_from_pages($pageid);
 			$parentid=socialwiki_get_parent($pageid);
 			$children=socialwiki_get_children($pageid);
@@ -64,9 +66,14 @@
 					}
 			}
 			// redirect($CFG->wwwroot .'/mod/socialwiki/home.php?id='.$cm->id);
-		}
+		}*/
 	}else{
 		socialwiki_add_like($USER->id,$pageid,$subwiki->id);
+		
+		//TODO: could optimize which peers we recompute: only those who have likes in common
 	}
 	//redirect($from);
+	echo 'ok';
+	peer::socialwiki_update_peers(true, false, $subwiki->id, $USER->id); //update like similarity to other peers
+	
 	echo socialwiki_numlikes($pageid); //respond by giving the new number of likes!

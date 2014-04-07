@@ -1,5 +1,7 @@
 
 // Let page load
+
+// todo: how to make one such fn for each id in the table? selector of onclick function should be more general that a specific id.
 $(document).ready(function()
 {
     // Click trigger for image

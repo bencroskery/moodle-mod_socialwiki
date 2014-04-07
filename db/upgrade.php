@@ -88,54 +88,88 @@ function xmldb_socialwiki_upgrade($oldversion) {
         // Socialwiki savepoint reached.
         upgrade_mod_savepoint(true, 2013071600, 'socialwiki');
     }
+    
+    $revision = 2014021100;
+    if ($oldversion < $revision) {
+        $table = new xmldb_table('socialwiki_user_views');
 
-    if ($oldversion < 201401012600) {
-
-        // Define user views table
-        $views_table = new xmldb_table('socialwiki_user_views');
-        $userid_field = new xmldb_field(
-            'userid',
+        $table->add_field(
+            "id",
             XMLDB_TYPE_INTEGER,
-            '10'
+            "10",
+            null,
+            XMLDB_NOTNULL,
+            XMLDB_SEQUENCE,
+            null
         );
-        $pageid_field = new xmldb_field(
-            'pageid',
+        $table->add_field(
+            "userid",
             XMLDB_TYPE_INTEGER,
-            '10'
+            "10",
+            null,
+            XMLDB_NOTNULL,
+            null,
+            null
         );
-        $count_field = new xmldb_field(
-            'count',
+
+        $table->add_field(
+            "pageid",
             XMLDB_TYPE_INTEGER,
-            '10'
+            "10",
+            null,
+            XMLDB_NOTNULL,
+            null,
+            null
         );
-        $latest = new xmldb_field(
-            'latest',
-            XMLDB_TYPE_DATETIME
+
+        $table->add_field(
+            "viewcount",
+            XMLDB_TYPE_INTEGER,
+            "10",
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0'
         );
 
-        if (!$dbman->table_exists($views_table)) {
-            $dbman->add_table($views_table);
-        }
+        $table->add_field(
+            "latestview",
+            XMLDB_TYPE_INTEGER,
+            "10",
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0'
+        );
 
-        // Conditionally launch add fields.
-        if (!$dbman->field_exists($views_table, $userid_field)) {
-            $dbman->add_field($views_table, $userid_field);
-        }
-        
-        if (!$dbman->field_exists($views_table, $pageid_field)) {
-            $dbman->add_field($views_table, $pageid_field);
-        }
-        
-        if (!$dbman->field_exists($views_table, $count_field)) {
-            $dbman->add_field($views_table, $count_field);
-        }
+        $table->add_key(
+            'primary',
+            XMLDB_KEY_PRIMARY,
+            array('id')
+        );
 
-        if (!$dbman->field_exists($views_table, $latest)) {
-            $dbman->add_field($views_table, $latest);
+        $table->add_key(
+            'userkey',
+            XMLDB_KEY_FOREIGN,
+            array('userid'),
+            'user',
+            array('id')
+        );
+
+        $table->add_key(
+            'pagekey',
+            XMLDB_KEY_FOREIGN,
+            array('pageid'),
+            'socialwiki_pages',
+            array('id')
+        );
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
 
         // Socialwiki savepoint reached.
-        upgrade_mod_savepoint(true, 201401012600, 'socialwiki');
+        upgrade_mod_savepoint(true, $revision, 'socialwiki');
     }
 
     return true;

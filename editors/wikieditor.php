@@ -111,7 +111,7 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
         $tag = $this->getTokens($editor, 'nowiki');
         $wiki_editor['nowiki'] = array('ed_nowiki.gif', get_string('wikinowikitext', 'socialwiki'), $tag[0], $tag[1], get_string('wikinowikitext', 'socialwiki'));
 
-        $PAGE->requires->js('/mod/socialwiki/editors/wiki/buttons.js');
+        $PAGE->requires->js(new moodle_url('/mod/socialwiki/editors/wiki/buttons.js'));
 
         $html = '<div class="socialwikieditor-toolbar">';
         foreach ($wiki_editor as $button) {

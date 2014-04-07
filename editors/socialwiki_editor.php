@@ -62,7 +62,7 @@ function socialwiki_print_editor_wiki($pageid, $content, $editor, $version = -1,
 
     $OUTPUT->heading(strtoupper(get_string('format' . $editor, 'socialwiki')));
 
-    $PAGE->requires->js('/mod/socialwiki/editors/wiki/buttons.js');
+    $PAGE->requires->js($CFG->wwwroot .'/mod/socialwiki/editors/wiki/buttons.js');
 
     echo $OUTPUT->container_start('mdl-align');
     foreach ($wiki_editor as $button) {

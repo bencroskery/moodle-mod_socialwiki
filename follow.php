@@ -16,6 +16,7 @@
 
 	require_once('../../config.php');
 	require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
+	require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
 	
 	$from=required_param('from',PARAM_TEXT); //the url of the previous page
 	$pageid=optional_param('pageid',-1, PARAM_INT);
@@ -90,7 +91,6 @@
 		if(socialwiki_is_following($USER->id,$user2,$subwiki->id)){
 			//delete the record if the user is already following the author
 			socialwiki_unfollow($USER->id,$user2, $subwiki->id);
-                        redirect($from);
 		}else{
 			//if the user isn't following the author add a new follow
 			$record=new StdClass();
@@ -98,9 +98,11 @@
 			$record->usertoid=$user2;
 			$record->subwikiid=$subwiki->id;
 			$DB->insert_record('socialwiki_follows',$record);
-                        //go back to the page you came from
-                        redirect($from);
 		}
+		peer::socialwiki_update_peers(false, true, $swid, $USER->id); //update peer info in session vars
+                      //go back to the page you came from
+        redirect($from);
+
 	}else{
 		print_error('nouser','socialwiki');
 	}

@@ -82,7 +82,8 @@ class mod_socialwiki_create_form extends moodleform {
         //hiddens
         $mform->addElement('hidden', 'action', 'create');
         $mform->setType('action', PARAM_ALPHA);
+        $mform->addElement('submit', 'submitbutton', get_string('createpage', 'socialwiki'));
 
-        $this->add_action_buttons(false, get_string('createpage', 'socialwiki'));
+
     }
 }

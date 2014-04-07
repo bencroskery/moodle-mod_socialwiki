@@ -5,7 +5,7 @@ var pattern3=/option/;
 var pattern4=/option=3/;
 
 
-//recalculates the score for the tree nodes
+/* /recalculates the score for the tree nodes
 function rescoreTree (){
 	var jpeers=JSON.stringify(peers);
 	var jnodes=JSON.stringify(mTree.myTree.nodes);
@@ -39,7 +39,7 @@ function rescorePages(){
 			$('.socialwiki_editor').html(output);
 		}
 	});
-}
+}* /
 
 
 //function create all the weight sliders and define the function to be executed when they are moved
@@ -79,23 +79,30 @@ function weightSliders (divID){
 		});
 	}
 }
+*/
 
+//var searchTree = new tree();
+//var zoom = document.documentElement.clientWidth / window.innerWidth;
 
-var searchTree = new tree();
-var zoom = document.documentElement.clientWidth / window.innerWidth;
-
-//only create tree if in tree view
+/*/only create tree if in tree view
 if(pattern1.test(document.URL)||!pattern3.test(document.URL)){
 	searchTree.nodes = searchResults;
 	mTree = new TreeControl(searchTree, "socialwiki_content_area");
-}
+}*/
 
 $(document).ready(function() {
-	$(".phptree").css("display", "none");
+	//$(".phptree").css("display", "none");
+
+	$("#table_searchresults").dataTable({
+            "sScrollY": "200px",
+            "bPaginate": false,
+            "bScrollCollapse": true,
+            });
 	
-	if(!pattern4.test(document.URL)){
+	//removed the weight sliders
+	/*if(!pattern4.test(document.URL)){
 		weightSliders("socialwiki_content_area");
-	}
+	}* /
 	//only display tree if in tree view
    if(pattern1.test(document.URL)||!pattern3.test(document.URL)){
 		//add weight sliders
@@ -120,5 +127,5 @@ $(document).ready(function() {
 					$("#tree_zoommessage").css("display", "none");
 			}
 		});
-	}
+	}*/
 });

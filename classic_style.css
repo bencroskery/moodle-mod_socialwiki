@@ -16,6 +16,7 @@
 
 @import url("bootstrap.css");
 
+
 .tabtree ul {
     text-align: left;
 }
@@ -24,6 +25,28 @@
     text-align: left;
 }
 
+.table_region
+{
+	margin-left: 25px;
+	margin-right: 25px;
+	display: inline-block;
+	overflow: auto;
+	min-width: 0px;
+	max-height: 300px;
+}
+
+.home_user_name
+{
+	text-align: left;
+	margin-bottom: 0px;
+	margin-left: 25px;
+}
+
+.followdata
+{
+	margin-left: 25px;
+	margin-top: 0px;
+}
 
 .tree_node
 {
@@ -32,6 +55,10 @@ color:black !important;
 
 .socialwiki_liketable {
 	width: 100%
+}
+
+table.peer_table td {
+	padding: 3px 10px;
 }
 
 .relation_line
@@ -67,9 +94,9 @@ font-style:italic;
 .socialwiki_likebutton
 {
 line-height: 20px;
-font-size: 2em;
+font-size: 1.5em;
 font-weight: bold;
-color:blue;
+color:gray;
 }
 
 /*this is in fact used just to display the author in the bottom of a page (should be renamed)*/
@@ -104,4 +131,9 @@ text-align:left;
 	margin:25px;
 	width:20px;
 	
+}
+
+input#preview
+{
+	display:none;
 }
