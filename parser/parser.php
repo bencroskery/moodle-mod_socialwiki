@@ -40,7 +40,7 @@ class socialwiki_parser_proxy {
     
     public static function get_section(&$string, $type, $section, $all_content = false) {
         if(self::create_parser_instance($type)) {
-            echo "ok here perser.php l43";
+            #echo "ok here perser.php l43";
             $content = self::$parsers[$type]->get_section($section, $string, true);
             
             if($all_content) {

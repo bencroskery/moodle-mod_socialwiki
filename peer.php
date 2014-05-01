@@ -201,8 +201,6 @@ echo '</p>';
 			
 			$peer = new peer($peerinfo);		//get peer from session var
 
-			
-
 			if($updatelikes){
 				
 				$peer->set_like_sim($thisuser, $swid);

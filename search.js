@@ -1,8 +1,8 @@
 //patterns to determine the view mode
-var pattern1=/option=1/; 
-var pattern2=/option=2/;
+var pattern1=/option=1/;  //tree
+var pattern2=/option=2/; // list
 var pattern3=/option/;
-var pattern4=/option=3/;
+var pattern4=/option=3/; //popular
 
 
 /* /recalculates the score for the tree nodes
@@ -99,6 +99,19 @@ $(document).ready(function() {
             "bScrollCollapse": true,
             });
 	
+
+	$.fn.tagcloud.defaults = {
+  		size: {start: 7, end: 26, unit: 'pt'},
+  		color: {start: '#000', end: '#000'}
+		};
+
+	//alert("about to tag the cloud");
+	if(pattern4.test(document.URL)){ // only in view 'popular'
+	  	$('#doublescroll .tagcloud').tagcloud(); //(oublescroll is the box containing the socialwikitree)
+	  }
+
+  	//alert("done");
+
 	//removed the weight sliders
 	/*if(!pattern4.test(document.URL)){
 		weightSliders("socialwiki_content_area");

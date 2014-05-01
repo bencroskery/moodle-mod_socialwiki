@@ -34,7 +34,7 @@ $searchcontent = optional_param('searchsocialwiki_socialwiki_socialwiki_wikicont
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $pageid = optional_param('pageid', -1, PARAM_INT);
 $option = optional_param('option', 0, PARAM_INT); // Option ID
-
+$exact = optional_param('exact', 0, PARAM_INT); // if match should be exact (wikilinks)
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     echo $courseid;
@@ -63,16 +63,20 @@ $wikipage = new page_socialwiki_search($wiki, $subwiki, $cm);
 if ($search == "*")
     $search = "";
 
-$wikipage->set_search_string($search, $searchcontent);
+if ($exact!=0){ //exact match on page title
+	$wikipage->set_search_string($search, $searchcontent, true);
+} else {
+	$wikipage->set_search_string($search, $searchcontent, false);
+}
 
 $wikipage->set_title(get_string('searchresultsfor', 'socialwiki').": ".$search);
 
-	$page = socialwiki_get_page($pageid);
+//$page = socialwiki_get_page($pageid);
 
-if ($pageid != -1)
-{
-	$wikipage->set_page($page);
-}
+//if ($pageid != -1)
+//{
+//	$wikipage->set_page($page);
+//}
 $wikipage->set_view($option);
 
 $wikipage->print_header();

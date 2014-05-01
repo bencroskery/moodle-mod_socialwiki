@@ -30,7 +30,7 @@ require_once("$CFG->dirroot/repository/lib.php");
 
 $subwikiid = required_param('subwiki', PARAM_INT);
 // not being used for file management, we use it to generate navbar link
-$pageid    = optional_param('pageid', 0, PARAM_INT);
+//$pageid    = optional_param('pageid', 0, PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 if (!$subwiki = socialwiki_get_subwiki($subwikiid)) {
@@ -59,19 +59,19 @@ if (empty($returnurl)) {
     if (!empty($_SERVER["HTTP_REFERER"])) {
         $returnurl = $_SERVER["HTTP_REFERER"];
     } else {
-        $returnurl = new moodle_url('/mod/socialwiki/files.php', array('subwiki'=>$subwiki->id));
+        $returnurl = new moodle_url('/mod/socialwiki/files.php', array('swid'=>$subwiki->id));
     }
 }
 
 $title = get_string('editfiles', 'socialwiki');
 
 $struser = get_string('user');
-$url = new moodle_url('/mod/socialwiki/filesedit.php', array('subwiki'=>$subwiki->id, 'pageid'=>$pageid));
+$url = new moodle_url('/mod/socialwiki/filesedit.php', array('subwiki'=>$subwiki->id));//, 'pageid'=>$pageid));
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
-$PAGE->navbar->add(format_string(get_string('wikifiles', 'socialwiki')), $CFG->wwwroot . '/mod/socialwiki/files.php?pageid=' . $pageid);
+$PAGE->navbar->add(format_string(get_string('wikifiles', 'socialwiki')), $CFG->wwwroot . '/mod/socialwiki/files.php?swid=' . $subwikiid);
 $PAGE->navbar->add(format_string($title));
 
 $data = new stdClass();

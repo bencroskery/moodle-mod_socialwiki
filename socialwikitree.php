@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 
+
+require_once($CFG->dirroot . "/mod/socialwiki/locallib.php");
+require_once($CFG->dirroot . "/mod/socialwiki/peer.php");
+
 	class socialwiki_node{
 		//the page id
 		public $id;
+		public $swid;
 		//page title and authors name
 		public $content;
 		//boolean true if the node isn't a leaf
@@ -27,6 +32,10 @@
 		public $children=array();
 		//the parents id
 		public $parent;
+
+		public $peerlist = array(); //kludge: should be page property, not node property
+		public $trustvalue;
+
 		//whether the mode has been added to the tree
 		//public $added;
 		//the level of the tree the node is on
@@ -37,11 +46,13 @@
 		
 		function __construct($page){
 			$this->id='l'.$page->id;
+			$this->swid = $page->subwikiid;
 			if($page->parent==NULL||$page->parent==0){
 				$this->parent=-1;
 			}else{
 				$this->parent='l'.$page->parent;
 			}
+			$this->compute_trust($page);
 			//$this->column=-1;
 			//$this->added=false;
 			//$this->hidden = true;
@@ -51,11 +62,28 @@
 			}*/
 		}
 	
+	function compute_trust($page){
+
+		$this->peerlist = socialwiki_get_likers($page->id, $page->subwikiid);
+
+		$this->trustvalue =  count($this->peerlist); //set default trust value to popularity
+
+	}
+
+	// requires trust to be already computed (above)!
 	function set_content($page){
 		Global $PAGE,$CFG;
 		$user = socialwiki_get_user_info($page->userid);
+
 		$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid));
-		$this->content=html_writer::link($CFG->wwwroot.'/mod/socialwiki/view.php?pageid='.$page->id,$page->title,array("class"=>"colourtext")).'<br/>'.html_writer::link($userlink->out(false),fullname($user),array("class"=>"colourtext")).'<br/>ID: '.$page->id;
+		$this->content=	html_writer::link($CFG->wwwroot.'/mod/socialwiki/view.php?pageid='.$page->id,$page->title,
+			                              array("class"=>"colourtext")// tagcloud", "rel"=>"$this->trustvalue")
+			                              //TODO: ugly hack for computing trust w.r.t a page!
+			                              )
+						.' [ID: '.$page->id.']<br/>';
+		$userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
+		$this->content.=html_writer::link($userlink->out(false),fullname($user));
+						//html_writer::link($userlink->out(false),fullname($user),array("class"=>"colourtext"));
 		/*if(isset($page->votes)){
 			//add page scores
 			$this->content.='<br/>Total Score: '.$page->votes.
@@ -75,7 +103,7 @@
 	
 	function to_HTML_List(){
 		//Global $OUTPUT;
-		$branch = '<li><div>'.$this->content.'</div>';
+		$branch = '<li><div class="tagcloud" rel="'.$this->trustvalue.'">'.$this->content.'</div>';
 		if (!empty($this->children)){
 			$branch .='<ul>';
 				foreach ($this->children as $child){ 
@@ -87,11 +115,21 @@
 		$branch .='</li>';   //$OUTPUT->box($this->content,'socialwiki_treebox colourtext');
 		return $branch;
 	}
+
+	function list_peers_rec(){
+		$plist = $this->peerlist; //arrays copied by value (a bit deeper than shallow copy!)
+		foreach ($this->children as $child){
+			$plist = array_merge($plist,$child->list_peers_rec());
+		}
+		return $plist;
+	}
+
 }
 
 
 class socialwiki_tree{
 	//an array of socialwiki_nodes
+
 	public $nodes=array();
 
 	public $roots = array(); // all the nodes with no parent.
@@ -251,16 +289,35 @@ class socialwiki_tree{
 	}*/
 	
 	function display(){
-		Global $OUTPUT;
+		Global $OUTPUT, $USER;
 		//$this->sort();
 		//echo $OUTPUT->heading('OLDEST--->NEWEST',1,'colourtext');
-		$treeul = '<div class="tree" id="doublescroll"><ul>'; // doublescroll = hack to put scrollbars at top and bottom using JS
 
+		$treeul = '<div class="tree" id="doublescroll"><ul>'; // doublescroll = hack to put scrollbars at top and bottom using JS
+		$allpeerset = array();
 		foreach($this->roots as $node){
-			$treeul .= $node->to_HTML_List(); //recusively descends tree
+			$treeul .= $node->to_HTML_List(); //recusively descends tree (trees)
+			$allpeerset = array_merge($allpeerset,$node->list_peers_rec());
 		}
 		$treeul .= '</ul></div>';
-		echo $treeul;
+		$allpeerset = array_unique($allpeerset); //remove duplicates
+		
+		$swid = 0; //just to set variable scope... 0 means nothing.
+		if (!empty($this->roots)){ // if it's empty there's no tree and no peers so we're ok
+			$swid = $this->roots[0]->swid; 
+		}
+		$peerinfo = '<div id="peerinfo" style="display:none"><ul>';
+		foreach ($allpeerset as $p){
+			$peerarray = peer::socialwiki_get_peer($p,$swid, $USER->id)->to_array();
+			$peerinfo .= '<li>';
+			foreach($peerarray as $k=>$v){
+				$peerinfo .= '<'.$k.'>'.$v.'</'.$k.'>';
+			}
+			$peerinfo .= '</li>';
+		}
+		$peerinfo .= '</ul></div>';
+
+		echo $treeul.$peerinfo;
 	}
 
 }

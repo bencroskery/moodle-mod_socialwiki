@@ -73,7 +73,7 @@
 		//TODO: could optimize which peers we recompute: only those who have likes in common
 	}
 	//redirect($from);
-	echo 'ok';
+	//echo 'ok';
 	peer::socialwiki_update_peers(true, false, $subwiki->id, $USER->id); //update like similarity to other peers
 	
 	echo socialwiki_numlikes($pageid); //respond by giving the new number of likes!

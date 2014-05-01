@@ -27,15 +27,16 @@ require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
 
-$pageid       = required_param('pageid', PARAM_INT); // Page ID
+//$pageid       = optional_param('pageid', 0, PARAM_INT); // Page ID
+$swid          = required_param('swid', PARAM_INT); // Subwiki ID
 $wid          = optional_param('wid', 0, PARAM_INT); // Wiki ID
 $currentgroup = optional_param('group', 0, PARAM_INT); // Group ID
 $userid       = optional_param('uid', 0, PARAM_INT); // User ID
 $groupanduser = optional_param('groupanduser', null, PARAM_TEXT);
 
-if (!$page = socialwiki_get_page($pageid)) {
+/*if (!$page = socialwiki_get_page($pageid)) {
     print_error('incorrectpageid', 'socialwiki');
-}
+}*/
 
 if ($groupanduser) {
     list($currentgroup, $userid) = explode('-', $groupanduser);
@@ -55,7 +56,7 @@ if ($wid) {
     }
 } else {
     // no group
-    if (!$subwiki = socialwiki_get_subwiki($page->subwikiid)) {
+    if (!$subwiki = socialwiki_get_subwiki($swid)) {
         print_error('incorrectsubwikiid', 'socialwiki');
     }
 
@@ -76,7 +77,7 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 $context = context_module::instance($cm->id);
 
 
-$PAGE->set_url('/mod/socialwiki/files.php', array('pageid'=>$pageid));
+$PAGE->set_url('/mod/socialwiki/files.php');//, array('pageid'=>$pageid));
 require_login($course, true, $cm);
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('wikifiles', 'socialwiki'));
@@ -85,20 +86,23 @@ $PAGE->navbar->add(format_string(get_string('wikifiles', 'socialwiki')));
 echo $OUTPUT->header();
 
 $renderer = $PAGE->get_renderer('mod_socialwiki');
+echo "<h2>Files available to include in pages</h2>";
+//var_dump($PAGE->navigation);
+//echo $renderer->pretty_navbar($pageid);
 
-echo $renderer->pretty_navbar($pageid);
-
-
+//echo "<h2>hi there ===</h2>";
 echo $OUTPUT->box_start('generalbox');
+//echo "<h2>ho there ===</h2>";
 if (has_capability('mod/socialwiki:viewpage', $context)) {
-    echo $renderer->socialwiki_print_subwiki_selector($PAGE->activityrecord, $subwiki, $page, 'files');
+    //echo $renderer->socialwiki_print_subwiki_selector($PAGE->activityrecord, $subwiki, $page, 'files');
     echo $renderer->socialwiki_files_tree($context, $subwiki);
 } else {
     echo $OUTPUT->notification(get_string('cannotviewfiles', 'socialwiki'));
 }
 echo $OUTPUT->box_end();
+//echo "<h2>hi there dudu ===</h2>";
 
 if (has_capability('mod/socialwiki:managefiles', $context)) {
-    echo $OUTPUT->single_button(new moodle_url('/mod/socialwiki/filesedit.php', array('subwiki'=>$subwiki->id, 'pageid'=>$pageid)), get_string('editfiles', 'socialwiki'), 'get');
+    echo $OUTPUT->single_button(new moodle_url('/mod/socialwiki/filesedit.php', array('subwiki'=>$subwiki->id)), get_string('editfiles', 'socialwiki'), 'get');//, 'pageid'=>$pageid
 }
 echo $OUTPUT->footer();

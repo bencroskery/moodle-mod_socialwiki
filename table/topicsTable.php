@@ -61,7 +61,7 @@ class TopicsTable extends socialwiki_table {
 		foreach ($topics as $title => $data) {
 			
 			
-			$titlelink = '<a href="search.php?searchstring='.$title.'&courseid='.$this->courseid.'&cmid='.$PAGE->cm->id.'&option=1">'.$title.'</a>';
+			$titlelink = '<a href="search.php?searchstring='.$title.'&courseid='.$this->courseid.'&cmid='.$PAGE->cm->id.'&exact=1&option=1">'.$title.'</a>';
 
 			$row = array(
 				"Title" => $titlelink,

@@ -182,12 +182,12 @@ function socialwiki_get_last_version($pageid) {
 function socialwiki_get_section_page($page, $section) {
 
     $version = socialwiki_get_current_version($page->id);
-    echo "logging in locallib.php line 185";
-    echo "content=".$version->content.":end";
-    echo "format=".$version->contentformat.":end";
-    echo "section:".$section;
+    #echo "logging in locallib.php line 185";
+    #echo "content=".$version->content.":end";
+    #echo "format=".$version->contentformat.":end";
+    #echo "section:".$section;
     $toreturn = socialwiki_parser_proxy::get_section($version->content, $version->contentformat, $section);
-    echo $toreturn;
+    #echo $toreturn;
     return $toreturn;
 }
 
@@ -195,13 +195,20 @@ function socialwiki_get_section_page($page, $section) {
  * Get a wiki page by page title
  * @param int $swid, sub wiki id
  * @param string $title
- * @return object
+ * @return object a page with the given title, the user's favorite if applicable
  */
 function socialwiki_get_page_by_title($swid, $title) {
-    global $DB;
+    global $DB, $USER;
 	$records = $DB->get_records('socialwiki_pages', array('subwikiid' => $swid, 'title' => $title));
 	if (count($records) > 0)
 	{
+
+        foreach($records as $r) {
+            if(socialwiki_is_user_favorite($USER->id, $r->id, $swid)){
+                return $r;
+            }
+        }
+        //the user has no fave
     	return $records[max(array_keys($records))];
 	}
 	else
@@ -209,6 +216,8 @@ function socialwiki_get_page_by_title($swid, $title) {
 		return $records;
 	}
 }
+
+
 
 /**
  * Get a version record by record id
@@ -581,18 +590,29 @@ function socialwiki_get_orphaned_pages($swid) {
  * @param int $swid sub wiki id
  * @param string $search
  */
-function socialwiki_search_title($swid, $search) {
+function socialwiki_search_title($swid, $search, $exact=false) {
     global $DB;
     
     $sql = "SELECT {socialwiki_pages}.*, COUNT(pageid) AS total 
     FROM  {socialwiki_pages}  
-    LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid 
-    WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title LIKE ?)  
-    GROUP BY {socialwiki_pages}.id 
-    ORDER BY total DESC";
+    LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid ";
+    //if($exact){//exact match
+    //    $sql .= "WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title=?)" ; 
+    //} else{
+        $sql .= "WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title LIKE ?)";
+    //}
+    
+    $sql .= "GROUP BY {socialwiki_pages}.id 
+            ORDER BY total DESC";
 
-    return $DB->get_records_sql($sql, array($swid, '%'.$search.'%'));
+    if($exact){//exact match
+        return $DB->get_records_sql($sql, array($swid, $search));
+    } else{
+        return $DB->get_records_sql($sql, array($swid, '%'.$search.'%'));
+    }
+    
 }
+
 
 /**
  * Search wiki content
@@ -741,7 +761,7 @@ function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
 /**
  * This function is the parser callback to parse wiki links.
  *
- * It returns the necesary information to print a link.
+ * It returns the necessary information to print a link.
  *
  * NOTE: Empty pages and non-existent pages must be print in red color.
  *
@@ -761,7 +781,7 @@ function socialwiki_parser_link($link, $options = null) {
 	$matches = array();
 
 
-    if (is_object($link)) {
+    if (is_object($link)) { //if the fn is passed a page_socialwiki object as 1st argument
         $parsedlink = array('content' => $link->title, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $link->id, 'new' => false, 'link_info' => array('link' => $link->title, 'pageid' => $link->id, 'new' => false));
 
         $version = socialwiki_get_current_version($link->id);
@@ -773,7 +793,7 @@ function socialwiki_parser_link($link, $options = null) {
         $swid = $options['swid'];
 		$specific = false;
 
-		if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches))
+		if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) //retrieve a version?
 		{
 			$link = preg_replace('/@(([0-9]+)|(\.))/', '', $link);
 			$specific = true;
@@ -781,9 +801,9 @@ function socialwiki_parser_link($link, $options = null) {
 
         if ($page = socialwiki_get_page_by_title($swid, $link)) {
 			if ($specific == false)
-			{
+			{ //normal wikilink searching for pages by title
 				$currentpage = optional_param('pageid',0,PARAM_INT);
-				$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot.'/mod/socialwiki/search.php?searchstring='.$link.'&pageid='.$currentpage.'&courseid='.$COURSE->id.'&cmid='.$PAGE->cm->id, 'new' => false, 'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
+				$parsedlink = array('content' => $link, 'url' => $CFG->wwwroot.'/mod/socialwiki/search.php?searchstring='.$link.'&pageid='.$currentpage.'&courseid='.$COURSE->id.'&cmid='.$PAGE->cm->id.'&exact=1', 'new' => false, 'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
 			}
 			else
 			{
@@ -1853,9 +1873,10 @@ function socialwiki_get_subwiki_users($swid) {
 
 function socialwiki_get_active_subwiki_users($swid) {    //TODO: change so we only get pages of this subwiki
     Global $DB;
-    $sql = 'SELECT DISTINCT userid
-            FROM {socialwiki_user_views}';
-    $users = $DB->get_records_sql($sql);
+    $sql = 'SELECT DISTINCT v.userid
+            FROM {socialwiki_user_views} as v join {socialwiki_pages} as p on v.pageid=p.id where p.subwikiid=?';
+
+    $users = $DB->get_records_sql($sql, array($swid));
     $uids = array();
     foreach ($users as $u) {
         $uids[] = $u->userid;
