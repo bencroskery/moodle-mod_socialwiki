@@ -61,7 +61,7 @@ if($id){
 
     // Getting current group id
     $currentgroup = groups_get_activity_group($cm);
-
+    $gid = !empty($gid) ? $gid : 0;
     // set user id 0
         $userid = 0;
 

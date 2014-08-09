@@ -2,7 +2,7 @@
 global $CFG;
 
 require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/sortableTable/sortableTable.php');
+//require_once($CFG->dirroot . '/mod/socialwiki/sortableTable/sortableTable.php');
 require_once($CFG->dirroot . '/mod/socialwiki/table/table.php');
 
 

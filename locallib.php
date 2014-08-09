@@ -1594,11 +1594,13 @@ function socialwiki_get_updated_pages_by_subwiki($swid, $userid='', $filterUnsee
         $params[]=0; //on first login, everything is new.
     }
     if ($filterUnseen){
-        $sql = $sql. ' AND id IN 
+        $sql = $sql. ' AND id NOT IN 
                       (SELECT pageid FROM {socialwiki_user_views} 
                        WHERE userid=?)';
         $params[]=$userid;
     }
+   // echo $sql;
+    //var_dump(params);
     return $DB->get_records_sql($sql,$params);
 
     

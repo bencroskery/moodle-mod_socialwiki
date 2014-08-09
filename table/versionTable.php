@@ -2,7 +2,7 @@
 
 //require_once("../../../config.php");
 require_once($CFG->dirroot . "/mod/socialwiki/locallib.php");
-require_once($CFG->dirroot . "/mod/socialwiki/sortableTable/sortableTable.php");
+//require_once($CFG->dirroot . "/mod/socialwiki/sortableTable/sortableTable.php");
 require_once($CFG->dirroot . "/mod/socialwiki/table/table.php");
 require_once($CFG->dirroot . "/mod/socialwiki/peer.php");
 
@@ -384,7 +384,7 @@ class versionTable extends socialwiki_table {
     }
 
     public static function makeNewPageVersionsTable($uid, $swid, $combiner=AVG){
-    	$pages = socialwiki_get_updated_pages_by_subwiki($swid);
+    	$pages = socialwiki_get_updated_pages_by_subwiki($swid, $uid);
 
         if ($pages) {
             
