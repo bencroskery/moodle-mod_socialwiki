@@ -643,7 +643,7 @@ function socialwiki_search_content($swid, $search) {
 function socialwiki_search_all($swid, $search) {
     global $DB;
     
-    $sql = "SELECT *, COUNT(pageid) AS total 
+    $sql = "SELECT {socialwiki_pages}.*, COUNT(pageid) AS total 
     FROM  {socialwiki_pages}  
     LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid 
     WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.cachedcontent LIKE ? OR {socialwiki_pages}.title LIKE ?)  

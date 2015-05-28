@@ -550,7 +550,7 @@ class page_socialwiki_view extends page_socialwiki {
 	$theliker .= html_writer::start_tag('span', array ('id' => 'numlikes')); //span updated asynchronously after ajax request
 	$theliker .= "$likess";
 	if ($likess == 1){
-		$theliker .= ' likes';
+		$theliker .= ' like';
 	} else {
 		$theliker .= ' likes';
 	}
