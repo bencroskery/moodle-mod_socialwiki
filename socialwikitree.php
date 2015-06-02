@@ -85,7 +85,7 @@ class socialwiki_node{
                                            //TODO: ugly hack for computing trust w.r.t a page!
                                            );
         $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
-        $this->content.= html_writer::link($userlink->out(false),fullname($user)).strftime('%d %b %Y', $page->timecreated);
+        $this->content.= html_writer::link($userlink->out(false),fullname($user)).socialwiki_format_time($page->timemodified);
         $this->content.= html_writer::end_tag('span');
                                         //html_writer::link($userlink->out(false),fullname($user),array("class"=>"colourtext"));
         /*if(isset($page->votes)){
