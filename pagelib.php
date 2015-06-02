@@ -1068,6 +1068,7 @@ class page_socialwiki_search extends page_socialwiki {
 		$PAGE->requires->jquery_plugin('ui-css');
 		//$PAGE->requires->js(new moodle_url("/mod/socialwiki/tree_jslib/tree.js"));
 		$PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
+                $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
 		$PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/jquery.tagcloud.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/doublescroll.js"));
@@ -1572,6 +1573,7 @@ class page_socialwiki_history extends page_socialwiki {
 		$PAGE->requires->jquery();
 		//$PAGE->requires->js(new moodle_url("/mod/socialwiki/tree_jslib/tree.js"));
 		$PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
+                $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
 		$PAGE->requires->js(new moodle_url("/mod/socialwiki/doublescroll.js"));
     }
 
@@ -1598,12 +1600,12 @@ class page_socialwiki_history extends page_socialwiki {
 	//add radio buttons to compare versions if there is more than one version
 	if(count($tree->nodes)>1){
             foreach($tree->nodes as $node){
-			$node->content .= "<br/>";
-			$node->content.=$this->choose_from_radio(array(substr($node->id,1) => null), 'compare', 'M.mod_socialwiki.history()', '', true). $this->choose_from_radio(array(substr($node->id,1) => null), 'comparewith', 'M.mod_socialwiki.history()', '', true);
+                $node->content.= '<span id="comp'.$node->id.'" style="display:block">';
+                $node->content.= $this->choose_from_radio(array(substr($node->id,1) => null), 'compare', 'M.mod_socialwiki.history()', '', true). $this->choose_from_radio(array(substr($node->id,1) => null), 'comparewith', 'M.mod_socialwiki.history()', '', true);
                 if ($node->id == 'l'.$this->page->id){ //current page
                     $node->content .= "<br/>[current page]";
                 }
-
+                $node->content .= "</span>";
             }
 	}
 		echo $this->wikioutput->content_area_begin();
