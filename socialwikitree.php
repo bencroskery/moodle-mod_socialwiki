@@ -76,16 +76,17 @@ class socialwiki_node {
         //buttons to minimize and collapse
         $this->content = html_writer::start_tag('img', array('title' => 'Collapse', 'id' => 'cop' . $this->id, 'src' => $OUTPUT->pix_url('t/up'), 'class' => 'collapser', 'value' => $this->id));
         $this->content.= html_writer::end_tag('img');
-        $this->content.= html_writer::start_tag('img', array('title' => 'Minimize', 'id' => 'hid' . $this->id, 'src' => $OUTPUT->pix_url('t/less'), 'class' => 'hider', 'value' => $this->id, 'style' => 'margin:2px 5px 0px 0px'));
+        $this->content.= html_writer::start_tag('img', array('title' => 'Minimize', 'id' => 'hid' . $this->id, 'src' => $OUTPUT->pix_url('t/less'), 'class' => 'hider', 'value' => $this->id));
         $this->content.= html_writer::end_tag('img');
 
         $this->content.= html_writer::start_tag('span', array('id' => 'content' . $this->id));
-        //$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $page->subwikiid));
-        $this->content.= html_writer::link($CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $page->id, $page->title . ' ID: ' . $page->id, array('class' => 'colourtext', 'style' => 'display:block; margin-top:5px;')// tagcloud", "rel"=>"$this->trustvalue")
-                        //TODO: ugly hack for computing trust w.r.t a page!
-        );
+        //title
+        $this->content.= html_writer::start_tag('span', array('class' => 'titletext'));
+        $this->content.= html_writer::link($CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $page->id, $page->title . ' ID: ' . $page->id, array('style' => 'padding:0px;'));
+        $this->content.= html_writer::end_tag('span');
+        //user and date
         $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
-        $this->content.= html_writer::link($userlink->out(false), fullname($user)) . socialwiki_format_time($page->timemodified);
+        $this->content.= html_writer::link($userlink->out(false), fullname($user)) . "&nbsp; " . socialwiki_format_time($page->timemodified);
         $this->content.= html_writer::end_tag('span');
         //html_writer::link($userlink->out(false),fullname($user),array("class"=>"colourtext"));
         /* if(isset($page->votes)){
