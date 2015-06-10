@@ -2101,7 +2101,6 @@ function socialwiki_format_time($time, $timeago = true) {
     $types = array(
         'y' => 'year',
         'm' => 'month',
-        'w' => 'week',
         'd' => 'day',
         'h' => 'hour',
         'i' => 'minute',
