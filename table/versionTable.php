@@ -8,15 +8,6 @@ require_once($CFG->dirroot . "/mod/socialwiki/peer.php");
 
 Global $CFG, $PAGE, $USER;
 
-const MAX = 'max';
-const MIN = 'min';
-const AVG = 'avg';
-const SUM = 'sum';
-
-//$tabletype = required_param('typeid', PARAM_TEXT);
-
-
-
 /*
  * how to do this: 
  * 1 - get a list of pages from DB.
@@ -30,18 +21,7 @@ class versionTable extends socialwiki_table {
     private $allpages; // maps pageid to page object, with additional field $p->likers containing array of likers (peerids)
     private $combiner; // way of combining user trust indicators
 
-    //private $headers;
-
-
-    /* private $col_names = array(
-      "Name",					//TODO: make these all "getString()"
-      "Social Distance",
-      "Number of Followers",
-      "Like Similarity",
-      "Follow Similarity",
-      ); */
-
-    public function __construct($uid, $swid, $pages, $headers, $combiner = AVG) {
+    public function __construct($uid, $swid, $pages, $headers, $combiner = 'avg') {
         parent::__construct($uid, $swid, $headers);
         //$this->allpages = $pages;
         $this->get_all_likers($pages); //get all peers involved, store info in $this->allpages and this->allpeers
@@ -57,12 +37,7 @@ class versionTable extends socialwiki_table {
         $this->combiner = $c;
     }
 
-    /* private getPeerfromId($pid){
-      return $allpeers[$pid];
-      } */
-
     public function get_as_HTML($tableid = 'a_table') {
-
         $t = "<table id=" . $tableid . " class='datatable'>";
         $tabledata = $this->get_table_data();
         //headers
@@ -102,25 +77,12 @@ class versionTable extends socialwiki_table {
     protected function get_table_data() {
         Global $CFG;
 
-        //$number_of_users = socialwiki_get_user_count($this->swid); //total number of users is used with followers data
-        $me = $this->uid;
-        $swid = $this->swid;
-        $www = $CFG->wwwroot;
-
         $table = array();
 
         //$option=optional_param('option', null, PARAM_INT); //?
 
         foreach ($this->allpages as $page) {
-            $user = socialwiki_get_user_info($page->userid);
-            /* $peer = socialwiki_get_peer($page->userid,
-              $this->swid,
-              $this->uid
-              );
-              //socialwiki_get_user_count($swid), */
-
-            $updated = $this->make_time_string($page->timemodified);
-            //$created = strftime('%d %b %Y', $page->timecreated);
+            $updated = socialwiki_format_time($page->timemodified);
 
             $views = $page->pageviews;
             $likes = socialwiki_numlikes($page->id);
@@ -130,35 +92,32 @@ class versionTable extends socialwiki_table {
             $contrib_string = $this->make_multi_user_div($contributors);
 
             //$followlink;
-            $likelink;
-
+            /*
             //TODO: show contributors
-            /* if(socialwiki_is_following($USER->id,$page->userid,$swid))
+            if(socialwiki_is_following($USER->id,$page->userid,$this->swid))
               {
               $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/man-minus.png'></img>";
-              $followlink = "<a style='margin:0;'   class='socialwiki_unfollowlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$swid."&option=$option'>".$img."</a>";
+              $followlink = "<a style='margin:0;'   class='socialwiki_unfollowlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$this->swid."&option=$option'>".$img."</a>";
               } else {
               $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/man-plus.png'></img>";
-              $followlink = "<a style='margin:0;' class='socialwiki_followlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$swid."'>".$img."</a>";
+              $followlink = "<a style='margin:0;' class='socialwiki_followlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$this->swid."'>".$img."</a>";
               } */
 
             $linkpage = "<a style='margin:0;' class='socialwiki_link' href=" . $CFG->wwwroot . "/mod/socialwiki/view.php?pageid=" . $page->id . ">" . $page->title . "</a>";
 
             if (socialwiki_liked($this->uid, $page->id)) {
-                $unlikeimg = "<img style='width:22px; vertical-align:middle;' class='socialwiki_unlikeimg unlikeimg_" . $page->id . "' alt='unlikeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
-                $likeimg = "<img style='width:22px; vertical-align:middle; display:none;' class='socialwiki_likeimg likeimg_" . $page->id . "' alt='likeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
+                $unlikeimg = "<img style='width:22px;' class='socialwiki_unlikeimg unlikeimg_" . $page->id . "' alt='unlikeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
+                $likeimg = "<img style='width:22px; display:none;' class='socialwiki_likeimg likeimg_" . $page->id . "' alt='likeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
             } else {
-
-                $unlikeimg = "<img style='width:22px; vertical-align:middle; display:none;' class='socialwiki_unlikeimg unlikeimg_" . $page->id . "'  alt='unlikeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
-                $likeimg = "<img style='width:22px; vertical-align:middle;' class='socialwiki_likeimg likeimg_" . $page->id . "'  alt='likeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
+                $unlikeimg = "<img style='width:22px; display:none;' class='socialwiki_unlikeimg unlikeimg_" . $page->id . "'  alt='unlikeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
+                $likeimg = "<img style='width:22px;' class='socialwiki_likeimg likeimg_" . $page->id . "'  alt='likeimg_" . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
             }
 
-            //$name = "<a style='margin:0;' class='socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/viewuserpages.php?userid=".$user->id."&subwikiid=".$swid."'>".fullname($user)."</a>";
             /////////// favorites
-            $favorites = socialwiki_get_favorites($page->id, $swid);
+            $favorites = socialwiki_get_favorites($page->id, $this->swid);
             $favdiv = $this->make_multi_user_div($favorites);
 
-            $combiner = $this->combiner; //TODO: make changeable, make constants
+            $combiner = $this->combiner;
 
             /* trust indicators */
             $peerpop = $this->combine_indicators($page, $combiner, "peerpopularity");
@@ -166,31 +125,21 @@ class versionTable extends socialwiki_table {
             $followsim = $this->combine_indicators($page, $combiner, "followsimilarity");
             $distance = $this->combine_indicators($page, $combiner, "networkdistance");
 
-
             $row = array(
-                get_string('title', 'socialwiki') => "<div style='white-space: nowrap; width:100%;'>$likeimg$unlikeimg$linkpage</div>", //$likelink$unlikelink$linkpage</div>",
+                get_string('title', 'socialwiki') => "<div style='white-space: nowrap; width:100%;'>$likeimg$unlikeimg$linkpage</div>",
                 get_string('contributors', 'socialwiki') => $contrib_string,
-                //get_string('created', 'socialwiki') => "$created",
-                get_string('updated', 'socialwiki') => "$updated",
-                get_string('likes', 'socialwiki') => "$likes",
-                get_string('views', 'socialwiki') => "$views",
+                get_string('updated', 'socialwiki') => $updated,
+                get_string('likes', 'socialwiki') => $likes,
+                get_string('views', 'socialwiki') => $views,
                 get_string('favorite', 'socialwiki') => $favdiv,
-                get_string('popularity', 'socialwiki') => substr("$peerpop", 0, 4),
-                get_string('likesim', 'socialwiki') => substr("$likesim", 0, 4),
-                get_string('followsim', 'socialwiki') => substr("$followsim", 0, 4),
-                get_string('networkdistance', 'socialwiki') => substr("$distance", 0, 4)
+                get_string('popularity', 'socialwiki') => substr($peerpop, 0, 4),
+                get_string('likesim', 'socialwiki') => substr($likesim, 0, 4),
+                get_string('followsim', 'socialwiki') => substr($followsim, 0, 4),
+                get_string('networkdistance', 'socialwiki') => substr($distance, 0, 4)
             );
             ////////// add trust values
             $table[] = array_intersect_key($row, array_flip($this->headers)); // filter to get only the requested headers
         }
-
-        /* $table_markup = "";
-
-          $table_markup .= "<div class='yui3-js-endable'>";
-          $table_markup .= $table->get_table($table_id);
-          $table_markup .= "<div id='$table_id' class='table_region'></div>";
-          $table_markup .= "</div>";
-         */
         return $table;
     }
 
@@ -209,7 +158,7 @@ class versionTable extends socialwiki_table {
         if ($num != 0) {
             $ctr = "Others:\n";
             foreach (array_reverse($contributors) as $c) {
-                $ctr .= fullname(socialwiki_get_user_info($c)) . "\n"; //that's a newline
+                $ctr .= fullname(socialwiki_get_user_info($c)) . "\n";
             }
         }
 
@@ -222,8 +171,8 @@ class versionTable extends socialwiki_table {
         return "<a class='socialwiki_link' " . $href . " title='$ctr'>$firstctr</a>";
     }
 
-    /** combines trust indicators obtained from the peers who like a page
-     *
+    /**
+     * combines trust indicators obtained from the peers who like a page
      */
     private function combine_indicators($page, $reducer, $indicator) {
         $uservals = array();
@@ -306,7 +255,6 @@ class versionTable extends socialwiki_table {
         //will return an associative array with peerid => peer object for each peerid
     }
 
-    //todo: make configurable
     public static function getHeaders($type) {
         switch ($type) {
             case "version":
@@ -331,6 +279,13 @@ class versionTable extends socialwiki_table {
                     get_string('views', 'socialwiki'),
                     get_string('favorite', 'socialwiki')
                 );
+            case "topics":
+                return array(
+                    get_string('title', 'socialwiki'),
+                    get_string('versions', 'socialwiki'),
+                    get_string('views', 'socialwiki'),
+                    get_string('likes', 'socialwiki')
+                );
             case "user":
                 return array(
                     get_string('popularity', 'socialwiki'),
@@ -347,7 +302,7 @@ class versionTable extends socialwiki_table {
     // factory method
     //=======================================================================
 
-    public static function makeFavouritesTable($uid, $swid, $combiner = AVG) {
+    public static function makeFavouritesTable($uid, $swid, $combiner = 'avg') {
         if ($favs = socialwiki_get_user_favorites($uid, $swid)) {
             $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $favs, $headers, $combiner);
@@ -356,8 +311,9 @@ class versionTable extends socialwiki_table {
         }
     }
 
-    public static function makeRecentLikesTable($uid, $swid, $combiner = AVG) {
+    public static function makeRecentLikesTable($uid, $swid, $combiner = 'avg') {
         $likes = socialwiki_get_liked_pages($uid, $swid);
+        
         if (!empty($likes)) {
             $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $likes, $headers, $combiner);
@@ -366,18 +322,7 @@ class versionTable extends socialwiki_table {
         }
     }
 
-    public static function make_A_User_Faves_table($userid, $swid, $targetuser, $combiner = AVG) {
-        if ($favs = socialwiki_get_user_favorites($targetuser, $swid)) {
-            $headers = versionTable::getHeaders('version');
-            $headers = array_diff($headers, array(get_string('favorite', 'socialwiki')));
-            return new versionTable($userid, $swid, $favs, $headers, $combiner);
-        } else {
-            return null;
-        }
-    }
-
-    public static function makeContentFromFollowedTable($userid, $swid) {
-
+    public static function makeFollowedVersionsTable($userid, $swid) {
         $pages = socialwiki_get_pages_from_followed($userid, $swid);
 
         if ($pages) {
@@ -387,7 +332,7 @@ class versionTable extends socialwiki_table {
         return null;
     }
 
-    public static function makeNewPageVersionsTable($uid, $swid, $combiner = AVG) {
+    public static function makeNewVersionsTable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_updated_pages_by_subwiki($swid, $uid);
 
         if ($pages) {
@@ -397,7 +342,7 @@ class versionTable extends socialwiki_table {
         return null;
     }
 
-    public static function makeAllVersionsTable($uid, $swid, $combiner = AVG) {
+    public static function makeAllVersionsTable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_page_list($swid);
 
         if (!empty($pages)) {
@@ -406,18 +351,19 @@ class versionTable extends socialwiki_table {
         }
     }
 
-    public static function makeUserVersionsTable($uid, $swid, $combiner = AVG) {
+    public static function makeUserVersionsTable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_user_page_list($uid, $swid);
 
         if (!empty($pages)) {
-            $headers = versionTable::getHeaders('version');
+            $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $pages, $headers, $combiner);
         }
     }
 
     //public static function 
 
-    public static function makeHTMLVersionTable($uid, $swid, $pages, $headers, $tabid) {
+    public static function makeHTMLVersionTable($uid, $swid, $pages, $type, $tabid) {
+        $headers = versionTable::getHeaders($type);
         $thetable = new versionTable($uid, $swid, $pages, $headers);
         //echo $thetable;
         return $thetable->get_as_HTML($tabid); // defined in parent class
