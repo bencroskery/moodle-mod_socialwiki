@@ -107,7 +107,7 @@ To create a new page, type the new page name enclosed in double square brackets,
 To link to a page copy the page url double square brackets with an existing page title inside links to a search for that page.';
 $string['formatnwiki_link'] = 'mod/socialwiki/nwiki';
 $string['help']='Help';
-$string['history'] = 'History';
+$string['history'] = 'Versions';
 $string['history_help'] = 'The history lists links to previous versions of the page.';
 $string['html'] = 'HTML';
 $string['incorrectdeleteversions'] = "Page versions provided for deletion are incorrect.";

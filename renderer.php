@@ -70,60 +70,60 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $olduser->id, 'subwikiid' => $page->subwikiid));
         // view version link
         $oldversionview = ' ';
-        $oldversionview .= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
+        $oldversionview.= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
 
         // userinfo container
         $oldheading = $this->output->container_start('socialwiki_diffuserleft');
         // username
-        $oldheading .= html_writer::link($CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid=' . $olduser->id . '&subwikiid=' . $page->subwikiid, fullname($olduser)) . ' ';
+        $oldheading.= html_writer::link($CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid=' . $olduser->id . '&subwikiid=' . $page->subwikiid, fullname($olduser)) . ' ';
         // user picture
-        $oldheading .= html_writer::link($userlink->out(false), $this->output->user_picture($olduser, array('popup' => true)), array('class' => 'notunderlined'));
-        $oldheading .= $this->output->container_end();
+        $oldheading.= html_writer::link($userlink->out(false), $this->output->user_picture($olduser, array('popup' => true)), array('class' => 'notunderlined'));
+        $oldheading.= $this->output->container_end();
 
         // version number container
-        $oldheading .= $this->output->container_start('socialwiki_diffversion');
-        $oldheading .= get_string('page') . ' ' . $old->pageid . $oldversionview;
-        $oldheading .= $this->output->container_end();
+        $oldheading.= $this->output->container_start('socialwiki_diffversion');
+        $oldheading.= get_string('page') . ' ' . $old->pageid . $oldversionview;
+        $oldheading.= $this->output->container_end();
         // userdate container
-        $oldheading .= $this->output->container_start('socialwiki_difftime');
-        $oldheading .= userdate($old->timecreated, $strdatetime);
-        $oldheading .= $this->output->container_end();
+        $oldheading.= $this->output->container_start('socialwiki_difftime');
+        $oldheading.= userdate($old->timecreated, $strdatetime);
+        $oldheading.= $this->output->container_end();
 
         $newuser = $new->user;
         $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $new->pageid));
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $newuser->id, 'subwikiid' => $page->subwikiid));
 
         $newversionview = ' ';
-        $newversionview .= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
+        $newversionview.= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
         // new user info
         $newheading = $this->output->container_start('socialwiki_diffuserright');
-        $newheading .= $this->output->user_picture($newuser, array('popup' => true));
+        $newheading.= $this->output->user_picture($newuser, array('popup' => true));
 
-        $newheading .=  ' '. html_writer::link($userlink->out(false), fullname($newuser), array('class' => 'notunderlined'));
-        $newheading .= $this->output->container_end();
+        $newheading.= ' ' . html_writer::link($userlink->out(false), fullname($newuser), array('class' => 'notunderlined'));
+        $newheading.= $this->output->container_end();
 
         // version
-        $newheading .= $this->output->container_start('socialwiki_diffversion');
-        $newheading .= get_string('page') . ' ' . $new->pageid . $newversionview;
-        $newheading .= $this->output->container_end();
+        $newheading.= $this->output->container_start('socialwiki_diffversion');
+        $newheading.= get_string('page') . ' ' . $new->pageid . $newversionview;
+        $newheading.= $this->output->container_end();
         // userdate
-        $newheading .= $this->output->container_start('socialwiki_difftime');
-        $newheading .= userdate($new->timecreated, $strdatetime);
-        $newheading .= $this->output->container_end();
+        $newheading.= $this->output->container_start('socialwiki_difftime');
+        $newheading.= userdate($new->timecreated, $strdatetime);
+        $newheading.= $this->output->container_end();
 
         $oldheading = html_writer::tag('div', $oldheading, array('class' => 'socialwiki-diff-heading header'));
         $newheading = html_writer::tag('div', $newheading, array('class' => 'socialwiki-diff-heading header'));
 
         $html = '';
-        $html .= html_writer::start_tag('div', array('class' => 'socialwiki-diff-container'));
-        $html .= html_writer::tag('div', $oldheading . $diff1, array('class' => 'socialwiki-diff-leftside'));
-        $html .= html_writer::tag('div', $newheading . $diff2, array('class' => 'socialwiki-diff-rightside'));
-        $html .= html_writer::end_tag('div');
+        $html.= html_writer::start_tag('div', array('class' => 'socialwiki-diff-container'));
+        $html.= html_writer::tag('div', $oldheading . $diff1, array('class' => 'socialwiki-diff-leftside'));
+        $html.= html_writer::tag('div', $newheading . $diff2, array('class' => 'socialwiki-diff-rightside'));
+        $html.= html_writer::end_tag('div');
 
         //add the paging bars
-        $html .= '<div class="socialwiki_diff_paging">';
-        $html .= $this->output->container($this->diff_paging_bar($old->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;comparewith=' . $new->pageid . '&amp;', 'compare', false, true), 'socialwiki_diff_oldpaging');
-        $html .= $this->output->container($this->diff_paging_bar($new->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;compare=' . $old->pageid . '&amp;', 'comparewith', false, true), 'socialwiki_diff_newpaging');
+        $html.= '<div class="socialwiki_diff_paging">';
+        $html.= $this->output->container($this->diff_paging_bar($old->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;comparewith=' . $new->pageid . '&amp;', 'compare', false, true), 'socialwiki_diff_oldpaging');
+        $html.= $this->output->container($this->diff_paging_bar($new->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;compare=' . $old->pageid . '&amp;', 'comparewith', false, true), 'socialwiki_diff_newpaging');
         $html.='</div>';
 
         return $html;
@@ -262,27 +262,14 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                 continue;
             }
 
-
             $link = new moodle_url('/mod/socialwiki/' . $tab . '.php', array('pageid' => $pageid));
             if ($tab == 'home') {
                 $link = new moodle_url('/mod/socialwiki/' . $tab . '.php', array('id' => $PAGE->cm->id));
-            }
-            if ($tab == 'like') {
-                $link = new moodle_url('/mod/socialwiki/' . $tab . '.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));
-            } elseif ($tab == 'unlike') {
-                $link = new moodle_url('/mod/socialwiki/like.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));
-            }
-
-            if ($tab == 'follow') {
-                $link = new moodle_url('/mod/socialwiki/' . $tab . '.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));
-            } elseif ($tab == 'unfollow') {
-                $link = new moodle_url('/mod/socialwiki/follow.php', array('pageid' => $pageid, 'from' => $PAGE->url->out()));
             }
 
             if ($tab == 'versions') {
                 $link = new moodle_url('/mod/socialwiki/history.php', array('pageid' => $pageid));
             }
-
 
             if ($linked == $tab) {
                 $tabs[] = new tabobject($tab, $link, get_string($tab, 'socialwiki'), '', true);
@@ -632,20 +619,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $html;
     }
 
-    public function search_results_area() {
-        $html = '';
-        $html .= html_writer::div('', '', array("id" => "socialwiki_searchresults_area"));
-        return $html;
-    }
-
-    public function title_block($title) {
-        $html = '';
-        $html .= html_writer::start_div('wikititle');
-        $html .= html_writer::tag('h1', $title, array('class' => 'colourtext'));
-        $html .= html_writer::end_div('wikititle colourtext');
-        return $html;
-    }
-
     /**
      * a function to make an html table
      */
@@ -682,21 +655,14 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         $html = '';
 
-        $html .= $this->content_area_begin();
-        $html .= html_writer::start_div('wikipage');
-        $html .= html_writer::start_div('', array('id' => 'socialwiki_wikicontent'));
-        $html .= $pagecontent;
-        $html .= html_writer::end_div();
-        $html .= html_writer::end_div();
+        $html.= $this->content_area_begin();
+        $html.= html_writer::start_div('wikipage');
+        $html.= html_writer::start_div('', array('id' => 'socialwiki_wikicontent'));
+        $html.= $pagecontent;
+        $html.= html_writer::end_div();
+        $html.= html_writer::end_div();
 
-
-
-        $html .= html_writer::start_div('wikititle');
-        //$html .= $this->testtable();
-        //$html .= html_writer::tag('h1', $pagetitle);
-        //$html .= html_writer::tag('p', "Likes: ".socialwiki_numlikes($page->id));
-        //$html .= html_writer::starttag('p');
-
+        $html.= html_writer::start_div('socialwiki_contributors');
         $html.='Contributors to this page:';
         $contributors = socialwiki_get_contributors($page->id);
 
@@ -737,7 +703,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
     public function help_content($heading, $content) {
         $html = '';
-        $html .= html_writer::tag('h2', $heading, array('class' => 'wikititle'));
+        $html .= html_writer::tag('h2', $heading);
         $html .= html_writer::start_div('', array('id' => 'socialwiki_wikicontent'));
         $html .= $content;
         $html .= html_writer::end_div();

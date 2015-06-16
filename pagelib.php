@@ -163,24 +163,6 @@ abstract class page_socialwiki {
 
         // tabs are associated with pageid, so if page is empty, tabs should be disabled
         if (!empty($this->page) && !empty($this->tabs)) {
-            /*   if (socialwiki_liked($USER->id, $this->page->id))				//////////TODO: move this stuff to have like/follow buttons.
-              {
-              $this->tabs['like'] = 'unlike';
-              }else
-              {
-              $this->tabs['like'] = 'like';
-              }
-              $userto = socialwiki_get_author($this->page->id);
-              if (socialwiki_is_following($USER->id,$userto->userid,$this->page->subwikiid))
-              {
-              $this->tabs['follow'] = 'unfollow';
-              }
-              else
-              {
-              $this->tabs['follow'] = 'follow';
-
-              } */
-
             $tabthing = $this->wikioutput->tabs($this->page, $this->tabs, $this->tabs_options); //calls tabs function in renderer.php
             echo $tabthing;
         }
@@ -1038,7 +1020,6 @@ class page_socialwiki_search extends page_socialwiki {
         parent::__construct($wiki, $subwiki, $cm);
         $PAGE->requires->jquery_plugin('ui');
         $PAGE->requires->jquery_plugin('ui-css');
-        //$PAGE->requires->js(new moodle_url("/mod/socialwiki/tree_jslib/tree.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
@@ -1072,113 +1053,26 @@ class page_socialwiki_search extends page_socialwiki {
     }
 
     function print_content() {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, NULL, true, 'noviewpagepermission', 'socialwiki');
+        
         echo $this->wikioutput->content_area_begin();
-        //echo $this->wikioutput->title_block("Search results for: ".$this->search_string." (".count($this->search_result)."&nbsptotal)");
-
-        switch ($this->view) {
-            case 1:
-                echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
-                //echo '<script>var makeTagCloud = false; </script>';
-                $this->print_tree();
-                break;
-            case 2:
-                echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
-                //echo '<script>var makeTagCloud = false; </script>';
-                $this->print_list();
-                break;
-            case 3:
-                echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
-                //echo '<script>var makeTagCloud = true; </script>';
-                $this->print_tree();
-                break;
-            default:
-                echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
-                $this->print_tree();
-        }
-
+        $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
+        $this->print_tree();
         echo $this->wikioutput->content_area_end();
     }
 
     //print the tree view
     private function print_tree() {
-        /* Global $OUTPUT;
-          //create a tree from the search results
-          $scale=array('follow'=>1,'like'=>1,'trust'=>1,'popular'=>1); //variable used to scale the percentages
-          $peers=socialwiki_get_peers($this->subwiki->id,$scale);
-          $pages=socialwiki_order_pages_using_peers($peers,$this->search_result,$scale);
-
-          $tree=new socialwiki_tree;
-          $tree->build_tree($pages);
-
-          //display the php tree (this is hidden if JavaScript is enabled)
-          echo $OUTPUT->container_start('phptree');
-          $tree->display();
-          echo $OUTPUT->container_end();
-
-          //send the tree and peers to javascript
-          $jpeers=json_encode($peers);
-          $jnodes=json_encode($tree->nodes);
-          $jscale=json_encode($scale);
-          echo '<script> var searchResults='.$jnodes.';var peers='.$jpeers.';var scale='.$jscale.'</script>'; */
-        /*
-          this->searchresult contains the results to the search.
-          must build a tree-shaped list with all (step 1) then only a filtered top-k subset (step 2) of the versions
-
-
-
-         */
         $pages = $this->search_result;
         $tree = new socialwiki_tree;
         $tree->build_tree($pages);
-
-        //cho '<div class="tree">';
         $tree->display();
-        //echo '</div>';
-        /* '<div class="tree">
-          <ul>
-          <li>
-          <a href="#">Parent</a>
-          <ul>
-          <li>
-          <a href="#">Child</a>
-          <ul>
-          <li>
-          <a href="#">Grand Child</a>
-          </li>
-          </ul>
-          </li>
-          <li>
-          <a href="#">Child</a>
-          <ul>
-          <li><a href="#">Grand Child</a></li>
-          <li>
-          <a href="#">Grand Child</a>
-          <ul>
-          <li>
-          <a href="#">Great Grand Child</a>
-          </li>
-          <li>
-          <a href="#">Great Grand Child</a>
-          </li>
-          <li>
-          <a href="#">Great Grand Child</a>
-          </li>
-          </ul>
-          </li>
-          <li><a href="#">Grand Child</a></li>
-          </ul>
-          </li>
-          </ul>
-          </li>
-          </ul>
-          </div>'; */
     }
 
     //print a list of pages ordered by peer votes
     private function print_list() {
-        Global $CFG, $USER;
+        Global $USER;
         //$scale=array('follow'=>1,'like'=>1,'trust'=>1,'popular'=>1);
         //$peers=socialwiki_get_peers($this->subwiki->id,$scale);
         //$pages=socialwiki_order_pages_using_peers($peers,$this->search_result,$scale);
@@ -1226,7 +1120,7 @@ class page_socialwiki_create extends page_socialwiki {
     }
 
     function set_url() {
-        global $PAGE, $CFG;
+        global $PAGE;
 
         $params = array();
         $params['swid'] = $this->swid;
@@ -1537,7 +1431,6 @@ class page_socialwiki_history extends page_socialwiki {
         parent::__construct($wiki, $subwiki, $cm);
         $PAGE->requires->js_init_call('M.mod_socialwiki.history', null, true);
         $PAGE->requires->jquery();
-        //$PAGE->requires->js(new moodle_url("/mod/socialwiki/tree_jslib/tree.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/doublescroll.js"));
@@ -1561,7 +1454,6 @@ class page_socialwiki_history extends page_socialwiki {
         //build the tree with all of the relate pages
         $tree = new socialwiki_tree();
         $tree->build_tree($history);
-        //cho '<div class="tree">';
         //add radio buttons to compare versions if there is more than one version
         if (count($tree->nodes) > 1) {
             foreach ($tree->nodes as $node) {
@@ -1579,13 +1471,7 @@ class page_socialwiki_history extends page_socialwiki {
         echo html_writer::start_tag('form', array('action' => new moodle_url('/mod/socialwiki/diff.php'), 'method' => 'get', 'id' => 'diff'));
         echo html_writer::tag('div', html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $this->page->id)));
 
-        //display the tree in php(hidden if javascript is enabled)
-        echo $OUTPUT->container_start('phptree');
         $tree->display();
-        echo $OUTPUT->container_end();
-        //$json=json_encode($tree);
-        //send the tree to javascript
-        //echo '<script> var searchResults='.$json.';</script>';
         //add compare button only if there are multiple versions of a page 
         if (count($tree->nodes) > 1) {
             echo $OUTPUT->container_start('socialwiki_diffbutton');
@@ -1761,7 +1647,7 @@ class page_socialwiki_home extends page_socialwiki {
         $following = count(socialwiki_get_follows($USER->id, $this->subwiki->id));
 
         $followdata = html_writer::start_tag('h3', array('class' => 'home_user'));
-        $followdata .= html_writer::tag('span', "Followers: $followers | Following: $following", array('class' => 'label label-default'));
+        $followdata .= html_writer::tag('span', "Followers: $followers | Following: $following", array('class' => 'socialwiki_label'));
         $followdata .= html_writer::end_tag('h3');
         return $followdata;
     }
@@ -1804,7 +1690,7 @@ class page_socialwiki_home extends page_socialwiki {
         //All Pages Table
         $tabletype = 'alltopics';
         echo "<h2>"
-           . "<a style='float:right' class='label label-primary' "
+           . "<a style='float:right' class='socialwiki_label' "
            . "href='create.php?action=new&swid=" . $this->subwiki->id . "'>Make a new Page</a>"
            . "All pages:</h2>";
         echo include 'table/tableFactory.php';

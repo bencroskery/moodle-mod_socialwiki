@@ -14,81 +14,25 @@
  along with Moodle. If not, see <http://www.gnu.org/licenses/>.
 */
 
-.nav {
-    margin-bottom: 0;
-    padding-left: 0;
-    list-style: none;
-}
-.nav-tabs {
-    margin-top: 30px;
-    border-bottom: 1px solid #dddddd;
-}
-.label {
+.socialwiki_label {
     display: inline;
     padding: .2em .6em .3em;
     font-size: 75%;
     font-weight: 500;
     line-height: 1;
     color: #ffffff;
+    background-color: #428bca;
     text-align: center;
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: .25em;
 }
-.label[href]:hover,
-.label[href]:focus {
-    color: #ffffff;
+
+.socialwiki_label[href]:hover,
+.socialwiki_label[href]:focus {
+    background-color: #3071a9;
     text-decoration: none;
     cursor: pointer;
-}
-.label:empty {
-    display: none;
-}
-.btn .label {
-    position: relative;
-    top: -1px;
-}
-.label-default {
-    background-color: rgb(66, 139, 202);
-}
-.label-default[href]:hover,
-.label-default[href]:focus {
-    background-color: #808080;
-}
-.label-primary {
-    background-color: #428bca;
-}
-.label-primary[href]:hover,
-.label-primary[href]:focus {
-    background-color: #3071a9;
-}
-.label-success {
-    background-color: #5cb85c;
-}
-.label-success[href]:hover,
-.label-success[href]:focus {
-    background-color: #449d44;
-}
-.label-info {
-    background-color: #5bc0de;
-}
-.label-info[href]:hover,
-.label-info[href]:focus {
-    background-color: #31b0d5;
-}
-.label-warning {
-    background-color: #f0ad4e;
-}
-.label-warning[href]:hover,
-.label-warning[href]:focus {
-    background-color: #ec971f;
-}
-.label-danger {
-    background-color: #d9534f;
-}
-.label-danger[href]:hover,
-.label-danger[href]:focus {
-    background-color: #c9302c;
 }
 
 .tabtree ul {
@@ -99,7 +43,7 @@
     text-align: left;
 }
 
-.home_user
+.socialwiki_wikicontent .home_user
 {
     text-align: left;
     margin: -2px 80px;
@@ -107,15 +51,20 @@
     line-height: 40px;
 }
 
-.home_picture
+.socialwiki_wikicontent .home_picture
 {
     float:left;
     margin-top: 8.9px;
 }
 
-.tree_node
-{
-    color:black !important;
+.socialwiki_wikicontent .nav {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+.socialwiki_wikicontent .nav-tabs {
+    margin-top: 30px;
+    border-bottom: 1px solid #dddddd;
 }
 
 .socialwiki_liketable {
@@ -155,10 +104,11 @@ table.peer_table td {
     font-weight: bold;
     color:gray;
     width: 160px;
+    margin: 0;
 }
 
 /*this is in fact used just to display the author in the bottom of a page (should be renamed)*/
-.wikititle
+.socialwiki_contributors
 {
     text-align:right;
 }
