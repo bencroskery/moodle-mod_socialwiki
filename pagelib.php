@@ -326,86 +326,53 @@ class page_socialwiki_view extends page_socialwiki {
     }
 
     protected function print_pagetitle() {
-        global $OUTPUT;
+        global $OUTPUT, $CFG;
         //$user = socialwiki_get_user_info($this->page->userid);
         //$userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $user->id, 'subwikiid' => $this->page->subwikiid));
         $html = '';
-
         $html .= $OUTPUT->container_start('', 'socialwiki_title');
         $html .= '<script> var pageid=' . $this->page->id . '</script>'; //passes the pageid to javascript likeajax.js
 
-
-        /* /link made by ethan
-
-          if(socialwiki_liked($USER->id, $page->id)) {
-          $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/likefilled.png'></img>";
-          $likelink = "<a style='margin:0;' class='socialwiki_unlikelink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/like.php?pageid=".$page->id."&from=".urlencode($PAGE->url->out()."&option=$option")."'>".$img."</a>";
-          } else {
-          $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/hollowlike.png'></img>";
-          $likelink = "<a style='margin:0;' class='socialwiki_likelink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/like.php?pageid=".$page->id."&from=".urlencode($PAGE->url->out()."&option=$option")."'>".$img."</a>";
-          } *///end link made by ethan
-
-        $unlikicon = new moodle_url('/mod/socialwiki/img/icons/likefilled.png');
-        $unliketip = 'click to unlike this page version';
-        $likicon = new moodle_url('/mod/socialwiki/img/icons/hollowlike.png');
-        $liketip = 'click to unlike this page version';
-        //$likefrom = urlencode(new moodle_url('/mod/socialwiki/view.php', array('pageid' => $this->page->id)));
-        //$likaction = new moodle_url('/mod/socialwiki/like.php', array('pageid' => $this->page->id, 'from'=> $likefrom)); // 'swid'=>$this->subwiki->id
-        //      $html .= $OUTPUT->heading(format_string($this->page->title), 1, 'socialwiki_headingtitle','viewtitle');
-        //$html .=$OUTPUT->container_start('userinfo','author');
-        //$html.=html_writer::link($userlink->out(false),fullname($user),array('class'=>'socialwiki_link'));
-        //$html .= $OUTPUT->container_end();
-        //Page Title
         $thetitle = html_writer::start_tag('h1');
         $thetitle .= format_string($this->page->title);
         $thetitle .= html_writer::end_tag('h1');
 
-        //Right aligned Like Button
-        $theliker = html_writer::start_tag('div', array('style' => 'float:right'));
-        if (socialwiki_liked($this->uid, $this->page->id)) {
-            //hide ĺike link
-            $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton', 'id' => 'likelink', 'title' => $liketip, 'style' => 'display:none'));
-        } else {
-            //show like link
-            $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton', 'id' => 'likelink', 'title' => $liketip));
-        }
+        $unlikeicon = new moodle_url('/mod/socialwiki/img/icons/likefilled.png');
+        $likeicon = new moodle_url('/mod/socialwiki/img/icons/hollowlike.png');
+        $likeaction = new moodle_url('/mod/socialwiki/like.php');
         
-        $theliker .= html_writer::tag('img', '', array('src' => $likicon));
-        $theliker .= 'Like';
+        $theliker = '<noscript>'. html_writer::start_tag('form', array('style' => "display: inline", 'action' => $likeaction, "method" => "get"));
+        $theliker.= '<input type ="hidden" name="pageid" value="' . $this->page->id . '"/>';
+        $theliker.= '<input type ="hidden" name="refresh" value="' . 1 . '"/>' . '</noscript>';
+        $theliker .= html_writer::start_tag('div', array('style' => 'float:right'));
+        
+        $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton'));
+        if (socialwiki_liked($this->uid, $this->page->id)) {
+            $theliker .= html_writer::tag('img', '', array('src' => $unlikeicon, 'other' => $likeicon));
+            $theliker .= '<span other="Like" >Unlike</span>';
+        } else {
+            $theliker .= html_writer::tag('img', '', array('src' => $likeicon, 'other' => $unlikeicon));
+            $theliker .= '<span other="Unlike" >Like</span>';
+        }
         $theliker .= html_writer::end_tag('button');
         
-        if (socialwiki_liked($this->uid, $this->page->id)) {
-            //hide ĺike link 
-            $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton', 'id' => 'unlikelink', 'title' => $unliketip));
-        } else {
-            //show like link
-            $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton', 'id' => 'unlikelink', 'title' => $unliketip, 'style' => 'display:none'));
-        }
-        $theliker .= html_writer::tag('img', '', array('src' => $unlikicon));
-        $theliker .= 'Unlike';
-        $theliker .= html_writer::end_tag('button');
-        
-        $likess = socialwiki_numlikes($this->page->id);
+        $theliker.= '<noscript>'. html_writer::end_tag('form') . '</noscript>';
 
+        $likess = socialwiki_numlikes($this->page->id);
         //show number of likes
-        $theliker .= html_writer::start_tag('div', array('id' => 'numlikes')); //span updated asynchronously after ajax request
+        $theliker .= html_writer::start_tag('div', array('id' => 'numlikes'));
         $theliker .= $likess . ($likess == 1 ? ' like' : ' likes');
         $theliker .= html_writer::end_tag('div');
 
         $theliker .= html_writer::end_tag('div');
 
-
-        $html .=html_writer::start_tag('div', array('class' => 'socialwiki_liketable'));
         $html .= $theliker . $thetitle;
-        $html .=html_writer::end_tag('div');
 
         $html .= $OUTPUT->container_end();
         echo $html;
     }
 
     function print_content() {
-        //global $PAGE;
-
         if (socialwiki_user_can_view($this->subwiki)) {
 
             if (!empty($this->page)) {
@@ -444,7 +411,6 @@ class page_socialwiki_view extends page_socialwiki {
         }
 
         $PAGE->set_url(new moodle_url($CFG->wwwroot . '/mod/socialwiki/view.php', $params));
-        //$PAGE->set_url(new moodle_url('/mod/socialwiki/view.php', $params));
     }
 
     function set_coursemodule($id) {
@@ -2477,11 +2443,9 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
     }
 
     function print_content() {
-        Global $OUTPUT, $CFG, $USER, $PAGE, $COURSE;
+        Global $OUTPUT, $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
 
-        echo '<script> var userid=' . $USER->id . ', targetuser=' . $this->uid . ' ,swid=' . $this->subwiki->id . ', courseid =' . $COURSE->id . ' ,cmid=' . $PAGE->cm->id . ';</script>'; // pass variables to JS
-        $likes = socialwiki_getlikes($this->uid, $this->subwiki->id);
         $user = socialwiki_get_user_info($this->uid);
         $scale = array('like' => 1, 'trust' => 1, 'follow' => 1, 'popular' => 1);
         $context = context_module::instance($PAGE->cm->id);
@@ -2491,14 +2455,10 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
         $html = $this->wikioutput->content_area_begin();
         //USER INFO OUTPUT
-        $html.= $OUTPUT->container_start('userinfo');
-        //$html.= '<table class="userinfotable"><tr><td>';
         $html.= $OUTPUT->heading(fullname($user), 1, 'colourtext');
+        $html.= "<div class='home_picture'>";
         $html.= $OUTPUT->user_picture($user, array('size' => 100,));
-        //$html.= '</td>';
-        $html.= $OUTPUT->container_end();
-
-        
+        $html.= "</div>";
 
         // ** result placed in table below **
         //////////////////////////

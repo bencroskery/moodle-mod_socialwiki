@@ -67,10 +67,6 @@
     border-bottom: 1px solid #dddddd;
 }
 
-.socialwiki_liketable {
-    width: 100%;
-}
-
 table.peer_table td {
     padding: 1px 10px 1px 0px;
 }
@@ -78,11 +74,6 @@ table.peer_table td {
 .relation_line
 {
     background-color:black !important;
-}
-
-.socialwiki_likelist, .socialwiki_followlist
-{
-    text-align:center;
 }
 
 .socialwiki_unfollowlink,.socialwiki_unlikelink
@@ -107,7 +98,6 @@ table.peer_table td {
     margin: 0;
 }
 
-/*this is in fact used just to display the author in the bottom of a page (should be renamed)*/
 .socialwiki_contributors
 {
     text-align:right;

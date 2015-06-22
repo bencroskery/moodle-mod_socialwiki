@@ -1310,9 +1310,14 @@ function socialwiki_print_page_content($page, $context, $subwikiid) {
       echo $OUTPUT->container_end();
       } */
 
+    //only increment page view when linked, not refreshed
+    $pageWasRefreshed = (null !== filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL'))
+        && filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL') === 'max-age=0';
+    if(!$pageWasRefreshed ) {
         socialwiki_increment_pageviews($page);
         socialwiki_increment_user_views($USER->id, $page->id);
     }
+}
 
 /**
  * This function trims any given text and returns it with some dots at the end
@@ -1657,7 +1662,6 @@ function socialwiki_get_author($pageid) {
 }
 
 function socialwiki_get_user_favorites($userid, $swid) {
-    //return socialwiki_getlikes($userid, $swid);
     $results = socialwiki_getlikes($userid, $swid);
     $favorites = array();
     foreach ($results as $r) {
@@ -1677,6 +1681,7 @@ function socialwiki_get_favorites($pageid, $swid) {
             array_push($favorites, $r);
         }
     }
+    echo print_r($favorites);
     return $favorites;
 }
 
