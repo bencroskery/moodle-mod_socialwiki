@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/tag/lib.php');
 
-define('SOCIALWIKI_REFRESH_CACHE_TIME', 30); // @TODO: To be deleted.
 define('SOCIALFORMAT_CREOLE', '37');
 define('SOCIALFORMAT_NWIKI', '38');
 define('SOCIAL_NO_VALID_RATE', '-999');
@@ -271,27 +270,30 @@ function socialwiki_save_section($wikipage, $sectiontitle, $sectioncontent, $use
  * @param string $newcontent
  * @param int $userid
  */
-function socialwiki_save_page($wikipage, $newcontent, $userid) {
+function socialwiki_save_page($page, $newcontent, $userid) {
     global $DB;
 
-    $wiki = socialwiki_get_wiki_from_pageid($wikipage->id);
+    $wiki = socialwiki_get_wiki_from_pageid($page->id);
     $cm = get_coursemodule_from_instance('socialwiki', $wiki->id);
     $context = context_module::instance($cm->id);
 
     if (has_capability('mod/socialwiki:editpage', $context)) {
-        $version = socialwiki_get_current_version($wikipage->id);
+        $version = socialwiki_get_current_version($page->id);
 
         $version->content = $newcontent;
         $version->userid = $userid;
         $version->version++;
         $version->timecreated = time();
-        $versionid = $DB->insert_record('socialwiki_versions', $version);
+        $DB->insert_record('socialwiki_versions', $version);
 
-        $wikipage->timemodified = $version->timecreated;
-        $wikipage->userid = $userid;
-        $return = socialwiki_refresh_cachedcontent($wikipage, $newcontent);
-
-        return $return;
+        $page->timemodified = $version->timecreated;
+        $page->userid = $userid;
+        $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
+        $parseroutput = socialwiki_parse_content($version->contentformat, $newcontent, $options);
+        $page->cachedcontent = $parseroutput['toc'] . $parseroutput['parsed_text'];
+        $page->timerendered = time();
+        $DB->update_record('socialwiki_pages', $page);
+        return array('page' => $page, 'sections' => $parseroutput['repeated_sections'], 'version' => $version->version);
     } else {
         return false;
     }
@@ -1041,7 +1043,6 @@ function socialwiki_user_can_edit($subwiki) {
     }
 }
 
-
 /**
  * Deletes wiki_links. It can be sepecific link or links attached in subwiki
  *
@@ -1272,48 +1273,16 @@ function socialwiki_get_wiki_page_id($pageid, $id) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function socialwiki_print_page_content($page, $context, $subwikiid) {
-    global $OUTPUT, $PAGE, $USER;
-
-    if ($page->timerendered + SOCIALWIKI_REFRESH_CACHE_TIME < time()) {
-        $content = socialwiki_refresh_cachedcontent($page);
-        $page = $content['page'];
-    }
-
-    if (isset($content)) {
-        $box = '';
-        foreach ($content['sections'] as $s) {
-            $box .= '<p>' . get_string('repeatedsection', 'socialwiki', $s) . '</p>';
-        }
-
-        if (!empty($box)) {
-            echo $OUTPUT->box($box);
-        }
-    }
+    global $PAGE, $USER;
     $html = file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php', $context->id, 'mod_socialwiki', 'attachments', $subwikiid);
     $html = format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true));
     $wikioutput = $PAGE->get_renderer('mod_socialwiki');
     ////////////////This is where the page content, from the title down, is rendered!!
     echo $wikioutput->viewing_area($page->title, $html, $page);
-    ////////
-    //echo $OUTPUT->box($html);
-//remove tags
-    /*   if (!empty($CFG->usetags)) {
-      $tags = tag_get_tags_array('socialwiki_pages', $page->id);
-      echo $OUTPUT->container_start('socialwiki-tags');
-      echo '<span class="socialwiki-tags-title">'.get_string('tags').': </span>';
-      $links = array();
-      foreach ($tags as $tagid=>$tag) {
-      $url = new moodle_url('/tag/index.php', array('tag'=>$tag));
-      $links[] = html_writer::link($url, $tag, array('title'=>get_string('tagtitle', 'socialwiki', $tag)));
-      }
-      echo join($links, ", ");
-      echo $OUTPUT->container_end();
-      } */
 
     //only increment page view when linked, not refreshed
-    $pageWasRefreshed = (null !== filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL'))
-        && filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL') === 'max-age=0';
-    if(!$pageWasRefreshed ) {
+    $pageWasRefreshed = (null !== filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL')) && filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL') === 'max-age=0';
+    if (!$pageWasRefreshed) {
         socialwiki_increment_pageviews($page);
         socialwiki_increment_user_views($USER->id, $page->id);
     }
@@ -1392,7 +1361,7 @@ function socialwiki_print_edit_form_default_fields($format, $pageid, $version = 
  * @param array deleteuploads
  */
 function socialwiki_print_upload_table($context, $filearea, $fileitemid, $deleteuploads = array()) {
-    global $CFG, $OUTPUT;
+    global $CFG;
 
     $htmltable = new html_table();
 
@@ -1482,14 +1451,14 @@ function socialwiki_get_updated_pages_by_subwiki($swid, $userid = '', $filterUns
     } else {
         $params[] = 0; //on first login, everything is new.
     }
+
     if ($filterUnseen) {
         $sql = $sql . ' AND id NOT IN 
                       (SELECT pageid FROM {socialwiki_user_views} 
                        WHERE userid=?)';
         $params[] = $userid;
     }
-    // echo $sql;
-    //var_dump(params);
+
     return $DB->get_records_sql($sql, $params);
 }
 
@@ -1534,18 +1503,15 @@ function socialwiki_get_followers($userid, $subwikiid) {
     return count($DB->get_records_select('socialwiki_follows', $select, array($userid, $subwikiid)));
 }
 
-//retursn the number of poeple following the user
+//returns the number of poeple following the user
 function socialwiki_get_follower_users($userid, $subwikiid) {
     Global $DB;
     $sql = 'SELECT userfromid 
           FROM {socialwiki_follows}
           WHERE usertoid=? AND subwikiid= ?';
     $results = $DB->get_records_sql($sql, array($userid, $subwikiid));
-    //var_dump($results);
     return array_map(function($obj) {
-        if (isset($obj->userfromid))
-            return $obj->userfromid;
-        return null;
+        return $obj->userfromid;
     }, $results);
 }
 
@@ -1588,24 +1554,12 @@ function socialwiki_delete_like($userid, $pageid) {
 function socialwiki_numlikes($pageid) {
     global $DB;
     $sql = 'SELECT * 
-		  FROM {socialwiki_likes}
-		  WHERE pageid=?';
+            FROM {socialwiki_likes}
+            WHERE pageid=?';
     return count($DB->get_records_sql($sql, array($pageid)));
 }
 
-function socialwiki_get_liked_pages($userid, $subwikiid, $limit = 1000) {
-    $likes = socialwiki_getlikes($userid, $subwikiid);
-
-    $pages = array();
-    foreach ($likes as $l) {
-        if ($limit-- == 0) {
-            break;
-        }
-        array_push($pages, socialwiki_get_page($l->pageid));
-    }
-    return $pages;
-}
-
+//get all the pages from the users followers
 function socialwiki_get_pages_from_followed($userid, $subwikiid, $filterUnseen = true) { //pages liked by those $userid follows
     global $DB;
 
@@ -1627,23 +1581,20 @@ function socialwiki_get_pages_from_followed($userid, $subwikiid, $filterUnseen =
 }
 
 //return all the pages the user likes
-function socialwiki_getlikes($userid, $subwikiid) {
+function socialwiki_get_user_likes($userid, $subwikiid) {
     global $DB;
     $sql = 'SELECT pageid 
-		  FROM {socialwiki_likes}
-		  WHERE userid=? and subwikiid=?';
+            FROM {socialwiki_likes}
+            WHERE userid=? and subwikiid=?';
     return $DB->get_records_sql($sql, array($userid, $subwikiid));
 }
 
-/**
- * returns an array of all the people that like a page
- * @param int $userid the users id
- */
-function socialwiki_get_likers($pageid, $swid) {
+//return an array of all the users that like a page
+function socialwiki_get_page_likes($pageid, $swid) {
     global $DB;
     $sql = 'SELECT userid
-          FROM {socialwiki_likes}
-          WHERE pageid=? and subwikiid=?';
+            FROM {socialwiki_likes}
+            WHERE pageid=? and subwikiid=?';
     $res = $DB->get_records_sql($sql, array($pageid, $swid), 0, 1000);
 
     return array_map(function($a) {
@@ -1655,14 +1606,15 @@ function socialwiki_get_likers($pageid, $swid) {
 function socialwiki_get_author($pageid) {
     global $DB;
     $sql = 'SELECT userid 
-		  FROM {socialwiki_pages}
-		  WHERE id=?';
+            FROM {socialwiki_pages}
+            WHERE id=?';
 
     return $DB->get_record_sql($sql, array($pageid));
 }
 
+//get pages favorited by a user
 function socialwiki_get_user_favorites($userid, $swid) {
-    $results = socialwiki_getlikes($userid, $swid);
+    $results = socialwiki_get_user_likes($userid, $swid);
     $favorites = array();
     foreach ($results as $r) {
         if (socialwiki_is_user_favorite($userid, $r->pageid, $swid)) {
@@ -1672,27 +1624,25 @@ function socialwiki_get_user_favorites($userid, $swid) {
     return $favorites;
 }
 
-//return user ids of all users who favorite this page
-function socialwiki_get_favorites($pageid, $swid) {
-    $results = socialwiki_get_likers($pageid, $swid);
+//get all users who favorite this page
+function socialwiki_get_page_favorites($pageid, $swid) {
+    $results = socialwiki_get_page_likes($pageid, $swid);
     $favorites = array();
     foreach ($results as $r) {
         if (socialwiki_is_user_favorite($r, $pageid, $swid)) {
             array_push($favorites, $r);
         }
     }
-    echo print_r($favorites);
     return $favorites;
 }
 
+//check if a page is a user's favorite
 function socialwiki_is_user_favorite($userid, $pageid, $swid) {
-    $liked_pages = socialwiki_getlikes($userid, $swid);
+    $liked_pages = socialwiki_get_user_likes($userid, $swid);
     $p = socialwiki_get_page($pageid);
 
     foreach ($liked_pages as $page_id) {
         $page = socialwiki_get_page($page_id->pageid);
-        // echo "Created: $page->timecreated<br/>";
-        // echo "Name: $page->title<br/>";
         if ($page->title == $p->title) {
             if ($page->timemodified > $p->timemodified) {
                 return false;
@@ -1702,7 +1652,7 @@ function socialwiki_is_user_favorite($userid, $pageid, $swid) {
     return true;
 }
 
-//returns the id of the parent page
+//get the id of the parent page
 function socialwiki_get_parent($pageid) {
     Global $DB;
     $sql = 'SELECT parent
@@ -1711,8 +1661,7 @@ function socialwiki_get_parent($pageid) {
     return $DB->get_record_sql($sql, array($pageid));
 }
 
-/* get all contributors: traverse the parent links to the root */
-
+//get all contributors: traverse the parent links to the root
 function socialwiki_get_contributors($pageid) {
     Global $DB;
     if ($pageid == NULL) {
@@ -1740,7 +1689,7 @@ function socialwiki_get_contributors($pageid) {
     }
 }
 
-//returns the children of a page
+//get all the children pages of a page
 function socialwiki_get_children($pageid) {
     Global $DB;
     $sql = 'SELECT *
@@ -1749,6 +1698,7 @@ function socialwiki_get_children($pageid) {
     return $DB->get_records_sql($sql, array($pageid));
 }
 
+//get all the users of the subwiki
 function socialwiki_get_subwiki_users($swid) {
     Global $PAGE;
     $context = context_module::instance($PAGE->cm->id);
@@ -1760,7 +1710,8 @@ function socialwiki_get_subwiki_users($swid) {
     return $uids;
 }
 
-function socialwiki_get_active_subwiki_users($swid) {    //TODO: change so we only get pages of this subwiki
+//get all the users who have contributed to the subwiki
+function socialwiki_get_active_subwiki_users($swid) {
     Global $DB;
     $sql = 'SELECT DISTINCT v.userid
             FROM {socialwiki_user_views} as v join {socialwiki_pages} as p on v.pageid=p.id where p.subwikiid=?';
@@ -1839,25 +1790,9 @@ function socialwiki_is_teacher($context, $uid) {
     return false;
 }
 
-function socialwiki_get_user_count($swid) {
-    Global $PAGE, $USER;
-    $context = context_module::instance($PAGE->cm->id);
-    $users = get_enrolled_users($context);
-    $numusers = count($users) - 1;
-    return $numusers;
-}
-
-function socialwiki_get_user_count_with_cmid($swid, $cmid) {
-    Global $PAGE, $USER;
-    $context =context_module::instance($cmid);
-    $users = get_enrolled_users($context);
-    $numusers = count($users) - 1;
-    return $numusers;
-}
-
 //returns an array of pages chosen based on peers likes and follows
 function socialwiki_get_recommended_pages($userid, $swid) {
-    Global $PAGE, $CFG;
+    Global $CFG;
     require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
     $scale = array('follow' => 1, 'like' => 1, 'trust' => 1, 'popular' => 1); //scale with weight for each peer category
     $peers = socialwiki_get_peers($swid, $scale); //TODO: not sure if this does anything...
@@ -1942,7 +1877,6 @@ function socialwiki_merge_nodes($left, $right) {
  * @param $pages an array of pages
  * */
 function socialwiki_order_pages_using_peers($peers, $pages, $scale) {
-    Global $USER;
     foreach ($pages as $page) {
         $page->trust = 0;
         $page->time = $page->timecreated / time();
@@ -1997,7 +1931,7 @@ function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checke
 }
 
 /**
- * Gives the time in a format that is readable
+ * Gives the time in a readable format
  *
  * @param int $time : time in system format
  * @param boolean $timeago : if true format how long ago instead of date
@@ -2005,10 +1939,12 @@ function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checke
  * @return string in a readable format
  */
 function socialwiki_format_time($time, $timeago = true) {
+    //Standard month, day, year format
     if (!$timeago) {
         return strftime('%d %b %Y', $time);
     }
 
+    //Return the time based upon how long ago from the current time
     $diff = (new DateTime)->diff(new DateTime('@' . $time));
     $types = array(
         'y' => 'year',
@@ -2018,7 +1954,7 @@ function socialwiki_format_time($time, $timeago = true) {
         'i' => 'minute',
         's' => 'second',
     );
-
+    //loops through to return the first type available
     foreach ($types as $t => &$i) {
         if ($diff->$t) {
             return $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : '') . ' ago';

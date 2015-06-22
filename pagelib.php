@@ -109,7 +109,8 @@ abstract class page_socialwiki {
      */
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE, $USER;
-        $PAGE->requires->js(new moodle_url("table/jquery.dataTables.min.js"));
+        $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+        $PAGE->requires->js(new moodle_url("table/alt-string.js"));
         $this->subwiki = $subwiki;
         $this->wiki = $wiki;
         $this->modcontext = context_module::instance($PAGE->cm->id);
@@ -2129,13 +2130,6 @@ class page_socialwiki_admin extends page_socialwiki {
     function print_content() {
         //make sure anyone trying to access this page has managewiki capabilities
         require_capability('mod/socialwiki:managewiki', $this->modcontext, NULL, true, 'noviewpagepermission', 'socialwiki');
-
-        //update wiki cache if timedout
-        $page = $this->page;
-        if ($page->timerendered + SOCIALWIKI_REFRESH_CACHE_TIME < time()) {
-            $fresh = socialwiki_refresh_cachedcontent($page);
-            $page = $fresh['page'];
-        }
 
         //dispaly admin menu
         echo $this->wikioutput->menu_admin($this->page->id, $this->view);

@@ -77,8 +77,6 @@ class versionTable extends socialwiki_table {
 
         $table = array();
 
-        //$option=optional_param('option', null, PARAM_INT); //?
-
         foreach ($this->allpages as $page) {
             $updated = socialwiki_format_time($page->timemodified);
 
@@ -112,7 +110,7 @@ class versionTable extends socialwiki_table {
             }
 
             /////////// favorites
-            $favorites = socialwiki_get_favorites($page->id, $this->swid);
+            $favorites = socialwiki_get_page_favorites($page->id, $this->swid);
             $favdiv = $this->make_multi_user_div($favorites);
 
             $combiner = $this->combiner;
@@ -228,7 +226,7 @@ class versionTable extends socialwiki_table {
         $peerids = array();
         //$this->allpages = []; //reboot this!
         foreach ($pagelist as $p) {
-            $likers = socialwiki_get_likers($p->id, $this->swid); //gets list of user likers
+            $likers = socialwiki_get_page_likes($p->id, $this->swid); //gets list of user likers
             $p->likers = $likers;
             $this->allpages[$p->id] = $p; //add pages to list
             $peerids = array_unique(array_merge($peerids, $likers));
@@ -240,8 +238,6 @@ class versionTable extends socialwiki_table {
 
     //get peers from user ids, with all relevant info: used by above
     private function get_peers($ids) {
-        //$number_of_users = socialwiki_get_user_count($this->swid);
-
         $me = $this->uid;
         $swid = $this->swid;
 
@@ -304,20 +300,22 @@ class versionTable extends socialwiki_table {
         if ($favs = socialwiki_get_user_favorites($uid, $swid)) {
             $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $favs, $headers, $combiner);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public static function makeRecentLikesTable($uid, $swid, $combiner = 'avg') {
-        $likes = socialwiki_get_liked_pages($uid, $swid);
+        $ids = socialwiki_get_user_likes($uid, $swid);
+        $likes = array();
+        foreach ($ids as $id) {
+            array_push($likes, socialwiki_get_page($id->pageid));
+        }
         
         if (!empty($likes)) {
             $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $likes, $headers, $combiner);
-        } else {
-            return null;
         }
+        return null;
     }
 
     public static function makeFollowedVersionsTable($userid, $swid) {
@@ -347,6 +345,7 @@ class versionTable extends socialwiki_table {
             $headers = versionTable::getHeaders('version');
             return new versionTable($uid, $swid, $pages, $headers, $combiner);
         }
+        return null;
     }
 
     public static function makeUserVersionsTable($uid, $swid, $combiner = 'avg') {
@@ -356,6 +355,7 @@ class versionTable extends socialwiki_table {
             $headers = versionTable::getHeaders('mystuff');
             return new versionTable($uid, $swid, $pages, $headers, $combiner);
         }
+        return null;
     }
 
     //public static function 

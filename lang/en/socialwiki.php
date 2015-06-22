@@ -324,7 +324,7 @@ $string['favorite'] = "Favorited By";
 $string['name'] = "Name";
 $string['distance'] = "Social Distance";
 
-$string['nofollowers']= "You Have no Followers.";
+$string['nofollowers']= "You don't have any followers.";
 $string['nofollowedusers']= "You don't follow anybody.";
 $string['nofaves']= "You don't have any favorite pages.";
 $string['noallusers']= "No other users.";
