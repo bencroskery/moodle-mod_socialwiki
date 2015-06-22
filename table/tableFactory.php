@@ -22,7 +22,7 @@
 
 Global $CFG;
 
-$trustcombiner = 'avg';
+$trustcombiner = 'max';  //default for now, should remove entirely
 require_once($CFG->dirroot . '/mod/socialwiki/table/userTable.php');
 require_once($CFG->dirroot . '/mod/socialwiki/table/topicsTable.php');
 require_once($CFG->dirroot . '/mod/socialwiki/table/versionTable.php');

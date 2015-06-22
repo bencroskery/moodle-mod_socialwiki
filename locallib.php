@@ -44,8 +44,6 @@ define('SOCIALIMPROVEMENT', '+');
 define('SOCIALEQUAL', '=');
 define('SOCIALWORST', '-');
 
-define('SOCIALLOCK_TIMEOUT', 30);
-
 /**
  * Get a wiki instance
  * @param int $wikiid the instance id of wiki
@@ -1043,93 +1041,6 @@ function socialwiki_user_can_edit($subwiki) {
     }
 }
 
-//----------------
-// Locks
-//----------------
-
-/**
- * Checks if a page-section is locked.
- *
- * @return true if the combination of section and page is locked, FALSE otherwise.
- */
-function socialwiki_is_page_section_locked($pageid, $userid, $section = null) {
-    /* global $DB;
-
-      $sql = "pageid = ? AND lockedat > ? AND userid != ?";
-      $params = array($pageid, time(), $userid);
-
-      if (!empty($section)) {
-      $sql .= " AND (sectionname = ? OR sectionname IS null)";
-      $params[] = $section;
-      }
-
-      return $DB->record_exists_select('socialwiki_locks', $sql, $params); */
-    return false;
-}
-
-/**
- * Inserts or updates a wiki_locks record.
- */
-function socialwiki_set_lock($pageid, $userid, $section = null, $insert = false) {
-    //TODO:no more locking needed !
-
-    /* global $DB;
-
-      if (socialwiki_is_page_section_locked($pageid, $userid, $section)) {
-      return false;
-      }
-
-      $params = array('pageid' => $pageid, 'userid' => $userid, 'sectionname' => $section);
-
-      $lock = $DB->get_record('socialwiki_locks', $params);
-
-      if (!empty($lock)) {
-      $DB->update_record('socialwiki_locks', array('id' => $lock->id, 'lockedat' => time() + SOCIALLOCK_TIMEOUT));
-      } else if ($insert) {
-      $DB->insert_record('socialwiki_locks', array('pageid' => $pageid, 'sectionname' => $section, 'userid' => $userid, 'lockedat' => time() + 30));
-      } */
-
-    return true;
-}
-
-/**
- * Deletes wiki_locks that are not in use. (F.Ex. after submitting the changes). If no userid is present, it deletes ALL the wiki_locks of a specific page.
- */
-function socialwiki_delete_locks($pageid, $userid = null, $section = null, $delete_from_db = true, $delete_section_and_page = false) {
-    return true;
-    /*
-      global $DB;
-
-      $params = array('pageid' => $pageid);
-
-      if (!empty($userid)) {
-      $params['userid'] = $userid;
-      }
-
-      if (!empty($section)) {
-      $params['sectionname'] = $section;
-      }
-
-      if ($delete_from_db) {
-      $DB->delete_records('socialwiki_locks', $params);
-      if ($delete_section_and_page && !empty($section)) {
-      $params['sectionname'] = null;
-      $DB->delete_records('socialwiki_locks', $params);
-      }
-      } else {
-      $DB->set_field('socialwiki_locks', 'lockedat', time(), $params);
-      } */
-}
-
-/**
- * Deletes wiki_locks that expired 1 hour ago.
- */
-function socialwiki_delete_old_locks() {
-    return true;
-    /* global $DB;
-
-      $DB->delete_records_select('socialwiki_locks', "lockedat < ?", array(time() - 3600)); */
-}
 
 /**
  * Deletes wiki_links. It can be sepecific link or links attached in subwiki
@@ -1225,9 +1136,6 @@ function socialwiki_delete_pages($context, $pageids = null, $subwikiid = null) {
 
         //Delete all page versions
         socialwiki_delete_page_versions(array($pageid => array(0)));
-
-        //Delete all page locks
-        socialwiki_delete_locks($pageid);
 
         //Delete all page links
         socialwiki_delete_links(null, $pageid);
@@ -1364,7 +1272,7 @@ function socialwiki_get_wiki_page_id($pageid, $id) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function socialwiki_print_page_content($page, $context, $subwikiid) {
-    global $OUTPUT, $CFG, $PAGE, $USER;
+    global $OUTPUT, $PAGE, $USER;
 
     if ($page->timerendered + SOCIALWIKI_REFRESH_CACHE_TIME < time()) {
         $content = socialwiki_refresh_cachedcontent($page);
@@ -1402,9 +1310,9 @@ function socialwiki_print_page_content($page, $context, $subwikiid) {
       echo $OUTPUT->container_end();
       } */
 
-    socialwiki_increment_pageviews($page);
-    socialwiki_increment_user_views($USER->id, $page->id);
-}
+        socialwiki_increment_pageviews($page);
+        socialwiki_increment_user_views($USER->id, $page->id);
+    }
 
 /**
  * This function trims any given text and returns it with some dots at the end
