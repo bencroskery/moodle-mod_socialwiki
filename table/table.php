@@ -10,10 +10,9 @@ abstract class socialwiki_table {
      * creates a table with the given headers, current uid (userid), subwikiid
      */
     public function __construct($u, $s, $h) {
-        Global $PAGE;
         $this->uid = $u;
         $this->swid = $s;
-        $this->headers = $h;
+        $this->headers = socialwiki_table::getHeaders($h);
     }
 
     abstract protected function get_table_data();
@@ -42,5 +41,49 @@ abstract class socialwiki_table {
 
         $t .= "</tbody></table>";
         return $t;
+    }
+    
+    public static function getHeaders($type) {
+        switch ($type) {
+            case "version":
+                return array(
+                    get_string('title', 'socialwiki'),
+                    get_string('contributors', 'socialwiki'),
+                    get_string('updated', 'socialwiki'),
+                    get_string('likes', 'socialwiki'),
+                    get_string('views', 'socialwiki'),
+                    get_string('favorite', 'socialwiki'),
+                    get_string('popularity', 'socialwiki'),
+                    get_string('likesim', 'socialwiki'),
+                    get_string('followsim', 'socialwiki'),
+                    get_string('networkdistance', 'socialwiki')
+                );
+            case "mystuff":
+                return array(
+                    get_string('title', 'socialwiki'),
+                    get_string('contributors', 'socialwiki'),
+                    get_string('updated', 'socialwiki'),
+                    get_string('likes', 'socialwiki'),
+                    get_string('views', 'socialwiki'),
+                    get_string('favorite', 'socialwiki')
+                );
+            case "topics":
+                return array(
+                    get_string('title', 'socialwiki'),
+                    get_string('versions', 'socialwiki'),
+                    get_string('views', 'socialwiki'),
+                    get_string('likes', 'socialwiki')
+                );
+            case "user":
+                return array(
+                    get_string('name', 'socialwiki'),
+                    get_string('popularity', 'socialwiki'),
+                    get_string('likesim', 'socialwiki'),
+                    get_string('followsim', 'socialwiki'),
+                    get_string('networkdistance', 'socialwiki')
+                );
+            default:
+                return array('error in getHeaders:' . $type);
+        }
     }
 }

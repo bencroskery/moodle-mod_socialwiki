@@ -20,19 +20,8 @@ class TopicsTable extends socialwiki_table {
         if (empty($topics)) {
             return null;
         }
-        $headers = TopicsTable::get_headers();
 
-        return new TopicsTable($uid, $swid, $topics, $headers);
-    }
-
-    public static function get_headers() { //TODO: make configurable
-        $col_names = array(
-            "Title",
-            "Number of Versions",
-            "Number of Views",
-            "Number of Likes",
-        );
-        return $col_names;
+        return new TopicsTable($uid, $swid, $topics, 'topics');
     }
 
     protected function get_table_data() {
@@ -41,13 +30,15 @@ class TopicsTable extends socialwiki_table {
         $table = array();
 
         foreach ($this->tlist as $title => $data) {
-            $titlelink = '<a href="search.php?searchstring=' . $title . '&courseid=' . $COURSE->id . '&cmid=' . $PAGE->cm->id . '&exact=1&option=1">' . $title . '</a>';
+            $titlelink = '<a href="search.php?searchstring=' . $title 
+                    . '&courseid=' . $COURSE->id . '&cmid=' . $PAGE->cm->id 
+                    . '&exact=1&option=1">' . $title . '</a>';
 
             $row = array(
-                "Title" => $titlelink,
-                "Number of Versions" => $data["Versions"],
-                "Number of Views" => $data["Views"],
-                "Number of Likes" => $data["Likes"],
+                get_string('title', 'socialwiki') => $titlelink,
+                get_string('versions', 'socialwiki') => $data["Versions"],
+                get_string('views', 'socialwiki') => $data["Views"],
+                get_string('likes', 'socialwiki') => $data["Likes"],
             );
 
             $table[] = $row; //add row to table

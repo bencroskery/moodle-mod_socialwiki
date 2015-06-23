@@ -33,7 +33,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/mod/socialwiki/edit_form.php');
-
 require_once($CFG->dirroot . '/tag/lib.php');
 
 /**
@@ -110,7 +109,6 @@ abstract class page_socialwiki {
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE, $USER;
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
-        $PAGE->requires->js(new moodle_url("table/alt-string.js"));
         $this->subwiki = $subwiki;
         $this->wiki = $wiki;
         $this->modcontext = context_module::instance($PAGE->cm->id);
@@ -290,6 +288,7 @@ abstract class page_socialwiki {
         global $SESSION;
         unset($SESSION->wikipreviousurl);
     }
+
 }
 
 /**
@@ -341,12 +340,12 @@ class page_socialwiki_view extends page_socialwiki {
         $unlikeicon = new moodle_url('/mod/socialwiki/img/icons/likefilled.png');
         $likeicon = new moodle_url('/mod/socialwiki/img/icons/hollowlike.png');
         $likeaction = new moodle_url('/mod/socialwiki/like.php');
-        
-        $theliker = '<noscript>'. html_writer::start_tag('form', array('style' => "display: inline", 'action' => $likeaction, "method" => "get"));
+
+        $theliker = '<noscript>' . html_writer::start_tag('form', array('style' => "display: inline", 'action' => $likeaction, "method" => "get"));
         $theliker.= '<input type ="hidden" name="pageid" value="' . $this->page->id . '"/>';
         $theliker.= '<input type ="hidden" name="refresh" value="' . 1 . '"/>' . '</noscript>';
         $theliker .= html_writer::start_tag('div', array('style' => 'float:right'));
-        
+
         $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_likebutton'));
         if (socialwiki_liked($this->uid, $this->page->id)) {
             $theliker .= html_writer::tag('img', '', array('src' => $unlikeicon, 'other' => $likeicon));
@@ -356,8 +355,8 @@ class page_socialwiki_view extends page_socialwiki {
             $theliker .= '<span other="Unlike" >Like</span>';
         }
         $theliker .= html_writer::end_tag('button');
-        
-        $theliker.= '<noscript>'. html_writer::end_tag('form') . '</noscript>';
+
+        $theliker.= '<noscript>' . html_writer::end_tag('form') . '</noscript>';
 
         $likess = socialwiki_numlikes($this->page->id);
         //show number of likes
@@ -530,7 +529,7 @@ class page_socialwiki_edit extends page_socialwiki {
 
     protected function print_edit($content = null) {
         global $CFG, $OUTPUT;
-        
+
         $version = socialwiki_get_current_version($this->page->id);
         $format = $version->contentformat;
 
@@ -545,7 +544,6 @@ class page_socialwiki_edit extends page_socialwiki {
         $versionnumber = $version->version;
         if ($this->versionnumber >= 0) {
             if ($version->version != $this->versionnumber) {
-                print $OUTPUT->box(get_string('wrongversionlock', 'socialwiki'), 'errorbox');
                 $versionnumber = $this->versionnumber;
             }
         }
@@ -884,7 +882,7 @@ class page_socialwiki_search extends page_socialwiki {
     function print_content() {
         global $PAGE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, NULL, true, 'noviewpagepermission', 'socialwiki');
-        
+
         echo $this->wikioutput->content_area_begin();
         $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
         $this->print_tree();
@@ -898,6 +896,7 @@ class page_socialwiki_search extends page_socialwiki {
         $tree->build_tree($pages);
         $tree->display();
     }
+
 }
 
 /**
@@ -1420,7 +1419,7 @@ class page_socialwiki_home extends page_socialwiki {
         echo "<div>";
         echo $this->generate_home_nav();
         echo "</div>";
-        
+
         if ($this->tab === self::EXPLORE_TAB) {
             $this->print_explore_tab();
         } else if ($this->tab === self::TOPICS_TAB) {
@@ -1463,7 +1462,7 @@ class page_socialwiki_home extends page_socialwiki {
                 $nav_links .= "<li>$a</li>";
             }
         }
-        
+
         return $navtag . $nav_links . $end_nav;
     }
 
@@ -1495,7 +1494,7 @@ class page_socialwiki_home extends page_socialwiki {
         $tabletype = 'allpageversions';
         echo include 'table/tableFactory.php';
     }
-    
+
     function print_topics_tab() {
         global $USER;
         $userid = $USER->id;
@@ -1503,12 +1502,12 @@ class page_socialwiki_home extends page_socialwiki {
         //All Pages Table
         $tabletype = 'alltopics';
         echo "<h2>"
-           . "<a style='float:right' class='socialwiki_label' "
-           . "href='create.php?action=new&swid=" . $this->subwiki->id . "'>Make a new Page</a>"
-           . "All pages:</h2>";
+        . "<a style='float:right' class='socialwiki_label' "
+        . "href='create.php?action=new&swid=" . $this->subwiki->id . "'>Make a new Page</a>"
+        . "All pages:</h2>";
         echo include 'table/tableFactory.php';
     }
-    
+
     function print_review_tab() {
         Global $USER;
         $userid = $USER->id;
@@ -2466,7 +2465,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             $table->attributes['class'] = 'peer_table colourtext';
             $table->align = array('left');
             $table->data = array();
-            
+
             //////// make button to follow/unfollow
             if (!socialwiki_is_following($USER->id, $user->id, $this->subwiki->id) && $USER->id != $this->uid) {
                 $icon = new moodle_url('/mod/socialwiki/img/icons/man-plus.png');
@@ -2479,7 +2478,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
                 $tip = 'click to unfollow this user';
             }
             $followaction = $CFG->wwwroot . '/mod/socialwiki/follow.php';
-            
+
             $theliker = html_writer::start_tag('form', array('style' => "display: inline", 'action' => $followaction, "method" => "get"));
             $theliker.= '<input type ="hidden" name="user2" value="' . $user->id . '"/>';
             $theliker.= '<input type ="hidden" name="from" value="' . $CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid=' . $user->id . '&subwikiid=' . $this->subwiki->id . '"/>';
@@ -2489,21 +2488,21 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             $theliker.= $text;
             $theliker.= html_writer::end_tag('button');
             $theliker.= html_writer::end_tag('form');
-            
+
             $row1 = new html_table_row(array('FOLLOW DISTANCE:', $peer->depth, $theliker));
             $row1->cells[2]->rowspan = 3;
-            
+
             $table->data[] = $row1; // /trust==0? 0:1/$peer->trust);
             //$table->data[]=array('TRUST:',$peer->trust);
             $table->data[] = array('FOLLOW SIMILARITY:', $peer->followsim);
             $table->data[] = array('LIKE SIMILARITY:', $peer->likesim);
             $table->data[] = array('PEER POPULARITY:', $peer->popularity);
             //$table->data[]=array('TOTAL:',$peer->score);
-            
+
             $html.=html_writer::table($table);
             $html.=$OUTPUT->container_end();
         }
-        
+
         //Favourites Table
         $userid = $user->id;
         $swid = $this->subwiki->id;

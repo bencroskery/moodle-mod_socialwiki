@@ -19,11 +19,9 @@ class versionTable extends socialwiki_table {
     private $allpages; // maps pageid to page object, with additional field $p->likers containing array of likers (peerids)
     private $combiner; // way of combining user trust indicators
 
-    public function __construct($uid, $swid, $pages, $headers, $combiner = 'avg') {
-        parent::__construct($uid, $swid, $headers);
-        //$this->allpages = $pages;
+    public function __construct($uid, $swid, $pages, $type, $combiner = 'avg') {
+        parent::__construct($uid, $swid, $type);
         $this->get_all_likers($pages); //get all peers involved, store info in $this->allpages and this->allpeers
-        // get_table_data(); ?
         $this->combiner = $combiner;
     }
 
@@ -35,8 +33,8 @@ class versionTable extends socialwiki_table {
         $this->combiner = $c;
     }
 
-    public function get_as_HTML($tableid = 'a_table') {
-        $t = "<table id=" . $tableid . " class='datatable'>";
+    /*public function get_as_HTML($tableid = 'a_table') {
+        $t = "<table id=" . $tableid . " class='datatable version'>";
         $tabledata = $this->get_table_data();
         //headers
         $t .= "<thead><tr>";
@@ -64,7 +62,7 @@ class versionTable extends socialwiki_table {
 
         $t .= "</tbody></table>";
         return $t;
-    }
+    }*/
 
     /**
      * get table data structure from spec:
@@ -79,25 +77,12 @@ class versionTable extends socialwiki_table {
 
         foreach ($this->allpages as $page) {
             $updated = socialwiki_format_time($page->timemodified);
-
             $views = $page->pageviews;
             $likes = socialwiki_numlikes($page->id);
 
             //////get all contributors
             $contributors = socialwiki_get_contributors($page->id);
             $contrib_string = $this->make_multi_user_div($contributors);
-
-            //$followlink;
-            /*
-            //TODO: show contributors
-            if(socialwiki_is_following($USER->id,$page->userid,$this->swid))
-              {
-              $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/man-minus.png'></img>";
-              $followlink = "<a style='margin:0;'   class='socialwiki_unfollowlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$this->swid."&option=$option'>".$img."</a>";
-              } else {
-              $img = "<img style='width:22px; vertical-align:middle;' src='".$CFG->wwwroot."/mod/socialwiki/img/icons/man-plus.png'></img>";
-              $followlink = "<a style='margin:0;' class='socialwiki_followlink socialwiki_link' href='".$CFG->wwwroot."/mod/socialwiki/follow.php?user2=".$page->userid."&from=".urlencode($PAGE->url->out()."&option=$option")."&swid=".$this->swid."'>".$img."</a>";
-              } */
 
             $linkpage = "<a style='margin:0;' class='socialwiki_link' href=" . $CFG->wwwroot . "/mod/socialwiki/view.php?pageid=" . $page->id . ">" . $page->title . "</a>";
 
@@ -224,7 +209,6 @@ class versionTable extends socialwiki_table {
      */
     private function get_all_likers($pagelist) {
         $peerids = array();
-        //$this->allpages = []; //reboot this!
         foreach ($pagelist as $p) {
             $likers = socialwiki_get_page_likes($p->id, $this->swid); //gets list of user likers
             $p->likers = $likers;
@@ -249,57 +233,13 @@ class versionTable extends socialwiki_table {
         //will return an associative array with peerid => peer object for each peerid
     }
 
-    public static function getHeaders($type) {
-        switch ($type) {
-            case "version":
-                return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('contributors', 'socialwiki'),
-                    get_string('updated', 'socialwiki'),
-                    get_string('likes', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('favorite', 'socialwiki'),
-                    get_string('popularity', 'socialwiki'),
-                    get_string('likesim', 'socialwiki'),
-                    get_string('followsim', 'socialwiki'),
-                    get_string('networkdistance', 'socialwiki')
-                );
-            case "mystuff":
-                return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('contributors', 'socialwiki'),
-                    get_string('updated', 'socialwiki'),
-                    get_string('likes', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('favorite', 'socialwiki')
-                );
-            case "topics":
-                return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('versions', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('likes', 'socialwiki')
-                );
-            case "user":
-                return array(
-                    get_string('popularity', 'socialwiki'),
-                    get_string('likesim', 'socialwiki'),
-                    get_string('followsim', 'socialwiki'),
-                    get_string('networkdistance', 'socialwiki')
-                );
-            default:
-                return array('error in getHeaders:' . $type);
-        }
-    }
-
     //=======================================================================
     // factory method
     //=======================================================================
 
     public static function makeFavouritesTable($uid, $swid, $combiner = 'avg') {
         if ($favs = socialwiki_get_user_favorites($uid, $swid)) {
-            $headers = versionTable::getHeaders('mystuff');
-            return new versionTable($uid, $swid, $favs, $headers, $combiner);
+            return new versionTable($uid, $swid, $favs, 'mystuff', $combiner);
         }
         return null;
     }
@@ -312,8 +252,7 @@ class versionTable extends socialwiki_table {
         }
         
         if (!empty($likes)) {
-            $headers = versionTable::getHeaders('mystuff');
-            return new versionTable($uid, $swid, $likes, $headers, $combiner);
+            return new versionTable($uid, $swid, $likes, 'mystuff', $combiner);
         }
         return null;
     }
@@ -322,8 +261,7 @@ class versionTable extends socialwiki_table {
         $pages = socialwiki_get_pages_from_followed($userid, $swid);
 
         if ($pages) {
-            $headers = versionTable::getHeaders('version');
-            return new versionTable($userid, $swid, $pages, $headers);
+            return new versionTable($userid, $swid, $pages, 'version');
         }
         return null;
     }
@@ -332,8 +270,7 @@ class versionTable extends socialwiki_table {
         $pages = socialwiki_get_updated_pages_by_subwiki($swid, $uid);
 
         if ($pages) {
-            $headers = versionTable::getHeaders('version');
-            return new versionTable($uid, $swid, $pages, $headers, $combiner);
+            return new versionTable($uid, $swid, $pages, 'version', $combiner);
         }
         return null;
     }
@@ -342,8 +279,7 @@ class versionTable extends socialwiki_table {
         $pages = socialwiki_get_page_list($swid);
 
         if (!empty($pages)) {
-            $headers = versionTable::getHeaders('version');
-            return new versionTable($uid, $swid, $pages, $headers, $combiner);
+            return new versionTable($uid, $swid, $pages, 'version', $combiner);
         }
         return null;
     }
@@ -352,8 +288,7 @@ class versionTable extends socialwiki_table {
         $pages = socialwiki_get_user_page_list($uid, $swid);
 
         if (!empty($pages)) {
-            $headers = versionTable::getHeaders('mystuff');
-            return new versionTable($uid, $swid, $pages, $headers, $combiner);
+            return new versionTable($uid, $swid, $pages, 'mystuff', $combiner);
         }
         return null;
     }
@@ -361,8 +296,7 @@ class versionTable extends socialwiki_table {
     //public static function 
 
     public static function makeHTMLVersionTable($uid, $swid, $pages, $type, $tabid) {
-        $headers = versionTable::getHeaders($type);
-        $thetable = new versionTable($uid, $swid, $pages, $headers);
+        $thetable = new versionTable($uid, $swid, $pages, $type);
         //echo $thetable;
         return $thetable->get_as_HTML($tabid); // defined in parent class
     }

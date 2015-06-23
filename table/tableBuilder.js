@@ -18,7 +18,7 @@ $.fn.dataTable.ext.type.order['time-ago-pre'] = function ( d ) {
     else if (d.indexOf("year") > -1) {
         return words[0]*100000000000;
     }
-    return 0;
+    return d;
 };
 
 $(document).ready(function () {

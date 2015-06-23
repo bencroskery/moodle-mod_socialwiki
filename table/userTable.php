@@ -8,23 +8,9 @@ require_once($CFG->dirroot . '/mod/socialwiki/table/table.php');
 
 class UserTable extends socialwiki_table {
 
-    private $columns;
-
-    private $col_names = array(
-        "Name", //TODO: make these all "getString()"
-        "Social Distance",
-        "Number of Followers",
-        "Like Similarity",
-        "Follow Similarity",
-    );
-
     public function __construct($uid, $swid, $ids, $headers) {
         parent::__construct($uid, $swid, $headers);
         $this->userlist = $ids;
-
-        $this->headers = array_map(function($h) {
-            return get_string($h, 'socialwiki');
-        }, $headers);
     }
 
     /*
@@ -54,8 +40,7 @@ class UserTable extends socialwiki_table {
             return ($i != $me);
         });
 
-        $h = array("name", "networkdistance", "popularity", "likesim", "followsim");
-        return new UserTable($me, $swid, $ids, $h);
+        return new UserTable($me, $swid, $ids, 'user');
     }
 
     /**
@@ -68,8 +53,7 @@ class UserTable extends socialwiki_table {
             return null;
         }
 
-        $h = array("name", "popularity", "likesim", "followsim");
-        return new UserTable($uid, $swid, $ids, $h);
+        return new UserTable($uid, $swid, $ids, 'user');
     }
 
     /**
@@ -80,9 +64,7 @@ class UserTable extends socialwiki_table {
         if (empty($ids)) {
             return null;
         }
-
-        $h = array("name", "popularity", "likesim", "followsim");
-        return new UserTable($uid, $swid, $ids, $h);
+        return new UserTable($uid, $swid, $ids, 'user');
     }
 
     /**
@@ -141,7 +123,6 @@ class UserTable extends socialwiki_table {
         };
 
         $tabledata = array_map($build_function, $ids); //end array_map
-        //echo 'the array is built';
 
         return $tabledata;
     }
