@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/socialwikitree.php');
 
 $pageid = required_param('pageid', PARAM_TEXT);
-$paging = optional_param('page', 0, PARAM_INT);
 $allversion = optional_param('allversion', 0, PARAM_INT);
 
 if (!$page = socialwiki_get_page($pageid)) {
@@ -68,7 +67,6 @@ add_to_log($course->id, 'socialwiki', 'history', "history.php?pageid=" . $pageid
 $wikipage = new page_socialwiki_history($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
-$wikipage->set_paging($paging);
 $wikipage->set_allversion($allversion);
 
 $wikipage->print_header();

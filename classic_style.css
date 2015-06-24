@@ -35,11 +35,12 @@
     cursor: pointer;
 }
 
-.tabtree {
+.socialwiki_wikicontent .tabtree {
     clear: both;
+    margin-bottom: 0;
 }
 
-.tabtree ul {
+.socialwiki_wikicontent .tabtree ul {
     text-align: left;
 }
 
@@ -55,19 +56,14 @@
 }
 
 .socialwiki_wikicontent .home_picture {
-    float:left;
+    float: left;
     margin-top: 8.9px;
 }
 
 .socialwiki_wikicontent .nav {
-    margin-bottom: 0;
+    margin: 1em 0;
     padding-left: 0;
     list-style: none;
-}
-
-.socialwiki_wikicontent .nav-tabs {
-    margin-top: 30px;
-    border-bottom: 1px solid #dddddd;
 }
 
 .socialwiki_wikicontent .nav-tabs > li {
@@ -96,26 +92,7 @@
     cursor: default;
 }
 
-.socialwiki_wikicontent .nav-tabs.nav-justified {
-    width: 100%;
-    border-bottom: 0;
-}
-
-.socialwiki_wikicontent .nav-tabs.nav-justified > li {
-    float: none;
-}
-
-.socialwiki_wikicontent .nav-tabs.nav-justified > li > a {
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-.socialwiki_wikicontent .nav-tabs.nav-justified > .dropdown .dropdown-menu {
-    top: auto;
-    left: auto;
-}
-
-.socialwiki_wikicontent .socialwiki_wikicontent label {
+.socialwiki_wikicontent label {
     display: inline-block;
     margin-bottom: 5px;
 }
@@ -151,7 +128,7 @@ table.peer_table td {
     font-size: 1.5em;
     font-weight: bold;
     color:gray;
-    width: 160px;
+    width: 7.5em;
     margin: 0;
 }
 
@@ -187,5 +164,5 @@ input#preview {
 }
 
 #numlikes {
-    margin-top: 8px;
+    margin-top: 5px;
 }

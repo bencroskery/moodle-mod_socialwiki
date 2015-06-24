@@ -232,13 +232,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         $selected = $options['activetab'];
 
-        // make specific tab linked even it is active
-        // if (!empty($options['linkedwhenactive'])) {
-        //     $linked = $options['linkedwhenactive'];
-        //  } else {
-        $linked = '';
-        //  }
-
         if (!empty($options['inactivetabs'])) {
             $inactive = $options['inactivetabs'];
         } else {
@@ -271,13 +264,9 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                 $link = new moodle_url('/mod/socialwiki/history.php', array('pageid' => $pageid));
             }
 
-            if ($linked == $tab) {
-                $tabs[] = new tabobject($tab, $link, get_string($tab, 'socialwiki'), '', true);
-            } else {
-                $tabs[] = new tabobject($tab, $link, get_string($tab, 'socialwiki'));
-            }
+            $tabs[] = new tabobject($tab, $link, get_string($tab, 'socialwiki'));
         }
-
+        
         return $this->tabtree($tabs, $selected, $inactive);
     }
 
@@ -550,13 +539,8 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     public function viewing_area($pagetitle, $pagecontent, $page) {
         global $PAGE, $USER;
 
-        $html = '';
-
-        $html.= $this->content_area_begin();
-        $html.= html_writer::start_div('wikipage');
-        $html.= html_writer::start_div('', array('id' => 'socialwiki_wikicontent'));
+        $html = html_writer::start_div('wikipage');
         $html.= $pagecontent;
-        $html.= html_writer::end_div();
         $html.= html_writer::end_div();
 
         $html.= html_writer::start_div('socialwiki_contributors');
@@ -574,11 +558,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         $html.=$contriblinks;
 
-        //$html .= html_writer::endtag('p');
-
         $html .= html_writer::end_div();
-
-        $html .= $this->content_area_end();
         return $html;
     }
 

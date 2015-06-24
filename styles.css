@@ -353,7 +353,7 @@ a.socialwiki_edit_section {
     padding-top: 20px;
 }
 
-.socialwiki-diff-container {width:95%;margin:10px auto;}
+.socialwiki-diff-container {width:98%;margin:10px auto;}
 .socialwiki-diff-container .socialwiki-diff-leftside,
 .socialwiki-diff-container .socialwiki-diff-rightside {width:49.5%;margin:0;padding:0;float:left;}
 .socialwiki-diff-container .socialwiki-diff-rightside {margin-left:1%;}

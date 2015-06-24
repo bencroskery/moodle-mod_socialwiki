@@ -19,6 +19,10 @@
     overflow: auto;
 }
 
+.tree ul:first-child {
+    padding-top: 0px;
+}
+
 .tree ul {
     padding-top: 20px; position: relative;
     margin : 0;
