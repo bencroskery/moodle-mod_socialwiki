@@ -105,64 +105,63 @@
     background: none;
 }
 
-table.peer_table td {
+.socialwiki_wikicontent .peer_table {
+    margin: 5px 15px;
+}
+
+.socialwiki_wikicontent .peer_table td {
     padding: 1px 10px 1px 0px;
 }
 
-.relation_line {
-    background-color:black !important;
+.socialwiki_wikicontent .peerinfo {
+    display:inline-block;
 }
 
-.socialwiki_unfollowlink,.socialwiki_unlikelink {
-    position:relative;
-    margin-left:50px;
+.socialwiki_wikicontent .socialwiki_unfollowlink, .socialwiki_unlikelink {
+    position: relative;
+    margin-left: 50px;
 }
 
-.socialwiki_link {
-    font-weight:bold;
-    font-style:italic;
+.socialwiki_wikicontent .socialwiki_link {
+    font-weight: bold;
+    font-style: italic;
 }
 
-.socialwiki_likebutton {
+.socialwiki_wikicontent .socialwiki_contributors {
+    text-align: right;
+}
+
+.socialwiki_wikicontent .socialwiki_likebutton {
     line-height: 20px;
     font-size: 1.5em;
     font-weight: bold;
-    color:gray;
+    color: gray;
     width: 7.5em;
     margin: 0;
 }
 
-.socialwiki_contributors {
-    text-align:right;
+.socialwiki_wikicontent  #numlikes {
+    margin-top: 5px;
 }
-
-#socialwiki_container {
-    display:none !important;
-}
-
 
 #page-mod-socialwiki-search #socialwiki_content_area {
-    overflow:auto;
-    position:relative;
-    text-align:left;
+    overflow: auto;
+    position: relative;
+    text-align: left;
 }
 
 #page-mod-socialwiki-history #socialwiki_content_area {
-    overflow:auto;
-    position:relative;
-    text-align:left;
+    overflow: auto;
+    position: relative;
+    text-align: left;
 }
 
 .slidecontainer {
-    display:inline-block;
-    margin:25px;
-    width:20px;
+    display: inline-block;
+    margin: 25px;
+    width: 20px;
 }
 
 input#preview {
-    display:none;
-}
-
-#numlikes {
-    margin-top: 5px;
+    display: none;
 }

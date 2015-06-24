@@ -129,26 +129,16 @@ abstract class page_socialwiki {
      */
     function print_header() {
         global $OUTPUT, $PAGE;
-
         $PAGE->set_heading(format_string($PAGE->course->fullname));
-
         $this->set_url();
-
         $this->set_session_url();
 
         $this->create_navbar();
-
-        //$html = $OUTPUT->header();
-        //var_dump($html);
-        //echo $html;
         echo $OUTPUT->header();
         echo $this->wikioutput->content_area_begin();
 
-        //test: put page title here
         $this->print_pagetitle();
-
         $this->setup_tabs();
-
         // tabs are associated with pageid, so if page is empty, tabs should be disabled
         if (!empty($this->page) && !empty($this->tabs)) {
             $tabthing = $this->wikioutput->tabs($this->page, $this->tabs, $this->tabs_options); //calls tabs function in renderer.php
@@ -162,10 +152,9 @@ abstract class page_socialwiki {
     protected function print_pagetitle() {
         global $OUTPUT;
         $html = '';
-
-        $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading(format_string($this->title), 1, 'socialwiki_headingtitle');
-        $html .= $OUTPUT->container_end();
+        $html.= $OUTPUT->container_start();
+        $html.= $OUTPUT->heading(format_string($this->title), 1, 'socialwiki_headingtitle');
+        $html.= $OUTPUT->container_end();
         echo $html;
     }
 
@@ -195,9 +184,6 @@ abstract class page_socialwiki {
         } else {
             $this->tabs_options = $options;
         }
-
-        //$curtab = $this->tabs_options['activetab'];
-        //$this->tabs_options['inactivetabs'] = array ($curtab);
     }
 
     /**
@@ -214,10 +200,8 @@ abstract class page_socialwiki {
      */
     function set_page($page) {
         global $PAGE;
-
         $this->page = $page;
         $this->title = $page->title; //. ' ID: ' . $page->id;
-        // set_title calls format_string itself so no probs there
         $PAGE->set_title($this->title);
     }
 
@@ -230,7 +214,6 @@ abstract class page_socialwiki {
         global $PAGE;
         $this->page = null;
         $this->title = $title;
-        // set_title calls format_string itself so no probs there
         $PAGE->set_title($this->title);
     }
 
@@ -263,7 +246,6 @@ abstract class page_socialwiki {
      */
     protected function create_navbar() {
         global $PAGE, $CFG;
-
         $PAGE->navbar->add(format_string($this->title), $CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $this->page->id);
     }
 
@@ -272,7 +254,7 @@ abstract class page_socialwiki {
      */
     function print_footer() {
         global $OUTPUT;
-        echo $this->wikioutput->content_area_begin();
+        echo $this->wikioutput->content_area_end();
         echo $OUTPUT->footer();
     }
 
@@ -813,7 +795,7 @@ class page_socialwiki_search extends page_socialwiki {
             //for table view
             $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
             $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/tableBuilder.js"));
-            $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/demo_table.css"));
+            $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/datatable.css"));
         } else {
             //for tree view
             $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
@@ -1305,7 +1287,7 @@ class page_socialwiki_home extends page_socialwiki {
         $PAGE->set_title('Social Wiki Home');
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/tableBuilder.js"));
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/demo_table.css"));
+        $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/datatable.css"));
     }
 
     /**
@@ -2326,7 +2308,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         $PAGE->set_title(fullname(socialwiki_get_user_info($targetuser)));
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/tableBuilder.js"));
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/demo_table.css"));
+        $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/datatable.css"));
     }
 
     function print_content() {

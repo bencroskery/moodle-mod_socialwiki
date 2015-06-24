@@ -101,6 +101,7 @@ $wikipage = new page_socialwiki_admin($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
 $wikipage->print_header();
+
 $wikipage->set_view($option, empty($listall)?false:true);
 $wikipage->print_content();
 

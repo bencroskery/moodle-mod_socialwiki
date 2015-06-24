@@ -408,12 +408,3 @@ a.socialwiki_edit_section {
     margin: 25px;
     width: 20px;
 }
-
-.socialwiki_content .peer_table {
-    text-align: center;
-    margin: 5px 15px;
-}
-
-.socialwiki_content .peerinfo {
-    display: inline-block;
-}
