@@ -299,56 +299,12 @@ function socialwiki_save_page($page, $newcontent, $userid) {
     }
 }
 
-function socialwiki_refresh_cachedcontent($page, $newcontent = null) {
-    global $DB;
-    $version = socialwiki_get_current_version($page->id);
-    if (empty($version)) {
-        return null;
-    }
-    if (!isset($newcontent)) {
-        $newcontent = $version->content;
-    }
-
-    $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
-    $parseroutput = socialwiki_parse_content($version->contentformat, $newcontent, $options);
-    $page->cachedcontent = $parseroutput['toc'] . $parseroutput['parsed_text'];
-    $page->timerendered = time();
-    $DB->update_record('socialwiki_pages', $page);
-    socialwiki_refresh_page_links($page, $parseroutput['link_count']);
-
-    return array('page' => $page, 'sections' => $parseroutput['repeated_sections'], 'version' => $version->version);
-}
-
 /**
  * Restore a page
  */
 function socialwiki_restore_page($wikipage, $newcontent, $userid) {
     $return = socialwiki_save_page($wikipage, $newcontent, $userid);
     return $return['page'];
-}
-
-function socialwiki_refresh_page_links($page, $links) {
-    global $DB;
-
-    $DB->delete_records('socialwiki_links', array('frompageid' => $page->id));
-    foreach ($links as $linkname => $linkinfo) {
-
-        $newlink = new stdClass();
-        $newlink->subwikiid = $page->subwikiid;
-        $newlink->frompageid = $page->id;
-
-        if ($linkinfo['new']) {
-            $newlink->tomissingpage = $linkname;
-        } else {
-            $newlink->topageid = $linkinfo['pageid'];
-        }
-
-        try {
-            $DB->insert_record('socialwiki_links', $newlink);
-        } catch (dml_exception $e) {
-            debugging($e->getMessage());
-        }
-    }
 }
 
 /**
@@ -400,21 +356,8 @@ function socialwiki_create_page($swid, $title, $format, $userid, $parent = NULL)
     $version->id = $versionid;
     $version->pageid = $pageid;
     $DB->update_record('socialwiki_versions', $version);
-
-    socialwiki_make_cache_expire($page->title);
+    
     return $pageid;
-}
-
-function socialwiki_make_cache_expire($pagename) {
-    global $DB;
-
-    $sql = "UPDATE {socialwiki_pages}
-            SET timerendered = 0
-            WHERE id IN ( SELECT l.frompageid
-                FROM {socialwiki_links} l
-                WHERE l.tomissingpage = ?
-            )";
-    $DB->execute($sql, array($pagename));
 }
 
 /**
@@ -448,24 +391,6 @@ function socialwiki_count_wiki_page_versions($pageid) {
 }
 
 /**
- * Get linked from page
- * @param int $pageid
- */
-function socialwiki_get_linked_to_pages($pageid) {
-    global $DB;
-    return $DB->get_records('socialwiki_links', array('frompageid' => $pageid));
-}
-
-/**
- * Get linked from page
- * @param int $pageid
- */
-function socialwiki_get_linked_from_pages($pageid) {
-    global $DB;
-    return $DB->get_records('socialwiki_links', array('topageid' => $pageid));
-}
-
-/**
  * Get pages which user has edited
  * @param int $swid
  * @param int $userid
@@ -480,31 +405,6 @@ function socialwiki_get_contributions($swid, $userid) {
             v.userid = ?";
 
     return $DB->get_records_sql($sql, array($swid, $userid));
-}
-
-/**
- * Get missing or empty pages in wiki
- * @param int $swid sub wiki id
- */
-function socialwiki_get_missing_or_empty_pages($swid) {
-    global $DB;
-
-    $sql = "SELECT DISTINCT p.title, p.id, p.subwikiid
-            FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
-            WHERE s.wikiid = w.id and
-            s.id = ? and
-            w.firstpagetitle != p.title and
-            p.subwikiid = ? and
-            1 =  (SELECT count(*)
-                FROM {socialwiki_versions} v
-                WHERE v.pageid = p.id)
-            UNION
-            SELECT DISTINCT l.tomissingpage as title, 0 as id, l.subwikiid
-            FROM {socialwiki_links} l
-            WHERE l.subwikiid = ? and
-            l.topageid = 0";
-
-    return $DB->get_records_sql($sql, array($swid, $swid, $swid));
 }
 
 /**
@@ -1039,56 +939,6 @@ function socialwiki_user_can_edit($subwiki) {
 }
 
 /**
- * Deletes wiki_links. It can be sepecific link or links attached in subwiki
- *
- * @global mixed $DB database object
- * @param int $linkid id of the link to be deleted
- * @param int $topageid links to the specific page
- * @param int $frompageid links from specific page
- * @param int $subwikiid links to subwiki
- */
-function socialwiki_delete_links($linkid = null, $topageid = null, $frompageid = null, $subwikiid = null) {
-    global $DB;
-    $params = array();
-
-    // if link id is givien then don't check for anything else
-    if (!empty($linkid)) {
-        $params['id'] = $linkid;
-    } else {
-        if (!empty($topageid)) {
-            $params['topageid'] = $topageid;
-        }
-        if (!empty($frompageid)) {
-            $params['frompageid'] = $frompageid;
-        }
-        if (!empty($subwikiid)) {
-            $params['subwikiid'] = $subwikiid;
-        }
-    }
-
-    //Delete links if any params are passed, else nothing to delete.
-    if (!empty($params)) {
-        $DB->delete_records('socialwiki_links', $params);
-    }
-}
-
-/**
- * Delete wiki synonyms related to subwikiid or page
- *
- * @param int $subwikiid id of sunbwiki
- * @param int $pageid id of page
- */
-function socialwiki_delete_synonym($subwikiid, $pageid = null) {
-    global $DB;
-
-    $params = array('subwikiid' => $subwikiid);
-    if (!is_null($pageid)) {
-        $params['pageid'] = $pageid;
-    }
-    $DB->delete_records('socialwiki_synonyms', $params, IGNORE_MISSING);
-}
-
-/**
  * Delete pages and all related data
  *
  * @param mixed $context context in which page needs to be deleted.
@@ -1127,18 +977,11 @@ function socialwiki_delete_pages($context, $pageids = null, $subwikiid = null) {
             tag_delete_instance('socialwiki_pages', $pageid, $tagid);
         }
 
-        //Delete Synonym
-        socialwiki_delete_synonym($subwikiid, $pageid);
-
         //Delete all page versions
         socialwiki_delete_page_versions(array($pageid => array(0)));
 
-        //Delete all page links
-        socialwiki_delete_links(null, $pageid);
-
         //Delete page
-        $params = array('id' => $pageid);
-        $DB->delete_records('socialwiki_pages', $params);
+        $DB->delete_records('socialwiki_pages', array('id' => $pageid));
     }
 }
 
@@ -1381,53 +1224,6 @@ function socialwiki_print_upload_table($context, $filearea, $fileitemid, $delete
 
     print '<h3 class="upload-table-title">' . get_string('uploadfiletitle', 'socialwiki') . "</h3>";
     print html_writer::table($htmltable);
-}
-
-/**
- * Generate wiki's page tree
- *
- * @param page_wiki $page. A wiki page object
- * @param navigation_node $node. Starting navigation_node
- * @param array $keys. An array to store keys
- * @return an array with all tree nodes
- */
-function socialwiki_build_tree($page, $node, &$keys) {
-    $content = array();
-    static $icon;
-    $icon = new pix_icon('f/odt', '');
-    $pages = socialwiki_get_linked_pages($page->id);
-    foreach ($pages as $p) {
-        $key = $page->id . ':' . $p->id;
-        if (in_array($key, $keys)) {
-            break;
-        }
-        array_push($keys, $key);
-        $l = socialwiki_parser_link($p);
-        $link = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $p->id));
-        // navigation_node::get_content will format the title for us
-        $nodeaux = $node->add($p->title, $link, null, null, null, $icon);
-        if ($l['new']) {
-            $nodeaux->add_class('socialwiki_newentry');
-        }
-        socialwiki_build_tree($p, $nodeaux, $keys);
-    }
-    $content[] = $node;
-    return $content;
-}
-
-/**
- * Get linked pages from page
- * @param int $pageid
- */
-function socialwiki_get_linked_pages($pageid) {
-    global $DB;
-
-    $sql = "SELECT p.id, p.title
-            FROM {socialwiki_pages} p
-            JOIN {socialwiki_links} l ON l.topageid = p.id
-            WHERE l.frompageid = ?
-            ORDER BY p.title ASC";
-    return $DB->get_records_sql($sql, array($pageid));
 }
 
 /**

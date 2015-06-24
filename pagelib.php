@@ -2084,7 +2084,6 @@ class page_socialwiki_admin extends page_socialwiki {
     protected function print_delete_content($showall = false) {
         $table = new html_table();
         $table->head = array(get_string('pagename', 'socialwiki'), '');
-        $table->attributes['class'] = 'flexible';
         $table->attributes['style'] = 'width:auto';
         $swid = $this->subwiki->id;
         if (!$showall) {
@@ -2106,25 +2105,25 @@ class page_socialwiki_admin extends page_socialwiki {
             'action' => new moodle_url('/mod/socialwiki/admin.php'),
             'method' => 'post'));
         echo html_writer::tag('div', html_writer::empty_tag('input', array(
-                    'type'  => 'hidden',
-                    'name'  => 'pageid',
-                    'value' => $this->page->id)));
+                'type'  => 'hidden',
+                'name'  => 'pageid',
+                'value' => $this->page->id)));
 
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'option', 'value' => $this->view));
         echo html_writer::table($table);
         if ($showall) {
             echo html_writer::empty_tag('input', array(
-                    'type'    => 'submit',
-                    'class'   => 'socialwiki_form-button',
-                    'value'   => get_string('listrelated', 'socialwiki'),
-                    'sesskey' => sesskey()));
+                'type'    => 'submit',
+                'class'   => 'socialwiki_form-button',
+                'value'   => get_string('listrelated', 'socialwiki'),
+                'sesskey' => sesskey()));
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'listall', 'value' => '1'));
             echo html_writer::empty_tag('input', array(
-                    'type'    => 'submit',
-                    'class'   => 'socialwiki_form-button',
-                    'value'   => get_string('listall', 'socialwiki'),
-                    'sesskey' => sesskey()));
+                'type'    => 'submit',
+                'class'   => 'socialwiki_form-button',
+                'value'   => get_string('listall', 'socialwiki'),
+                'sesskey' => sesskey()));
         }
         echo html_writer::end_tag('form');
     }

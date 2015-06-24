@@ -90,14 +90,7 @@ class moodle1_mod_socialwiki_handler extends moodle1_mod_handler {
             ),
             new convert_path(
                 'wiki_entries', '/MOODLE_BACKUP/COURSE/MODULES/MOD/WIKI/ENTRIES',
-                array(
-                    'newfields' => array(
-                        'synonyms' => '0',
-                        'links' => 'collaborative',
-                    ),
-                    'dropfields' => array(
-                        'pagename' ,'timemodified'
-                    )
+                array('dropfields' => array('pagename' ,'timemodified')
                 )
             ),
             new convert_path(
@@ -262,9 +255,7 @@ class moodle1_mod_socialwiki_handler extends moodle1_mod_handler {
             $data_entry = array(
                 'id'        => $this->converter->get_nextid(), //creating the first entry
                 'groupid'   => 0,
-                'userid'    => 0,
-                'synonyms'  => '',
-                'links'     => ''
+                'userid'    => 0
             );
             $data_page = array(
                 'id'            => $this->converter->get_nextid(), //just creating the first page in the wiki

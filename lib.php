@@ -97,11 +97,6 @@ function socialwiki_delete_instance($id) {
     $subwikis = $DB->get_records('socialwiki_subwikis', array('wikiid' => $wiki->id));
 
     foreach ($subwikis as $subwiki) {
-        # Get existing links, and delete them #
-        if (!$DB->delete_records('socialwiki_links', array('subwikiid' => $subwiki->id), IGNORE_MISSING)) {
-            $result = false;
-        }
-
         # Get likes and delete them #
         if (!$DB->delete_records('socialwiki_likes', array('subwikiid' => $subwiki->id), IGNORE_MISSING)) {
             $result = false;
@@ -111,7 +106,6 @@ function socialwiki_delete_instance($id) {
         if (!$DB->delete_records('socialwiki_follows', array('subwikiid' => $subwiki->id), IGNORE_MISSING)) {
             $result = false;
         }
-
 
         # Get existing pages #
         if ($pages = $DB->get_records('socialwiki_pages', array('subwikiid' => $subwiki->id))) {
@@ -126,11 +120,6 @@ function socialwiki_delete_instance($id) {
             if (!$DB->delete_records('socialwiki_pages', array('subwikiid' => $subwiki->id), IGNORE_MISSING)) {
                 $result = false;
             }
-        }
-
-        # Get existing synonyms, and delete them #
-        if (!$DB->delete_records('socialwiki_synonyms', array('subwikiid' => $subwiki->id), IGNORE_MISSING)) {
-            $result = false;
         }
 
         # Delete any subwikis #

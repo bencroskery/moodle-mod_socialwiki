@@ -118,7 +118,6 @@ $string['invalidparameters'] = 'Invalid parameters have been given.';
 $string['invalidsection'] = 'Invalid section.';
 $string['invalidsesskey'] = 'The given sesskey is not valid. Please resend data again';
 $string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
-$string['links'] = 'Links';
 $string['links_help']='There are 3 diffrent ways to add links: <br/>
 * [[page name]] links to a search pageName <br/>
 * [[page name@pageid]] links to a specific version of a page <br/>

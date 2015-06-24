@@ -21,7 +21,6 @@
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 /**
  * Define all the backup steps that will be used by the backup_wiki_activity_task
  */
@@ -45,21 +44,17 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $pages = new backup_nested_element('pages');
 
-        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'readonly','parent'));
+        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'readonly', 'parent'));
 
         $likes = new backup_nested_element('likes');
 
         $like = new backup_nested_element('like', array('id'), array('userid', 'pageid'));
 
-        $links = new backup_nested_element('links');
-
-        $link = new backup_nested_element('link', array('id'), array('frompageid', 'topageid', 'tomissingpage'));
-		
-		$follows = new backup_nested_element('follows');
+        $follows = new backup_nested_element('follows');
 
         $follow = new backup_nested_element('follow', array('id'), array('userfromid', 'usertoid'));
-        
-		$versions = new backup_nested_element('versions');
+
+        $versions = new backup_nested_element('versions');
 
         $version = new backup_nested_element('version', array('id'), array('content', 'contentformat', 'version', 'timecreated', 'userid'));
 
@@ -79,10 +74,10 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $subwiki->add_child($links);
         $links->add_child($link);
-		
-		$subwiki->add_child($follows);
-		$follows->add_child($follow);
-		
+
+        $subwiki->add_child($follows);
+        $follows->add_child($follow);
+
         $page->add_child($versions);
         $versions->add_child($version);
 
@@ -103,19 +98,17 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
             $like->set_source_table('socialwiki_likes', array('subwikiid' => backup::VAR_PARENTID));
 
-            $link->set_source_table('socialwiki_links', array('subwikiid' => backup::VAR_PARENTID));
-			
-			$follow->set_source_table('socialwiki_follows', array('subwikiid' => backup::VAR_PARENTID));
-            
-			$version->set_source_table('socialwiki_versions', array('pageid' => backup::VAR_PARENTID));
+            $follow->set_source_table('socialwiki_follows', array('subwikiid' => backup::VAR_PARENTID));
+
+            $version->set_source_table('socialwiki_versions', array('pageid' => backup::VAR_PARENTID));
 
             $tag->set_source_sql('SELECT t.id, t.name, t.rawname
                                     FROM {tag} t
                                     JOIN {tag_instance} ti ON ti.tagid = t.id
                                    WHERE ti.itemtype = ?
                                      AND ti.itemid = ?', array(
-                                         backup_helper::is_sqlparam('socialwiki_pages'),
-                                         backup::VAR_PARENTID));
+                backup_helper::is_sqlparam('socialwiki_pages'),
+                backup::VAR_PARENTID));
         }
 
         // Define id annotations
@@ -130,7 +123,6 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
         // Define file annotations
         $wiki->annotate_files('mod_socialwiki', 'intro', null); // This file area hasn't itemid
         $page->annotate_files('mod_socialwiki', 'attachments', 'id'); // This file area hasn't itemid
-
         // Return the root element (wiki), wrapped into standard activity structure
         return $this->prepare_activity_structure($wiki);
     }

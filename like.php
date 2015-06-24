@@ -44,21 +44,6 @@ if (!is_enrolled($context, $USER->id)) {
 
 if (socialwiki_liked($USER->id, $pageid)) {
     socialwiki_delete_like($USER->id, $pageid);
-    //$likes = socialwiki_numlikes($pageid);
-    //delete pages with no likes as long as it's not the first page
-    /* if($likes==0){
-          $pagelist = socialwiki_get_linked_from_pages($pageid);
-          $parentid=socialwiki_get_parent($pageid);
-          $children=socialwiki_get_children($pageid);
-          //change the child's parent to be the parent of the page being deleted
-          foreach($children as $child){
-          $child->parent=$parentid->parent;
-          $DB->update_record('socialwiki_pages',$child);
-      }
-      //remove the page from the database
-      socialwiki_delete_pages($context,array($pageid));
-      //redirect($CFG->wwwroot .'/mod/socialwiki/home.php?id='.$cm->id);
-      } */
 } else {
     socialwiki_add_like($USER->id, $pageid, $subwiki->id);
 
