@@ -125,14 +125,14 @@ $string['links_help']='There are 3 diffrent ways to add links: <br/>
 * [[page name@.]] links to the most recent version of that page';
 $string['list']='List View';
 $string['listall'] = 'List all';
-$string['listorphan'] = 'List orphan';
+$string['listrelated'] = 'List related';
 $string['manage']='Manage';
 $string['home'] = 'Home';
 $string['homemenu'] = 'Home menu';
 $string['migrationfinished'] = 'Migration finished successfully';
 $string['migrationfinishednowikis'] = 'Migration finished, no wikis were migrated';
 $string['missingpages'] = 'Pages without content';
-$string ['modern']='Modern';
+$string['modern']='Modern';
 $string['modified'] = 'Modified';
 $string['modulename'] = 'Social Wiki';
 $string['modulename_help'] = 'The Social Wiki activity module enables participants to add and edit a collection of web pages. A new wiki page is created for every edit someone makes to a page. Pages only exist while someone likes it, if a page has 0 likes it is deleted.

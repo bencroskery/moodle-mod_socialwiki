@@ -572,18 +572,13 @@ function socialwiki_get_user_topics($uid, $swid) {
  * @global object
  * @param int $swid sub wiki id
  */
-function socialwiki_get_orphaned_pages($swid) {
+function socialwiki_get_related_pages($swid, $title) {
     global $DB;
 
-    $sql = "SELECT p.id, p.title
-            FROM {socialwiki_pages} p, {socialwiki} w , {socialwiki_subwikis} s
-            WHERE p.subwikiid = ?
-            AND s.id = ?
-            AND w.id = s.wikiid
-            AND p.title != w.firstpagetitle
-            AND p.id NOT IN (SELECT topageid FROM {socialwiki_links} WHERE subwikiid = ?)";
+    $sql = "SELECT p.id, p.title FROM {socialwiki_pages} p WHERE p.subwikiid = ? AND p.title = ?";
+    
 
-    return $DB->get_records_sql($sql, array($swid, $swid, $swid));
+    return $DB->get_records_sql($sql, array($swid, $title));
 }
 
 /**

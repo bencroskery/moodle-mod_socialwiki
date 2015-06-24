@@ -118,5 +118,9 @@
     background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
 }
 
+input[type="radio"] {
+    margin: -4px 0 0 2px;
+}
+
 /*Thats all. I hope you enjoyed it.
 Thanks :)*/

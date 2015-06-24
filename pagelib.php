@@ -216,7 +216,7 @@ abstract class page_socialwiki {
         global $PAGE;
 
         $this->page = $page;
-        $this->title = $page->title . ' ID: ' . $page->id;
+        $this->title = $page->title; //. ' ID: ' . $page->id;
         // set_title calls format_string itself so no probs there
         $PAGE->set_title($this->title);
     }
@@ -1193,7 +1193,7 @@ class page_socialwiki_history extends page_socialwiki {
                 $node->content .= "</span>";
             }
         }
-        echo 'Related Versions of page ' . $this->page->title;
+        //echo 'Related Versions of page ' . $this->page->title;
 
         echo html_writer::start_tag('form', array('action' => new moodle_url('/mod/socialwiki/diff.php'), 'method' => 'get', 'id' => 'diff'));
         echo html_writer::tag('div', html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $this->page->id)));
@@ -1988,7 +1988,7 @@ class page_socialwiki_handlecomments extends page_socialwiki {
 class page_socialwiki_admin extends page_socialwiki {
 
     public $view, $action;
-    public $listorphan = false;
+    public $listall = false;
 
     /**
      * Constructor
@@ -2001,29 +2001,43 @@ class page_socialwiki_admin extends page_socialwiki {
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        $PAGE->requires->js_init_call('M.mod_socialwiki.deleteversion', null, true);
+        //$PAGE->requires->js_init_call('M.mod_socialwiki.deleteversion', null, true);
     }
 
     /**
      * This function will display administration view to users with managewiki capability
      */
     function print_content() {
+        global $OUTPUT;
         //make sure anyone trying to access this page has managewiki capabilities
         require_capability('mod/socialwiki:managewiki', $this->modcontext, NULL, true, 'noviewpagepermission', 'socialwiki');
 
-        //dispaly admin menu
-        echo $this->wikioutput->menu_admin($this->page->id, $this->view);
+        //display admin menu
+        //echo $this->wikioutput->menu_admin($this->page->id, $this->view);
+        $link = socialwiki_parser_link($this->page);
+        $class = ($link['new']) ? 'class="socialwiki_newentry"' : '';
+        $pagelink = '<a href="' . $link['url'] . '"' . $class . '>' . format_string($link['content']) . ' (ID:' . $this->page->id . ')' . '</a>';
+        $urledit = new moodle_url('/mod/socialwiki/edit.php', array('pageid' => $this->page->id, 'sesskey' => sesskey()));
+        $urldelete = new moodle_url('/mod/socialwiki/admin.php', array(
+                'pageid'  => $this->page->id,
+                'delete'  => $this->page->id,
+                'option'  => $this->view,
+                'listall' => !$this->listall ? '1' : '',
+                'sesskey' => sesskey()));
 
+        $editlinks = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit')));
+        $editlinks .= $OUTPUT->action_icon($urldelete, new pix_icon('t/delete', get_string('delete')));
+        echo "Current Page: $pagelink $editlinks";
         //Display appropriate admin view
         switch ($this->view) {
             case 1: //delete page view
-                $this->print_delete_content($this->listorphan);
+                $this->print_delete_content($this->listall);
                 break;
             case 2: //delete version view
                 $this->print_delete_version();
                 break;
             default: //default is delete view
-                $this->print_delete_content($this->listorphan);
+                $this->print_delete_content($this->listall);
                 break;
         }
     }
@@ -2032,11 +2046,11 @@ class page_socialwiki_admin extends page_socialwiki {
      * Sets admin view option
      *
      * @param int $view page view id
-     * @param bool $listorphan is only valid for view 1.
+     * @param bool $listall is only valid for view 1.
      */
-    public function set_view($view, $listorphan = true) {
+    public function set_view($view, $listall = true) {
         $this->view = $view;
-        $this->listorphan = $listorphan;
+        $this->listall = $listall;
     }
 
     /**
@@ -2065,22 +2079,23 @@ class page_socialwiki_admin extends page_socialwiki {
     /**
      * Show wiki page delete options
      *
-     * @param bool $showorphan
+     * @param bool $showall
      */
-    protected function print_delete_content($showorphan = true) {
+    protected function print_delete_content($showall = false) {
         $table = new html_table();
-        $table->head = array('', get_string('pagename', 'socialwiki'));
-        $table->attributes['class'] = 'generaltable mdl-align';
+        $table->head = array(get_string('pagename', 'socialwiki'), '');
+        $table->attributes['class'] = 'flexible';
+        $table->attributes['style'] = 'width:auto';
         $swid = $this->subwiki->id;
-        if ($showorphan) {
-            if ($orphanedpages = socialwiki_get_orphaned_pages($swid)) {
-                $this->add_page_delete_options($orphanedpages, $swid, $table);
+        if (!$showall) {
+            if ($relatedpages = socialwiki_get_related_pages($swid, $this->title)) {
+                $this->add_page_delete_options($relatedpages, $table);
             } else {
                 $table->data[] = array('', get_string('noorphanedpages', 'socialwiki'));
             }
         } else {
             if ($pages = socialwiki_get_page_list($swid)) {
-                $this->add_page_delete_options($pages, $swid, $table);
+                $this->add_page_delete_options($pages, $table);
             } else {
                 $table->data[] = array('', get_string('nopages', 'socialwiki'));
             }
@@ -2091,28 +2106,26 @@ class page_socialwiki_admin extends page_socialwiki {
             'action' => new moodle_url('/mod/socialwiki/admin.php'),
             'method' => 'post'));
         echo html_writer::tag('div', html_writer::empty_tag('input', array(
-                    'type' => 'hidden',
-                    'name' => 'pageid',
+                    'type'  => 'hidden',
+                    'name'  => 'pageid',
                     'value' => $this->page->id)));
 
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'option', 'value' => $this->view));
         echo html_writer::table($table);
-        echo html_writer::start_tag('div', array('class' => 'mdl-align'));
-        if (!$showorphan) {
+        if ($showall) {
             echo html_writer::empty_tag('input', array(
-                'type' => 'submit',
-                'class' => 'socialwiki_form-button',
-                'value' => get_string('listorphan', 'socialwiki'),
-                'sesskey' => sesskey()));
+                    'type'    => 'submit',
+                    'class'   => 'socialwiki_form-button',
+                    'value'   => get_string('listrelated', 'socialwiki'),
+                    'sesskey' => sesskey()));
         } else {
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'listall', 'value' => '1'));
             echo html_writer::empty_tag('input', array(
-                'type' => 'submit',
-                'class' => 'socialwiki_form-button',
-                'value' => get_string('listall', 'socialwiki'),
-                'sesskey' => sesskey()));
+                    'type'    => 'submit',
+                    'class'   => 'socialwiki_form-button',
+                    'value'   => get_string('listall', 'socialwiki'),
+                    'sesskey' => sesskey()));
         }
-        echo html_writer::end_tag('div');
         echo html_writer::end_tag('form');
     }
 
@@ -2124,7 +2137,7 @@ class page_socialwiki_admin extends page_socialwiki {
      * @param int $swid id of subwiki
      * @param object $table reference to the table in which data needs to be added
      */
-    protected function add_page_delete_options($pages, $swid, &$table) {
+    protected function add_page_delete_options($pages, &$table) {
         global $OUTPUT;
         foreach ($pages as $page) {
             $link = socialwiki_parser_link($page);
@@ -2132,15 +2145,15 @@ class page_socialwiki_admin extends page_socialwiki {
             $pagelink = '<a href="' . $link['url'] . '"' . $class . '>' . format_string($link['content']) . ' (ID:' . $page->id . ')' . '</a>';
             $urledit = new moodle_url('/mod/socialwiki/edit.php', array('pageid' => $page->id, 'sesskey' => sesskey()));
             $urldelete = new moodle_url('/mod/socialwiki/admin.php', array(
-                'pageid' => $this->page->id,
-                'delete' => $page->id,
-                'option' => $this->view,
-                'listall' => !$this->listorphan ? '1' : '',
+                'pageid'  => $this->page->id,
+                'delete'  => $page->id,
+                'option'  => $this->view,
+                'listall' => !$this->listall ? '1' : '',
                 'sesskey' => sesskey()));
 
             $editlinks = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit')));
             $editlinks .= $OUTPUT->action_icon($urldelete, new pix_icon('t/delete', get_string('delete')));
-            $table->data[] = array($editlinks, $pagelink);
+            $table->data[] = array($pagelink, $editlinks);
         }
     }
 
