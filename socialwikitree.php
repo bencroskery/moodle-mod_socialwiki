@@ -74,7 +74,7 @@ class socialwiki_node {
         Global $PAGE, $CFG, $OUTPUT;
         $user = socialwiki_get_user_info($page->userid);
         //buttons to minimize and collapse
-        $this->content = html_writer::start_tag('span', array('style' => 'float:right'));
+        $this->content = html_writer::start_tag('span', array('id' => 'bgroup' . $this->id, 'class' => 'btngroup'));
             $this->content.= html_writer::start_tag('img', array('title' => 'Minimize', 'id' => 'hid' . $this->id, 'src' => $OUTPUT->pix_url('t/less'), 'class' => 'hider', 'value' => $this->id));
             $this->content.= html_writer::end_tag('img');
             $this->content.= html_writer::start_tag('img', array('title' => 'Collapse', 'id' => 'cop' . $this->id, 'src' => $OUTPUT->pix_url('t/up'), 'class' => 'collapser', 'value' => $this->id));

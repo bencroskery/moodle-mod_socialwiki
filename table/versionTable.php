@@ -295,10 +295,9 @@ class versionTable extends socialwiki_table {
 
     //public static function 
 
-    public static function makeHTMLVersionTable($uid, $swid, $pages, $type, $tabid) {
+    public static function makeHTMLVersionTable($uid, $swid, $pages, $type) {
         $thetable = new versionTable($uid, $swid, $pages, $type);
-        //echo $thetable;
-        return $thetable->get_as_HTML($tabid); // defined in parent class
+        return $thetable->get_as_HTML(); // defined in parent class
     }
 
 }

@@ -24,8 +24,6 @@ require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/socialwikitree.php');
-
 
 $search = optional_param('searchstring', null, PARAM_TEXT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -56,7 +54,7 @@ if (!$wiki = socialwiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'socialwiki');
 }
 
-$wikipage = new page_socialwiki_search($wiki, $subwiki, $cm);
+$wikipage = new page_socialwiki_search($wiki, $subwiki, $cm, $option);
 
 //make * a wild-card search
 if ($search == "*")
@@ -75,8 +73,6 @@ $wikipage->set_title(get_string('searchresultsfor', 'socialwiki') . ": " . $sear
 //{
 //	$wikipage->set_page($page);
 //}
-$wikipage->set_view($option);
-
 $wikipage->print_header();
 
 $wikipage->print_content();

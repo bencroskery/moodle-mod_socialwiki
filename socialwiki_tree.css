@@ -1,7 +1,9 @@
 /*Now the CSS*/
 
-.hider, .collapser {
+.btngroup {
     cursor: pointer;
+    position: relative;
+    left: 40%;
 }
 
 .hider {
@@ -9,9 +11,8 @@
 }
 
 .titletext {
-    padding-bottom: 6px;
+    padding-bottom: 0.3em;
     display: block;
-    clear: right;
 }
 
 .tree {

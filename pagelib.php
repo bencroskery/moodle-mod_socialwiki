@@ -805,19 +805,21 @@ class page_socialwiki_search extends page_socialwiki {
         $PAGE->navbar->add(format_string($this->title));
     }
 
-    function __construct($wiki, $subwiki, $cm) {
+    function __construct($wiki, $subwiki, $cm, $option) {
         global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        //$PAGE->requires->jquery_plugin('ui');
-        //$PAGE->requires->jquery_plugin('ui-css');
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/doublescroll.js"));
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/jquery.tagcloud.js"));
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
-        $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/tableBuilder.js"));
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/demo_table.css"));
+        $this->view = $option;
+        if ($this->view == 2) {
+            //for table view
+            $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/tableBuilder.js"));
+            $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/demo_table.css"));
+        } else {
+            //for tree view
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
+            $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
+        }
     }
 
     function set_search_string($search, $searchcontent, $exact_match = false) {
@@ -840,19 +842,29 @@ class page_socialwiki_search extends page_socialwiki {
         }
     }
 
-    function set_view($option) {
-        $this->view = $option;
-    }
-
     function print_content() {
         global $PAGE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, NULL, true, 'noviewpagepermission', 'socialwiki');
         echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->search_string, $this->exact);
-        $this->print_tree();
+        if ($this->view == 2) {
+            $this->print_table();
+        } else {
+            $this->print_tree();
+        }
     }
 
+    //print the table view
+    private function print_table() {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . "/mod/socialwiki/table/versionTable.php");
+        $pages = $this->search_result;
+        echo versionTable::makeHTMLVersionTable($USER->id, $this->subwiki->id, $pages, 'version');
+    }
+    
     //print the tree view
     private function print_tree() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/socialwiki/socialwikitree.php');
         $pages = $this->search_result;
         $tree = new socialwiki_tree;
         $tree->build_tree($pages);
@@ -1153,9 +1165,8 @@ class page_socialwiki_history extends page_socialwiki {
     function __construct($wiki, $subwiki, $cm) {
         global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/socialwiki_tree.js"));
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/doublescroll.js"));
+        $PAGE->requires->css(new moodle_url("/mod/socialwiki/socialwiki_tree.css"));
     }
 
     /**
