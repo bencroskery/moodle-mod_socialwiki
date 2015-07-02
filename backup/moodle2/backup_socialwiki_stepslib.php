@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,6 +20,7 @@
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 /**
  * Define all the backup steps that will be used by the backup_wiki_activity_task
  */
@@ -32,11 +32,13 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
-        $wiki = new backup_nested_element('socialwiki', array('id'), array('name', 'intro', 'introformat', 'timecreated', 'timemodified', 'firstpagetitle', 'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend'));
+        // Define each element separated.
+        $wiki = new backup_nested_element('socialwiki', array('id'), array('name',
+            'intro', 'introformat', 'timecreated', 'timemodified', 'firstpagetitle',
+            'wikimode', 'defaultformat', 'forceformat', 'editbegin', 'editend'));
 
         $subwikis = new backup_nested_element('subwikis');
 
@@ -44,7 +46,8 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $pages = new backup_nested_element('pages');
 
-        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent', 'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'readonly', 'parent'));
+        $page = new backup_nested_element('page', array('id'), array('title', 'cachedcontent',
+            'timecreated', 'timemodified', 'timerendered', 'userid', 'pageviews', 'readonly', 'parent'));
 
         $likes = new backup_nested_element('likes');
 
@@ -56,13 +59,14 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $versions = new backup_nested_element('versions');
 
-        $version = new backup_nested_element('version', array('id'), array('content', 'contentformat', 'version', 'timecreated', 'userid'));
+        $version = new backup_nested_element('version', array('id'), array('content', 'contentformat',
+            'version', 'timecreated', 'userid'));
 
         $tags = new backup_nested_element('tags');
 
         $tag = new backup_nested_element('tag', array('id'), array('name', 'rawname'));
 
-        // Build the tree
+        // Build the tree.
         $wiki->add_child($subwikis);
         $subwikis->add_child($subwiki);
 
@@ -71,9 +75,6 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $subwiki->add_child($likes);
         $likes->add_child($like);
-
-        $subwiki->add_child($links);
-        $links->add_child($link);
 
         $subwiki->add_child($follows);
         $follows->add_child($follow);
@@ -84,10 +85,10 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
         $page->add_child($tags);
         $tags->add_child($tag);
 
-        // Define sources
+        // Define sources.
         $wiki->set_source_table('socialwiki', array('id' => backup::VAR_ACTIVITYID));
 
-        // All these source definitions only happen if we are including user info
+        // All these source definitions only happen if we are including user info.
         if ($userinfo) {
             $subwiki->set_source_sql('
                 SELECT *
@@ -111,7 +112,7 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
                 backup::VAR_PARENTID));
         }
 
-        // Define id annotations
+        // Define id annotations.
         $subwiki->annotate_ids('group', 'groupid');
 
         $subwiki->annotate_ids('user', 'userid');
@@ -120,10 +121,10 @@ class backup_socialwiki_activity_structure_step extends backup_activity_structur
 
         $version->annotate_ids('user', 'userid');
 
-        // Define file annotations
-        $wiki->annotate_files('mod_socialwiki', 'intro', null); // This file area hasn't itemid
-        $page->annotate_files('mod_socialwiki', 'attachments', 'id'); // This file area hasn't itemid
-        // Return the root element (wiki), wrapped into standard activity structure
+        // Define file annotations.
+        $wiki->annotate_files('mod_socialwiki', 'intro', null); // This file area hasn't itemid.
+        $page->annotate_files('mod_socialwiki', 'attachments', 'id'); // This file area hasn't itemid.
+        // Return the root element (wiki), wrapped into standard activity structure.
         return $this->prepare_activity_structure($wiki);
     }
 

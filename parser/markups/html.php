@@ -1,5 +1,4 @@
 <?php
-
 /**
  * HTML parser implementation. It only implements links.
  *

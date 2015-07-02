@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -52,7 +51,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $this->output->container($this->output->render($select), 'socialwiki_index');
     }
 
-    //compares two pages
+    // compares two pages
     public function diff($pageid, $old, $new) {
         global $CFG;
         $page = socialwiki_get_page($pageid);
@@ -70,60 +69,60 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $olduser->id, 'subwikiid' => $page->subwikiid));
         // view version link
         $oldversionview = ' ';
-        $oldversionview.= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
+        $oldversionview .= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
 
         // userinfo container
         $oldheading = $this->output->container_start('socialwiki_diffuserleft');
         // username
-        $oldheading.= html_writer::link($CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid=' . $olduser->id . '&subwikiid=' . $page->subwikiid, fullname($olduser)) . ' ';
+        $oldheading .= html_writer::link($CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid=' . $olduser->id . '&subwikiid=' . $page->subwikiid, fullname($olduser)) . ' ';
         // user picture
-        $oldheading.= html_writer::link($userlink->out(false), $this->output->user_picture($olduser, array('popup' => true)), array('class' => 'notunderlined'));
-        $oldheading.= $this->output->container_end();
+        $oldheading .= html_writer::link($userlink->out(false), $this->output->user_picture($olduser, array('popup' => true)), array('class' => 'notunderlined'));
+        $oldheading .= $this->output->container_end();
 
         // version number container
-        $oldheading.= $this->output->container_start('socialwiki_diffversion');
-        $oldheading.= get_string('page') . ' ' . $old->pageid . $oldversionview;
-        $oldheading.= $this->output->container_end();
+        $oldheading .= $this->output->container_start('socialwiki_diffversion');
+        $oldheading .= get_string('page') . ' ' . $old->pageid . $oldversionview;
+        $oldheading .= $this->output->container_end();
         // userdate container
-        $oldheading.= $this->output->container_start('socialwiki_difftime');
-        $oldheading.= userdate($old->timecreated, $strdatetime);
-        $oldheading.= $this->output->container_end();
+        $oldheading .= $this->output->container_start('socialwiki_difftime');
+        $oldheading .= userdate($old->timecreated, $strdatetime);
+        $oldheading .= $this->output->container_end();
 
         $newuser = $new->user;
         $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $new->pageid));
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php', array('userid' => $newuser->id, 'subwikiid' => $page->subwikiid));
 
         $newversionview = ' ';
-        $newversionview.= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
+        $newversionview .= html_writer::link($versionlink->out(false), get_string('view', 'socialwiki'), array('class' => 'socialwiki_diffview'));
         // new user info
         $newheading = $this->output->container_start('socialwiki_diffuserright');
-        $newheading.= $this->output->user_picture($newuser, array('popup' => true));
+        $newheading .= $this->output->user_picture($newuser, array('popup' => true));
 
-        $newheading.= ' ' . html_writer::link($userlink->out(false), fullname($newuser), array('class' => 'notunderlined'));
-        $newheading.= $this->output->container_end();
+        $newheading .= ' ' . html_writer::link($userlink->out(false), fullname($newuser), array('class' => 'notunderlined'));
+        $newheading .= $this->output->container_end();
 
         // version
-        $newheading.= $this->output->container_start('socialwiki_diffversion');
-        $newheading.= get_string('page') . ' ' . $new->pageid . $newversionview;
-        $newheading.= $this->output->container_end();
+        $newheading .= $this->output->container_start('socialwiki_diffversion');
+        $newheading .= get_string('page') . ' ' . $new->pageid . $newversionview;
+        $newheading .= $this->output->container_end();
         // userdate
-        $newheading.= $this->output->container_start('socialwiki_difftime');
-        $newheading.= userdate($new->timecreated, $strdatetime);
-        $newheading.= $this->output->container_end();
+        $newheading .= $this->output->container_start('socialwiki_difftime');
+        $newheading .= userdate($new->timecreated, $strdatetime);
+        $newheading .= $this->output->container_end();
 
         $oldheading = html_writer::tag('div', $oldheading, array('class' => 'socialwiki-diff-heading header'));
         $newheading = html_writer::tag('div', $newheading, array('class' => 'socialwiki-diff-heading header'));
 
         $html = '';
-        $html.= html_writer::start_tag('div', array('class' => 'socialwiki-diff-container'));
-        $html.= html_writer::tag('div', $oldheading . $diff1, array('class' => 'socialwiki-diff-leftside'));
-        $html.= html_writer::tag('div', $newheading . $diff2, array('class' => 'socialwiki-diff-rightside'));
-        $html.= html_writer::end_tag('div');
+        $html .= html_writer::start_tag('div', array('class' => 'socialwiki-diff-container'));
+        $html .= html_writer::tag('div', $oldheading . $diff1, array('class' => 'socialwiki-diff-leftside'));
+        $html .= html_writer::tag('div', $newheading . $diff2, array('class' => 'socialwiki-diff-rightside'));
+        $html .= html_writer::end_tag('div');
 
-        //add the paging bars
-        $html.= '<div class="socialwiki_diff_paging">';
-        $html.= $this->output->container($this->diff_paging_bar($old->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;comparewith=' . $new->pageid . '&amp;', 'compare', false, true), 'socialwiki_diff_oldpaging');
-        $html.= $this->output->container($this->diff_paging_bar($new->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;compare=' . $old->pageid . '&amp;', 'comparewith', false, true), 'socialwiki_diff_newpaging');
+        // add the paging bars
+        $html .= '<div class="socialwiki_diff_paging">';
+        $html .= $this->output->container($this->diff_paging_bar($old->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;comparewith=' . $new->pageid . '&amp;', 'compare', false, true), 'socialwiki_diff_oldpaging');
+        $html .= $this->output->container($this->diff_paging_bar($new->pageid, $CFG->wwwroot . '/mod/socialwiki/diff.php?pageid=' . $pageid . '&amp;compare=' . $old->pageid . '&amp;', 'comparewith', false, true), 'socialwiki_diff_newpaging');
         $html.='</div>';
 
         return $html;
@@ -141,9 +140,9 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
      * @return bool or string
      */
     public function diff_paging_bar($pageid, $baseurl, $pagevar = 'page', $nocurr = false) {
-        //get all pages related to the page being compared
+        // get all pages related to the page being compared
         $relations = socialwiki_get_relations($pageid);
-        //get the index of the current page id in the array
+        // get the index of the current page id in the array
         $pageindex = socialwiki_indexof_page($pageid, $relations);
         $totalcount = count($relations) - 1;
         $maxdisplay = 2;
@@ -152,23 +151,23 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         if ($pageindex == -1) {
             print_error('invalidparameters', 'socialwiki');
         }
-        //if there is more than one page create html for paging bar
+        // if there is more than one page create html for paging bar
         if ($totalcount > 1) {
             $html .= '<div class="paging">';
 
-            //add first link to first page
+            // add first link to first page
             if ($pageindex != 0) {
 
-                //print link to parent page
+                // print link to parent page
                 if (!is_a($baseurl, 'moodle_url')) {
                     $html .= ' <a href="' . $baseurl . $pagevar . '=' . $relations[0]->id . '">' . $relations[0]->id . '</a> ';
                 } else {
                     $html .= ' <a href="' . $baseurl->out(false, array($pagevar => $relations[0]->id)) . '">' . $relations[0]->id . '</a> ';
                 }
 
-                //print link to page before current
+                // print link to page before current
                 if ($pageindex > 2) {
-                    //print page that is before the current page in relations array
+                    // print page that is before the current page in relations array
                     if (!is_a($baseurl, 'moodle_url')) {
                         $html .= '... <a href="' . $baseurl . $pagevar . '=' . $relations[$pageindex - 1]->id . '">' . $relations[$pageindex - 1]->id . '</a> ';
                     } else {
@@ -182,7 +181,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                     }
                 }
             }
-            //print current page
+            // print current page
             $html.=$pageid;
             if ($pageindex != $totalcount) {
                 if ($pageindex < $totalcount - 2) {
@@ -198,7 +197,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                         $html .= ' <a href="' . $baseurl->out(false, array($pagevar => $relations[$pageindex + 1]->id)) . '">' . $relations[$pageindex + 1]->id . '</a> ';
                     }
                 }
-                //print last page in the array
+                // print last page in the array
                 if (!is_a($baseurl, 'moodle_url')) {
                     $html .= ' <a href="' . $baseurl . $pagevar . '=' . $relations[$totalcount]->id . '">' . $relations[$totalcount]->id . '</a> ';
                 } else {
@@ -215,12 +214,12 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $this->output->box(format_module_intro('socialwiki', $this->page->activityrecord, $PAGE->cm->id), 'generalbox', 'intro');
     }
 
-    /* public function tabsAndLike($page, $tabitems, $options){ //tabs in a table on the left with the like button on the right
+    /* public function tabsAndLike($page, $tabitems, $options){ // tabs in a table on the left with the like button on the right
       global $PAGE;
-      return this->tabs($page, $tabitems, $options); //calling the one below for now
+      return this->tabs($page, $tabitems, $options); // calling the one below for now
       } */
 
-    public function tabs($page, $tabitems, $options) { //TODO: pass current tab as inactive
+    public function tabs($page, $tabitems, $options) { // TODO: pass current tab as inactive
         global $PAGE;
         $tabs = array();
         $context = context_module::instance($this->page->cm->id);
@@ -266,7 +265,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
             $tabs[] = new tabobject($tab, $link, get_string($tab, 'socialwiki'));
         }
-        
+
         return $this->tabtree($tabs, $selected, $inactive);
     }
 
@@ -508,42 +507,42 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     /**
      * a function to make an html table
      */
-//public function testtable(){
-//	
-//	$harry = html_writer::start_tag('h1');
-//	$harry .='HARRY';
-//	$harry .= html_writer::end_tag('h1');
+// public function testtable(){
+// 	
+// 	$harry = html_writer::start_tag('h1');
+// 	$harry .='HARRY';
+// 	$harry .= html_writer::end_tag('h1');
 //
-//	/*$icon = new moodle_action_icon();
-//	$icon->image->src = 'http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png';
-//	//$icon->image->alt = 'What is moodle?';
-//	$icon->link->url = new moodle_url('http://domain.com/index.php');
-//	//$icon->add_confirm_action('Are you sure?');
+// 	/*$icon = new moodle_action_icon();
+// 	$icon->image->src = 'http://cdn.sstatic.net/stackoverflow/img/apple-touch-icon.png';
+// 	// $icon->image->alt = 'What is moodle?';
+// 	$icon->link->url = new moodle_url('http://domain.com/index.php');
+// 	// $icon->add_confirm_action('Are you sure?');
 // return $this->output->action_icon($icon);*/
 //
-//	$t = new html_table();
-//	$row1 = array($harry, 'potter');
-//	$t->data = array($row1);
+// 	$t = new html_table();
+// 	$row1 = array($harry, 'potter');
+// 	$t->data = array($row1);
 //
-//	$hh = $this->output->container(html_writer::table($t),'ba');
-//        
-//        
-////	$hh = 
-////	$hh .= $this->output->container_end();
-//
-//return $hh;
+// 	$hh = $this->output->container(html_writer::table($t),'ba');
 //
 //
-//}
-    //Outputs the main socialwiki view area, under the toolbar
+//// 	$hh =
+//// 	$hh .= $this->output->container_end();
+//
+// return $hh;
+//
+//
+// }
+    // Outputs the main socialwiki view area, under the toolbar
     public function viewing_area($pagetitle, $pagecontent, $page) {
         global $PAGE, $USER;
 
         $html = html_writer::start_div('wikipage');
-        $html.= $pagecontent;
-        $html.= html_writer::end_div();
+        $html .= $pagecontent;
+        $html .= html_writer::end_div();
 
-        $html.= html_writer::start_div('socialwiki_contributors');
+        $html .= html_writer::start_div('socialwiki_contributors');
         $html.='Contributors to this page:';
         $contributors = socialwiki_get_contributors($page->id);
 
@@ -552,7 +551,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         foreach (array_reverse($contributors) as $contrib) {
             $user = socialwiki_get_user_info($contrib);
             $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
-            //prepend to list (to get them in chronological order)
+            // prepend to list (to get them in chronological order)
             $contriblinks .= '<br/>' . html_writer::link($userlink->out(false), fullname($user));
         }
 

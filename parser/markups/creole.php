@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Creole parser implementation
  *
@@ -21,7 +20,7 @@ class creole_parser extends socialwiki_markup_parser {
         ),
         'header' => array(
             'expression' => "/^\ *(={1,6})\ *(.+?)=*\ *$/ims",
-            'tags' => array(), //none
+            'tags' => array(), // none
             'token' => '='
         ),
         'table' => array(
@@ -39,7 +38,7 @@ class creole_parser extends socialwiki_markup_parser {
         ),
         'paragraph' => array(
             'expression' => "/^\ *((?:<(?!\ *\/?(?:h\d|pre|table|tbody|thead|tr|th|td|ul|li|ol|hr)\ *\/?>)|[^<\s]).+?)\n\s*\n/ims",
-            //not specified -> all tags (null or unset)
+            // not specified -> all tags (null or unset)
             'tag' => 'p'
         )
     );
@@ -76,9 +75,9 @@ class creole_parser extends socialwiki_markup_parser {
             'token' => array('**', '**')
         ),
         'italic' => array(
-            'expression' => "#(?<!http:|https:|ftp:)//(.+?)(?<!http:|https:|ftp:)//#is",
+            'expression' => "#(?<!http:|https:|ftp:)// (.+?)(?<!http:|https:|ftp:)// #is",
             'tag' => 'em',
-            'token' => array('//', '//')
+            'token' => array('// ', '// ')
         )
     );
 
@@ -144,15 +143,15 @@ class creole_parser extends socialwiki_markup_parser {
         foreach($this->tagrules as $tr) {
             if(isset($tr['token'])) {
                 if(is_array($tr['token'])) {
-                    $this->escape_token_string($text, $tr['token'][0]);
-                    $this->escape_token_string($text, $tr['token'][1]);
+                    $this->escapetoken_string($text, $tr['token'][0]);
+                    $this->escapetoken_string($text, $tr['token'][1]);
                 }
                 else {
-                    $this->escape_token_string($text, $tr['token']);
+                    $this->escapetoken_string($text, $tr['token']);
                 }
             }
         }
-        $this->escape_token_string($text, "~");
+        $this->escapetoken_string($text, "~");
 
         return $text;
     }
@@ -160,7 +159,7 @@ class creole_parser extends socialwiki_markup_parser {
     /**
      * Escape token when it is "negated"
      */
-    private function escape_token_string(&$text, $token) {
+    private function escapetoken_string(&$text, $token) {
         $text = str_replace("~".$token, $this->protect($token), $text);
     }
 
@@ -197,8 +196,8 @@ class creole_parser extends socialwiki_markup_parser {
     protected function bold_tag_rule($match) {
         $text = $match[1];
         $this->rules($text, array('only' => array('italic')));
-        if(strpos($text, "//") !== false) {
-            $text = str_replace("//", $this->protect("//"), $text);
+        if(strpos($text, "// ") !== false) {
+            $text = str_replace("// ", $this->protect("// "), $text);
         }
         return array($text, array());
     }

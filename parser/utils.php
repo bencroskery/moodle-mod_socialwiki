@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Parser utils and default callbacks.
  *
@@ -10,9 +9,9 @@
  */
 
 require_once($CFG->dirroot . "/lib/outputcomponents.php");
-    
+
 class socialparser_utils {
-        
+
     public static function h($tag, $text = null, $options = array(), $escape_text = false) {
         $tag = htmlentities($tag, ENT_COMPAT, 'UTF-8');
         if(!empty($text) && $escape_text) {
@@ -20,7 +19,7 @@ class socialparser_utils {
             }
         return html_writer::tag($tag, $text, $options);
     }
-    
+
     /**
      * Default link generator
      */
@@ -32,7 +31,6 @@ class socialparser_utils {
         }
         return array('content' => $link, 'url' => "http://".$l);
     }
-
 
     /**
      * Default table generator
@@ -77,7 +75,7 @@ class socialparser_utils {
                     }
                     else if($row[$i][0] == 'normal'){
                         $htmlrow .= "\n".socialparser_utils::h('td', $text)."\n";
-                    }   
+                    }
                 }
             }
             $bodyhtml .= "\n".socialparser_utils::h('tr', $htmlrow)."\n";
@@ -86,11 +84,11 @@ class socialparser_utils {
         $html .= "\n".socialparser_utils::h('tbody', $bodyhtml)."\n";
         return "\n".socialparser_utils::h('table', $html)."\n";
     }
-    
+
     /**
      * Default path converter
      */
-    
+
     public static function socialwiki_parser_real_path($url) {
         return $url;
     }

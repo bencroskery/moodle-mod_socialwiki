@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Generic & abstract parser functions & skeleton. It has some functions & generic stuff.
  *
@@ -14,15 +13,15 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
     protected $pretty_print = false;
     protected $printable = false;
 
-    //page id
+    // page id
     protected $wiki_page_id;
 
-    //sections
+    // sections
     protected $repeated_sections;
 
     protected $section_editing = true;
 
-    //header & ToC
+    // header & ToC
     protected $toc = array();
     protected $maxheaderdepth = 3;
 
@@ -390,7 +389,7 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
         $options['href'] = $link['url'];
 
         if ($this->printable) {
-            $options['href'] = '#'; //no target for the link
+            $options['href'] = '#'; // no target for the link
             }
         return array($link['content'], $options);
     }
@@ -405,10 +404,10 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
             $text = preg_replace('/\r/', "\n", $text);
             $text .= "\n\n";
         }
-        
+
         #echo "header:".$header."::end";
         preg_match("/(.*?)(=\ *\Q$header\E\ *=*\ *\n.*?)((?:\n=[^=]+.*)|$)/is", $text, $match);
-        //$text = preg_replace('/\n/', "#", $text);
+        // $text = preg_replace('/\n/', "#", $text);
         #echo "text:".$text."::end";
         if (!empty($match)) {
             return array($match[1], $match[2], $match[3]);

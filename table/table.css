@@ -1,5 +1,5 @@
 /*
- *  File:         demo_table.css
+ *  File:         table.css
  *  CVS:          $Id$
  *  Description:  CSS descriptions for DataTables demo pages
  *  Author:       Allan Jardine
@@ -66,8 +66,6 @@
     margin-bottom: 0.2em;
 }
 
-
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables display
  */
@@ -89,8 +87,6 @@ table.datatable thead th {
 table.datatable td {
     padding: 3px 10px 2px 6px;
 }
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables sorting
@@ -120,8 +116,6 @@ table.datatable thead td:active {
     outline: none;
 }
 
-
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
  */
@@ -132,8 +126,6 @@ tr.odd {
 tr.even {
     background-color: white;
 }
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Borders
@@ -151,8 +143,6 @@ table.dataTable tbody tr {
 table.dataTable tbody tr:first-child td {
     border-top: none;
 }
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Sorting classes for columns

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Generic parser implementation
  *
@@ -37,12 +36,12 @@ class socialwiki_parser_proxy {
             return false;
         }
     }
-    
+
     public static function get_section(&$string, $type, $section, $all_content = false) {
         if(self::create_parser_instance($type)) {
             #echo "ok here perser.php l43";
             $content = self::$parsers[$type]->get_section($section, $string, true);
-            
+
             if($all_content) {
             	return $content;
             }
@@ -88,17 +87,17 @@ abstract class socialgeneric_parser {
     private $rulestack = array();
 
     protected $parser_status = 'Before';
-    
+
     /**
      * Dynamic return values
      */
-     
+
     protected $returnvalues = array();
 
     private $nowikiindex = array();
 
     protected $nowikitoken = "%!";
-    
+
     public function __construct() {}
 
     /**
@@ -119,7 +118,7 @@ abstract class socialgeneric_parser {
         if(method_exists($this, 'before_parsing')) {
             $this->before_parsing();
         }
-        
+
         $this->parser_status = 'Parsing';
 
         foreach($this->blockrules as $name => $block) {
@@ -133,7 +132,7 @@ abstract class socialgeneric_parser {
         if(method_exists($this, 'after_parsing')) {
             $this->after_parsing();
         }
-        
+
         return array('parsed_text' => $this->string) + $this->returnvalues;
     }
 
@@ -224,7 +223,7 @@ abstract class socialgeneric_parser {
             else {
                 $replace = socialparser_utils::h($rule['tag'], "$1");
             }
-            
+
             $text = preg_replace($rule['expression'], $replace, $text);
         }
     }
@@ -281,5 +280,5 @@ abstract class socialgeneric_parser {
          }
 
          return false;
-     }     
+     }
 }

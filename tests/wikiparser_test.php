@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Unit tests for the wiki parser
@@ -35,7 +35,6 @@ defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
-
 
 class mod_socialwiki_wikiparser_test extends basic_testcase {
 
@@ -60,7 +59,7 @@ class mod_socialwiki_wikiparser_test extends basic_testcase {
 
         $result = socialwiki_parser_proxy::parse($input, $markup, array('pretty_print' => true));
 
-        //removes line breaks to avoid line break encoding causing tests to fail.
+        // removes line breaks to avoid line break encoding causing tests to fail.
         $result['parsed_text'] = preg_replace('~[\r\n]~', '', $result['parsed_text']);
         $output                = preg_replace('~[\r\n]~', '', $output);
 

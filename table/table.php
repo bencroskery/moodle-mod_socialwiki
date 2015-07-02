@@ -1,18 +1,32 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 abstract class socialwiki_table {
 
-    protected $uid; //uid of user viewing
+    protected $uid; // UID of user viewing.
     protected $swid;
     protected $headers;
-    
+
     /**
      * creates a table with the given headers, current uid (userid), subwikiid
      */
     public function __construct($u, $s, $h) {
         $this->uid = $u;
         $this->swid = $s;
-        $this->headers = socialwiki_table::getHeaders($h);
+        $this->headers = self::getheaders($h);
     }
 
     abstract protected function get_table_data();
@@ -20,11 +34,11 @@ abstract class socialwiki_table {
     /**
      * gets the table in HTML format (string)
      */
-    public function get_as_HTML($tableid = 'a_table') {
+    public function get_as_html($tableid = 'a_table') {
 
         $t = "<table id=" . $tableid . " class='datatable'>";
         $tabledata = $this->get_table_data();
-        //headers
+        // Headers.
         $t .= "<thead><tr>";
         foreach ($this->headers as $h) {
             $t .= "<th>" . $h . "</th>";
@@ -42,8 +56,8 @@ abstract class socialwiki_table {
         $t .= "</tbody></table>";
         return $t;
     }
-    
-    public static function getHeaders($type) {
+
+    public static function getheaders($type) {
         switch ($type) {
             case "version":
                 return array(
@@ -52,7 +66,7 @@ abstract class socialwiki_table {
                     get_string('updated', 'socialwiki'),
                     get_string('likes', 'socialwiki'),
                     get_string('views', 'socialwiki'),
-                    get_string('favorite', 'socialwiki'),
+                    get_string('favourite', 'socialwiki'),
                     get_string('popularity', 'socialwiki'),
                     get_string('likesim', 'socialwiki'),
                     get_string('followsim', 'socialwiki'),
@@ -65,7 +79,7 @@ abstract class socialwiki_table {
                     get_string('updated', 'socialwiki'),
                     get_string('likes', 'socialwiki'),
                     get_string('views', 'socialwiki'),
-                    get_string('favorite', 'socialwiki')
+                    get_string('favourite', 'socialwiki')
                 );
             case "topics":
                 return array(
@@ -83,7 +97,7 @@ abstract class socialwiki_table {
                     get_string('networkdistance', 'socialwiki')
                 );
             default:
-                return array('error in getHeaders:' . $type);
+                return array('error in getheaders: ' . $type);
         }
     }
 }
