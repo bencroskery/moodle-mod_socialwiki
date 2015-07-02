@@ -19,10 +19,9 @@
  * Copyright (C) 2000, 2001 Geoffrey T. Dairiki <dairiki@dairiki.org>
  * You may copy this code freely under the conditions of the GPL.
  */
-
 define('USE_ASSERTS_IN_WIKI', function_exists('assert'));
 
-class _WikiDiffOp {
+class wikidiffop {
 
     public $type;
     public $orig;
@@ -42,11 +41,11 @@ class _WikiDiffOp {
 
 }
 
-class _WikiDiffOp_Copy extends _WikiDiffOp {
+class wikidiffop_copy extends wikidiffop {
 
     public $type = 'copy';
 
-    public function _WikiDiffOp_Copy($orig, $closing = false) {
+    public function __construct($orig, $closing = false) {
         if (!is_array($closing)) {
             $closing = $orig;
         }
@@ -55,52 +54,52 @@ class _WikiDiffOp_Copy extends _WikiDiffOp {
     }
 
     public function reverse() {
-        return new _WikiDiffOp_Copy($this->closing, $this->orig);
+        return new wikidiffop_copy($this->closing, $this->orig);
     }
 
 }
 
-class _WikiDiffOp_Delete extends _WikiDiffOp {
+class wikidiffop_delete extends wikidiffop {
 
     public $type = 'delete';
 
-    public function _WikiDiffOp_Delete($lines) {
+    public function __construct($lines) {
         $this->orig = $lines;
         $this->closing = false;
     }
 
     public function reverse() {
-        return new _WikiDiffOp_Add($this->orig);
+        return new wikidiffop_add($this->orig);
     }
 
 }
 
-class _WikiDiffOp_Add extends _WikiDiffOp {
+class wikidiffop_add extends wikidiffop {
 
     public $type = 'add';
 
-    public function _WikiDiffOp_Add($lines) {
+    public function __construct($lines) {
         $this->closing = $lines;
         $this->orig = false;
     }
 
     public function reverse() {
-        return new _WikiDiffOp_Delete($this->closing);
+        return new wikidiffop_delete($this->closing);
     }
 
 }
 
-class _WikiDiffOp_Change extends _WikiDiffOp {
+class wikidiffop_change extends wikidiffop {
 
     public $type = 'change';
 
-    public function _WikiDiffOp_Change($orig, $closing) {
+    public function __construct($orig, $closing) {
         $this->orig = $orig;
         $this->closing = $closing;
     }
 
     public function reverse() {
-        return new _WikiDiffOp_Change($this->closing, $this->orig);
+        return new wikidiffop_change($this->closing, $this->orig);
     }
 
 }
@@ -125,11 +124,11 @@ class _WikiDiffOp_Change extends _WikiDiffOp {
  * @author Geoffrey T. Dairiki
  * @access private
  */
-class _WikiDiffEngine {
+class wikidiffengine {
 
-    public function diff($from_lines, $to_lines) {
-        $n_from = count($from_lines);
-        $n_to = count($to_lines);
+    public function diff($fromlines, $tolines) {
+        $nfrom = count($fromlines);
+        $nto = count($tolines);
 
         $this->xchanged = $this->ychanged = array();
         $this->xv = $this->yv = array();
@@ -139,35 +138,40 @@ class _WikiDiffEngine {
         unset($this->lcs);
 
         // Skip leading common lines.
-        for ($skip = 0; $skip < $n_from && $skip < $n_to; $skip++) {
-            if ($from_lines[$skip] != $to_lines[$skip])
+        for ($skip = 0; $skip < $nfrom && $skip < $nto; $skip++) {
+            if ($fromlines[$skip] != $tolines[$skip]) {
                 break;
+            }
             $this->xchanged[$skip] = $this->ychanged[$skip] = false;
         }
         // Skip trailing common lines.
-        $xi = $n_from;
-        $yi = $n_to;
+        $xi = $nfrom;
+        $yi = $nto;
         for ($endskip = 0; --$xi > $skip && --$yi > $skip; $endskip++) {
-            if ($from_lines[$xi] != $to_lines[$yi])
+            if ($fromlines[$xi] != $tolines[$yi]) {
                 break;
+            }
             $this->xchanged[$xi] = $this->ychanged[$yi] = false;
         }
 
         // Ignore lines which do not exist in both files.
-        for ($xi = $skip; $xi < $n_from - $endskip; $xi++)
-            $xhash[$from_lines[$xi]] = 1;
-        for ($yi = $skip; $yi < $n_to - $endskip; $yi++) {
-            $line = $to_lines[$yi];
-            if (($this->ychanged[$yi] = empty($xhash[$line])))
+        for ($xi = $skip; $xi < $nfrom - $endskip; $xi++) {
+            $xhash[$fromlines[$xi]] = 1;
+        }
+        for ($yi = $skip; $yi < $nto - $endskip; $yi++) {
+            $line = $tolines[$yi];
+            if (($this->ychanged[$yi] = empty($xhash[$line]))) {
                 continue;
+            }
             $yhash[$line] = 1;
             $this->yv[] = $line;
             $this->yind[] = $yi;
         }
-        for ($xi = $skip; $xi < $n_from - $endskip; $xi++) {
-            $line = $from_lines[$xi];
-            if (($this->xchanged[$xi] = empty($yhash[$line])))
+        for ($xi = $skip; $xi < $nfrom - $endskip; $xi++) {
+            $line = $fromlines[$xi];
+            if (($this->xchanged[$xi] = empty($yhash[$line]))) {
                 continue;
+            }
             $this->xv[] = $line;
             $this->xind[] = $xi;
         }
@@ -176,40 +180,44 @@ class _WikiDiffEngine {
         $this->_compareseq(0, count($this->xv), 0, count($this->yv));
 
         // Merge edits when possible.
-        $this->_shift_boundaries($from_lines, $this->xchanged, $this->ychanged);
-        $this->_shift_boundaries($to_lines, $this->ychanged, $this->xchanged);
+        $this->_shift_boundaries($fromlines, $this->xchanged, $this->ychanged);
+        $this->_shift_boundaries($tolines, $this->ychanged, $this->xchanged);
 
         // Compute the edit operations.
         $edits = array();
         $xi = $yi = 0;
-        while ($xi < $n_from || $yi < $n_to) {
-            USE_ASSERTS_IN_WIKI && assert($yi < $n_to || $this->xchanged[$xi]);
-            USE_ASSERTS_IN_WIKI && assert($xi < $n_from || $this->ychanged[$yi]);
+        while ($xi < $nfrom || $yi < $nto) {
+            USE_ASSERTS_IN_WIKI && assert($yi < $nto || $this->xchanged[$xi]);
+            USE_ASSERTS_IN_WIKI && assert($xi < $nfrom || $this->ychanged[$yi]);
 
             // Skip matching "snake".
             $copy = array();
-            while ($xi < $n_from && $yi < $n_to && !$this->xchanged[$xi] && !$this->ychanged[$yi]) {
-                $copy[] = $from_lines[$xi++];
+            while ($xi < $nfrom && $yi < $nto && !$this->xchanged[$xi] && !$this->ychanged[$yi]) {
+                $copy[] = $fromlines[$xi++];
                 ++$yi;
             }
-            if ($copy)
-                $edits[] = new _WikiDiffOp_Copy($copy);
+            if ($copy) {
+                $edits[] = new wikidiffop_copy($copy);
+            }
 
             // Find deletes & adds.
             $delete = array();
-            while ($xi < $n_from && $this->xchanged[$xi])
-                $delete[] = $from_lines[$xi++];
+            while ($xi < $nfrom && $this->xchanged[$xi]) {
+                $delete[] = $fromlines[$xi++];
+            }
 
             $add = array();
-            while ($yi < $n_to && $this->ychanged[$yi])
-                $add[] = $to_lines[$yi++];
+            while ($yi < $nto && $this->ychanged[$yi]) {
+                $add[] = $tolines[$yi++];
+            }
 
-            if ($delete && $add)
-                $edits[] = new _WikiDiffOp_Change($delete, $add);
-            elseif ($delete)
-                $edits[] = new _WikiDiffOp_Delete($delete);
-            elseif ($add)
-                $edits[] = new _WikiDiffOp_Add($add);
+            if ($delete && $add) {
+                $edits[] = new wikidiffop_change($delete, $add);
+            } else if ($delete) {
+                $edits[] = new wikidiffop_delete($delete);
+            } else if ($add) {
+                $edits[] = new wikidiffop_add($add);
+            }
         }
         return $edits;
     }
@@ -241,12 +249,15 @@ class _WikiDiffEngine {
             list ($xoff, $xlim, $yoff, $ylim) = array($yoff, $ylim, $xoff, $xlim);
         }
 
-        if ($flip)
-            for ($i = $ylim - 1; $i >= $yoff; $i--)
+        if ($flip) {
+            for ($i = $ylim - 1; $i >= $yoff; $i--) {
                 $ymatches[$this->xv[$i]][] = $i;
-        else
-            for ($i = $ylim - 1; $i >= $yoff; $i--)
+            }
+        } else {
+            for ($i = $ylim - 1; $i >= $yoff; $i--) {
                 $ymatches[$this->yv[$i]][] = $i;
+            }
+        }
 
         $this->lcs = 0;
         $this->seq[0] = $yoff - 1;
@@ -256,24 +267,28 @@ class _WikiDiffEngine {
         $numer = $xlim - $xoff + $nchunks - 1;
         $x = $xoff;
         for ($chunk = 0; $chunk < $nchunks; $chunk++) {
-            if ($chunk > 0)
-                for ($i = 0; $i <= $this->lcs; $i++)
+            if ($chunk > 0) {
+                for ($i = 0; $i <= $this->lcs; $i++) {
                     $ymids[$i][$chunk - 1] = $this->seq[$i];
+                }
+            }
 
             $x1 = $xoff + (int) (($numer + ($xlim - $xoff) * $chunk) / $nchunks);
             for (; $x < $x1; $x++) {
                 $line = $flip ? $this->yv[$x] : $this->xv[$x];
-                if (empty($ymatches[$line]))
+                if (empty($ymatches[$line])) {
                     continue;
+                }
                 $matches = $ymatches[$line];
                 reset($matches);
-                while (list ($junk, $y) = each($matches))
+                while (list ($junk, $y) = each($matches)) {
                     if (empty($this->in_seq[$y])) {
                         $k = $this->_lcs_pos($y);
                         USE_ASSERTS_IN_WIKI && assert($k > 0);
                         $ymids[$k] = $ymids[$k - 1];
                         break;
                     }
+                }
                 while (list ($junk, $y) = each($matches)) {
                     if ($y > $this->seq[$k - 1]) {
                         USE_ASSERTS_IN_WIKI && assert($y < $this->seq[$k]);
@@ -314,10 +329,11 @@ class _WikiDiffEngine {
         $beg = 1;
         while ($beg < $end) {
             $mid = (int) (($beg + $end) / 2);
-            if ($ypos > $this->seq[$mid])
+            if ($ypos > $this->seq[$mid]) {
                 $beg = $mid + 1;
-            else
+            } else {
                 $end = $mid;
+            }
         }
 
         USE_ASSERTS_IN_WIKI && assert($ypos != $this->seq[$end]);
@@ -353,23 +369,21 @@ class _WikiDiffEngine {
             --$ylim;
         }
 
-        if ($xoff == $xlim || $yoff == $ylim)
+        if ($xoff == $xlim || $yoff == $ylim) {
             $lcs = 0;
-        else {
-            // This is ad hoc but seems to work well.
-            // $nchunks = sqrt(min($xlim - $xoff, $ylim - $yoff) / 2.5);
-            // $nchunks = max(2,min(8,(int)$nchunks));
+        } else {
             $nchunks = min(7, $xlim - $xoff, $ylim - $yoff) + 1;
             list ($lcs, $seps) = $this->_diag($xoff, $xlim, $yoff, $ylim, $nchunks);
         }
 
         if ($lcs == 0) {
-            // X and Y sequences have no common subsequence:
-            // mark all changed.
-            while ($yoff < $ylim)
+            // X and Y sequences have no common subsequence: mark all changed.
+            while ($yoff < $ylim) {
                 $this->ychanged[$this->yind[$yoff++]] = 1;
-            while ($xoff < $xlim)
+            }
+            while ($xoff < $xlim) {
                 $this->xchanged[$this->xind[$xoff++]] = 1;
+            }
         } else {
             // Use the partitions to split this problem into subproblems.
             reset($seps);
@@ -394,13 +408,13 @@ class _WikiDiffEngine {
      * This is extracted verbatim from analyze.c (GNU diffutils-2.7).
      */
 
-    public function _shift_boundaries($lines, &$changed, $other_changed) {
+    public function _shift_boundaries($lines, &$changed, $otherchanged) {
         $i = 0;
         $j = 0;
 
         USE_ASSERTS_IN_WIKI && assert('count($lines) == count($changed)');
         $len = count($lines);
-        $other_len = count($other_changed);
+        $otherlen = count($otherchanged);
 
         while (1) {
             /*
@@ -409,30 +423,34 @@ class _WikiDiffEngine {
              *
              * Throughout this code, $i and $j are adjusted together so that
              * the first $i elements of $changed and the first $j elements
-             * of $other_changed both contain the same number of zeros
+             * of $otherchanged both contain the same number of zeros
              * (unchanged lines).
-             * Furthermore, $j is always kept so that $j == $other_len or
-             * $other_changed[$j] == false.
+             * Furthermore, $j is always kept so that $j == $otherlen or
+             * $otherchanged[$j] == false.
              */
-            while ($j < $other_len && $other_changed[$j])
+            while ($j < $otherlen && $otherchanged[$j]) {
                 $j++;
-
-            while ($i < $len && !$changed[$i]) {
-                USE_ASSERTS_IN_WIKI && assert('$j < $other_len && ! $other_changed[$j]');
-                $i++;
-                $j++;
-                while ($j < $other_len && $other_changed[$j])
-                    $j++;
             }
 
-            if ($i == $len)
+            while ($i < $len && !$changed[$i]) {
+                USE_ASSERTS_IN_WIKI && assert('$j < $otherlen && ! $otherchanged[$j]');
+                $i++;
+                $j++;
+                while ($j < $otherlen && $otherchanged[$j]) {
+                    $j++;
+                }
+            }
+
+            if ($i == $len) {
                 break;
+            }
 
             $start = $i;
 
             // Find the end of this run of changes.
-            while (++$i < $len && $changed[$i])
+            while (++$i < $len && $changed[$i]) {
                 continue;
+            }
 
             do {
                 /*
@@ -449,12 +467,14 @@ class _WikiDiffEngine {
                 while ($start > 0 && $lines[$start - 1] == $lines[$i - 1]) {
                     $changed[--$start] = 1;
                     $changed[--$i] = false;
-                    while ($start > 0 && $changed[$start - 1])
+                    while ($start > 0 && $changed[$start - 1]) {
                         $start--;
+                    }
                     USE_ASSERTS_IN_WIKI && assert('$j > 0');
-                    while ($other_changed[--$j])
+                    while ($otherchanged[--$j]) {
                         continue;
-                    USE_ASSERTS_IN_WIKI && assert('$j >= 0 && !$other_changed[$j]');
+                    }
+                    USE_ASSERTS_IN_WIKI && assert('$j >= 0 && !$otherchanged[$j]');
                 }
 
                 /*
@@ -462,7 +482,7 @@ class _WikiDiffEngine {
                  * point where it corresponds to a changed run in the other file.
                  * CORRESPONDING == LEN means no such point has been found.
                  */
-                $corresponding = $j < $other_len ? $i : $len;
+                $corresponding = $j < $otherlen ? $i : $len;
 
                 /*
                  * Move the changed region forward, so long as the
@@ -474,15 +494,17 @@ class _WikiDiffEngine {
                 while ($i < $len && $lines[$start] == $lines[$i]) {
                     $changed[$start++] = false;
                     $changed[$i++] = 1;
-                    while ($i < $len && $changed[$i])
+                    while ($i < $len && $changed[$i]) {
                         $i++;
+                    }
 
-                    USE_ASSERTS_IN_WIKI && assert('$j < $other_len && ! $other_changed[$j]');
+                    USE_ASSERTS_IN_WIKI && assert('$j < $otherlen && ! $otherchanged[$j]');
                     $j++;
-                    if ($j < $other_len && $other_changed[$j]) {
+                    if ($j < $otherlen && $otherchanged[$j]) {
                         $corresponding = $i;
-                        while ($j < $other_len && $other_changed[$j])
+                        while ($j < $otherlen && $otherchanged[$j]) {
                             $j++;
+                        }
                     }
                 }
             } while ($runlength != $i - $start);
@@ -495,9 +517,10 @@ class _WikiDiffEngine {
                 $changed[--$start] = 1;
                 $changed[--$i] = 0;
                 USE_ASSERTS_IN_WIKI && assert('$j > 0');
-                while ($other_changed[--$j])
+                while ($otherchanged[--$j]) {
                     continue;
-                USE_ASSERTS_IN_WIKI && assert('$j >= 0 && !$other_changed[$j]');
+                }
+                USE_ASSERTS_IN_WIKI && assert('$j >= 0 && !$otherchanged[$j]');
             }
         }
     }
@@ -507,7 +530,7 @@ class _WikiDiffEngine {
 /**
  * Class representing a 'diff' between two sequences of strings.
  */
-class WikiDiff {
+class wikidiff {
 
     public $edits;
 
@@ -515,24 +538,23 @@ class WikiDiff {
      * Constructor.
      * Computes diff between sequences of strings.
      *
-     * @param $from_lines array An array of strings.
+     * @param $fromlines array An array of strings.
      * 		  (Typically these are lines from a file.)
-     * @param $to_lines array An array of strings.
+     * @param $tolines array An array of strings.
      */
-    public function WikiDiff($from_lines, $to_lines) {
-        $eng = new _WikiDiffEngine;
-        $this->edits = $eng->diff($from_lines, $to_lines);
-        // $this->_check($from_lines, $to_lines);
+    public function __construct($fromlines, $tolines) {
+        $eng = new wikidiffengine;
+        $this->edits = $eng->diff($fromlines, $tolines);
     }
 
     /**
-     * Compute reversed WikiDiff.
+     * Compute reversed wikidiff.
      *
      * SYNOPSIS:
      *
-     * 	$diff = new WikiDiff($lines1, $lines2);
+     * 	$diff = new wikidiff($lines1, $lines2);
      * 	$rev = $diff->reverse();
-     * @return object A WikiDiff object representing the inverse of the
+     * @return object A wikidiff object representing the inverse of the
      * 				  original diff.
      */
     public function reverse() {
@@ -549,10 +571,11 @@ class WikiDiff {
      *
      * @return bool True iff two sequences were identical.
      */
-    public function isEmpty() {
+    public function isempty() {
         foreach ($this->edits as $edit) {
-            if ($edit->type != 'copy')
+            if ($edit->type != 'copy') {
                 return false;
+            }
         }
         return true;
     }
@@ -567,8 +590,9 @@ class WikiDiff {
     public function lcs() {
         $lcs = 0;
         foreach ($this->edits as $edit) {
-            if ($edit->type == 'copy')
+            if ($edit->type == 'copy') {
                 $lcs += count($edit->orig);
+            }
         }
         return $lcs;
     }
@@ -576,7 +600,7 @@ class WikiDiff {
     /**
      * Get the original set of lines.
      *
-     * This reconstructs the $from_lines parameter passed to the
+     * This reconstructs the $fromlines parameter passed to the
      * constructor.
      *
      * @return array The original sequence of strings.
@@ -585,8 +609,9 @@ class WikiDiff {
         $lines = array();
 
         foreach ($this->edits as $edit) {
-            if ($edit->orig)
+            if ($edit->orig) {
                 array_splice($lines, count($lines), 0, $edit->orig);
+            }
         }
         return $lines;
     }
@@ -594,7 +619,7 @@ class WikiDiff {
     /**
      * Get the closing set of lines.
      *
-     * This reconstructs the $to_lines parameter passed to the
+     * This reconstructs the $tolines parameter passed to the
      * constructor.
      *
      * @return array The sequence of strings.
@@ -603,38 +628,44 @@ class WikiDiff {
         $lines = array();
 
         foreach ($this->edits as $edit) {
-            if ($edit->closing)
+            if ($edit->closing) {
                 array_splice($lines, count($lines), 0, $edit->closing);
+            }
         }
         return $lines;
     }
 
     /**
-     * Check a WikiDiff for validity.
+     * Check a wikidiff for validity.
      *
      * This is here only for debugging purposes.
      */
-    public function _check($from_lines, $to_lines) {
-        if (serialize($from_lines) != serialize($this->orig()))
+    public function _check($fromlines, $tolines) {
+        if (serialize($fromlines) != serialize($this->orig())) {
             trigger_error("Reconstructed original doesn't match", E_USER_ERROR);
-        if (serialize($to_lines) != serialize($this->closing()))
+        }
+        if (serialize($tolines) != serialize($this->closing())) {
             trigger_error("Reconstructed closing doesn't match", E_USER_ERROR);
+        }
 
         $rev = $this->reverse();
-        if (serialize($to_lines) != serialize($rev->orig()))
+        if (serialize($tolines) != serialize($rev->orig())) {
             trigger_error("Reversed original doesn't match", E_USER_ERROR);
-        if (serialize($from_lines) != serialize($rev->closing()))
+        }
+        if (serialize($fromlines) != serialize($rev->closing())) {
             trigger_error("Reversed closing doesn't match", E_USER_ERROR);
+        }
 
         $prevtype = 'none';
         foreach ($this->edits as $edit) {
-            if ($prevtype == $edit->type)
+            if ($prevtype == $edit->type) {
                 trigger_error("Edit sequence is non-optimal", E_USER_ERROR);
+            }
             $prevtype = $edit->type;
         }
 
         $lcs = $this->lcs();
-        trigger_error("WikiDiff okay: LCS = $lcs", E_USER_NOTICE);
+        trigger_error("wikidiff okay: LCS = $lcs", E_USER_NOTICE);
     }
 
 }
@@ -642,7 +673,7 @@ class WikiDiff {
 /**
  * FIXME: bad name.
  */
-class MappedWikiDiff extends WikiDiff {
+class mappedwikidiff extends wikidiff {
 
     /**
      * Constructor.
@@ -653,38 +684,38 @@ class MappedWikiDiff extends WikiDiff {
      * case-insensitve diffs, or diffs which ignore
      * changes in white-space.
      *
-     * @param $from_lines array An array of strings.
+     * @param $fromlines array An array of strings.
      * 	(Typically these are lines from a file.)
      *
-     * @param $to_lines array An array of strings.
+     * @param $tolines array An array of strings.
      *
-     * @param $mapped_from_lines array This array should
-     * 	have the same size number of elements as $from_lines.
-     * 	The elements in $mapped_from_lines and
-     * 	$mapped_to_lines are what is actually compared
+     * @param $mappedfromlines array This array should
+     * 	have the same size number of elements as $fromlines.
+     * 	The elements in $mappedfromlines and
+     * 	$mappedtolines are what is actually compared
      * 	when computing the diff.
      *
-     * @param $mapped_to_lines array This array should
-     * 	have the same number of elements as $to_lines.
+     * @param $mappedtolines array This array should
+     * 	have the same number of elements as $tolines.
      */
-    public function MappedWikiDiff($from_lines, $to_lines, $mapped_from_lines, $mapped_to_lines) {
+    public function __construct($fromlines, $tolines, $mappedfromlines, $mappedtolines) {
 
-        assert(count($from_lines) == count($mapped_from_lines));
-        assert(count($to_lines) == count($mapped_to_lines));
+        assert(count($fromlines) == count($mappedfromlines));
+        assert(count($tolines) == count($mappedtolines));
 
-        $this->WikiDiff($mapped_from_lines, $mapped_to_lines);
+        $this->wikidiff($mappedfromlines, $mappedtolines);
 
         $xi = $yi = 0;
         for ($i = 0; $i < count($this->edits); $i++) {
             $orig = &$this->edits[$i]->orig;
             if (is_array($orig)) {
-                $orig = array_slice($from_lines, $xi, count($orig));
+                $orig = array_slice($fromlines, $xi, count($orig));
                 $xi += count($orig);
             }
 
             $closing = &$this->edits[$i]->closing;
             if (is_array($closing)) {
-                $closing = array_slice($to_lines, $yi, count($closing));
+                $closing = array_slice($tolines, $yi, count($closing));
                 $yi += count($closing);
             }
         }
@@ -693,13 +724,13 @@ class MappedWikiDiff extends WikiDiff {
 }
 
 /**
- * A class to format WikiDiffs
+ * A class to format wikidiffs
  *
  * This class formats the diff in classic diff format.
  * It is intended that this class be customized via inheritance,
  * to obtain fancier outputs.
  */
-class WikiDiffFormatter {
+class wikidiffformatter {
 
     /**
      * Number of leading context "lines" to preserve.
@@ -707,7 +738,7 @@ class WikiDiffFormatter {
      * This should be left at zero for this class, but subclasses
      * may want to set this to other values.
      */
-    public $leading_context_lines = 0;
+    public $leadingcontextlines = 0;
 
     /**
      * Number of trailing context "lines" to preserve.
@@ -715,12 +746,12 @@ class WikiDiffFormatter {
      * This should be left at zero for this class, but subclasses
      * may want to set this to other values.
      */
-    public $trailing_context_lines = 0;
+    public $trailingcontextlines = 0;
 
     /**
      * Format a diff.
      *
-     * @param $diff object A WikiDiff object.
+     * @param $diff object A wikidiff object.
      * @return string The formatted output.
      */
     public function format($diff) {
@@ -729,8 +760,8 @@ class WikiDiffFormatter {
         $block = false;
         $context = array();
 
-        $nlead = $this->leading_context_lines;
-        $ntrail = $this->trailing_context_lines;
+        $nlead = $this->leadingcontextlines;
+        $ntrail = $this->trailingcontextlines;
 
         $this->_start_diff();
 
@@ -742,7 +773,7 @@ class WikiDiffFormatter {
                     } else {
                         if ($ntrail) {
                             $context = array_slice($edit->orig, 0, $ntrail);
-                            $block[] = new _WikiWikiDiffOp_Copy($context);
+                            $block[] = new _WikiwikidiffOp_copy($context);
                         }
                         $this->_block($x0, $ntrail + $xi - $x0, $y0, $ntrail + $yi - $y0, $block);
                         $block = false;
@@ -755,20 +786,24 @@ class WikiDiffFormatter {
                     $x0 = $xi - count($context);
                     $y0 = $yi - count($context);
                     $block = array();
-                    if ($context)
-                        $block[] = new _WikiWikiDiffOp_Copy($context);
+                    if ($context) {
+                        $block[] = new _WikiwikidiffOp_copy($context);
+                    }
                 }
                 $block[] = $edit;
             }
 
-            if ($edit->orig)
+            if ($edit->orig) {
                 $xi += count($edit->orig);
-            if ($edit->closing)
+            }
+            if ($edit->closing) {
                 $yi += count($edit->closing);
+            }
         }
 
-        if (is_array($block))
+        if (is_array($block)) {
             $this->_block($x0, $xi - $x0, $y0, $yi - $y0, $block);
+        }
 
         return $this->_end_diff();
     }
@@ -776,16 +811,17 @@ class WikiDiffFormatter {
     public function _block($xbeg, $xlen, $ybeg, $ylen, &$edits) {
         $this->_start_block($this->_block_header($xbeg, $xlen, $ybeg, $ylen));
         foreach ($edits as $edit) {
-            if ($edit->type == 'copy')
+            if ($edit->type == 'copy') {
                 $this->_context($edit->orig);
-            elseif ($edit->type == 'add')
+            } else if ($edit->type == 'add') {
                 $this->_added($edit->closing);
-            elseif ($edit->type == 'delete')
+            } else if ($edit->type == 'delete') {
                 $this->_deleted($edit->orig);
-            elseif ($edit->type == 'change')
+            } else if ($edit->type == 'change') {
                 $this->_changed($edit->orig, $edit->closing);
-            else
+            } else {
                 trigger_error("Unknown edit type", E_USER_ERROR);
+            }
         }
         $this->_end_block();
     }
@@ -801,10 +837,12 @@ class WikiDiffFormatter {
     }
 
     public function _block_header($xbeg, $xlen, $ybeg, $ylen) {
-        if ($xlen > 1)
+        if ($xlen > 1) {
             $xbeg .= "," . ($xbeg + $xlen - 1);
-        if ($ylen > 1)
+        }
+        if ($ylen > 1) {
             $ybeg .= "," . ($ybeg + $ylen - 1);
+        }
 
         return $xbeg . ($xlen ? ($ylen ? 'c' : 'd') : 'a') . $ybeg;
     }
@@ -818,8 +856,9 @@ class WikiDiffFormatter {
     }
 
     public function _lines($lines, $prefix = ' ') {
-        foreach ($lines as $line)
+        foreach ($lines as $line) {
             echo "$prefix $line\n";
+        }
     }
 
     public function _context($lines) {
@@ -846,46 +885,50 @@ class WikiDiffFormatter {
  * 	Additions by Axel Boldt follow, partly taken from diff.php, phpwiki-1.3.3
  *
  */
-define('NBSP', '&#160;');   // iso-8859-x non-breaking space.
+define('NBSP', '&#160;');   // Non-breaking space.
 
-class _WikiHWLDF_WordAccumulator {
+class wikihwldf_wordaccumulator {
 
-    public function _WikiHWLDF_WordAccumulator() {
+    public function __construct() {
         $this->_lines = array();
         $this->_line = '';
         $this->_group = '';
         $this->_tag = '';
     }
 
-    public function _flushGroup($new_tag) {
+    public function _flushgroup($newtag) {
         if ($this->_group !== '') {
-            if ($this->_tag == 'mark')
+            if ($this->_tag == 'mark') {
                 $this->_line .= '<span class="diffchange">' . $this->_group . '</span>';
-            else
+            } else {
                 $this->_line .= $this->_group;
+            }
         }
         $this->_group = '';
-        $this->_tag = $new_tag;
+        $this->_tag = $newtag;
     }
 
-    public function _flushLine($new_tag) {
-        $this->_flushGroup($new_tag);
-        if ($this->_line != '')
+    public function _flushline($newtag) {
+        $this->_flushgroup($newtag);
+        if ($this->_line != '') {
             $this->_lines[] = $this->_line;
+        }
         $this->_line = '';
     }
 
-    public function addWords($words, $tag = '') {
-        if ($tag != $this->_tag)
-            $this->_flushGroup($tag);
+    public function addwords($words, $tag = '') {
+        if ($tag != $this->_tag) {
+            $this->_flushgroup($tag);
+        }
 
         foreach ($words as $word) {
-            // new-line should only come as first char of word.
-            if ($word == '')
+            // New-line should only come as first char of word.
+            if ($word == '') {
                 continue;
+            }
             if ($word[0] == "\n") {
                 $this->_group .= NBSP;
-                $this->_flushLine($tag);
+                $this->_flushline($tag);
                 $word = substr($word, 1);
             }
             assert(!strstr($word, "\n"));
@@ -893,25 +936,23 @@ class _WikiHWLDF_WordAccumulator {
         }
     }
 
-    public function getLines() {
-        $this->_flushLine('~done');
+    public function getlines() {
+        $this->_flushline('~done');
         return $this->_lines;
     }
 
 }
 
-class WordLevelWikiDiff extends MappedWikiDiff {
+class wordlevelwikidiff extends mappedwikidiff {
 
-    public function WordLevelWikiDiff($orig_lines, $closing_lines) {
-        list ($orig_words, $orig_stripped) = $this->_split($orig_lines);
-        list ($closing_words, $closing_stripped) = $this->_split($closing_lines);
+    public function __construct($origlines, $closinglines) {
+        list ($origwords, $origstripped) = $this->_split($origlines);
+        list ($closingwords, $closingstripped) = $this->_split($closinglines);
 
-        $this->MappedWikiDiff($orig_words, $closing_words, $orig_stripped, $closing_stripped);
+        $this->mappedwikidiff($origwords, $closingwords, $origstripped, $closingstripped);
     }
 
     public function _split($lines) {
-        // FIXME: fix POSIX char class.
-#		 if (!preg_match_all('/ ( [^\S\n]+ | [[:alnum:]]+ | . ) (?: (?!< \n) [^\S\n])? /xs',
         if (!preg_match_all('/ ( [^\S\n]+ | [0-9_A-Za-z\x80-\xff]+ | . ) (?: (?!< \n) [^\S\n])? /xs', implode("\n", $lines), $m)) {
             return array(array(''), array(''));
         }
@@ -919,27 +960,29 @@ class WordLevelWikiDiff extends MappedWikiDiff {
     }
 
     public function orig() {
-        $orig = new _WikiHWLDF_WordAccumulator;
+        $orig = new wikihwldf_wordaccumulator;
 
         foreach ($this->edits as $edit) {
-            if ($edit->type == 'copy')
-                $orig->addWords($edit->orig);
-            elseif ($edit->orig)
-                $orig->addWords($edit->orig, 'mark');
+            if ($edit->type == 'copy') {
+                $orig->addwords($edit->orig);
+            } else if ($edit->orig) {
+                $orig->addwords($edit->orig, 'mark');
+            }
         }
-        return $orig->getLines();
+        return $orig->getlines();
     }
 
     public function closing() {
-        $closing = new _WikiHWLDF_WordAccumulator;
+        $closing = new wikihwldf_wordaccumulator;
 
         foreach ($this->edits as $edit) {
-            if ($edit->type == 'copy')
-                $closing->addWords($edit->closing);
-            elseif ($edit->closing)
-                $closing->addWords($edit->closing, 'mark');
+            if ($edit->type == 'copy') {
+                $closing->addwords($edit->closing);
+            } else if ($edit->closing) {
+                $closing->addwords($edit->closing, 'mark');
+            }
         }
-        return $closing->getLines();
+        return $closing->getlines();
     }
 
 }
@@ -947,11 +990,11 @@ class WordLevelWikiDiff extends MappedWikiDiff {
 /**
  * @TODO: Doc this class
  */
-class TableWikiDiffFormatter extends WikiDiffFormatter {
+class tablewikidiffformatter extends wikidiffformatter {
 
     public $htmltable = array();
 
-    public function TableWikiDiffFormatter() {
+    public function __construct() {
         $this->leading_context_lines = 2;
         $this->trailing_context_lines = 2;
     }
@@ -995,15 +1038,16 @@ class TableWikiDiffFormatter extends WikiDiffFormatter {
 
     public function _changed($orig, $closing) {
         global $htmltable;
-        $diff = new WordLevelWikiDiff($orig, $closing);
+        $diff = new wordlevelwikidiff($orig, $closing);
         $del = $diff->orig();
         $add = $diff->closing();
 
         while ($line = array_shift($del)) {
             $aline = array_shift($add);
-            $htmltable[] = array('<div class="wiki_diffdel">' . $line . '</div>', '-', '<div class="wiki_diffadd">' . $aline . '</div>');
+            $htmltable[] = array('<div class="wiki_diffdel">'
+                . $line . '</div>', '-', '<div class="wiki_diffadd">' . $aline . '</div>');
         }
-        $this->_added($add); # If any leftovers
+        $this->_added($add); // If any leftovers.
     }
 
     public function get_result() {
@@ -1017,9 +1061,9 @@ class TableWikiDiffFormatter extends WikiDiffFormatter {
  * 	Wikipedia Table style diff formatter.
  *
  */
-class TableWikiDiffFormatterOld extends WikiDiffFormatter {
+class tablewikidiffformatterold extends wikidiffformatter {
 
-    public function TableWikiDiffFormatter() {
+    public function tablewikidiffformatter() {
         $this->leading_context_lines = 2;
         $this->trailing_context_lines = 2;
     }
@@ -1034,8 +1078,8 @@ class TableWikiDiffFormatterOld extends WikiDiffFormatter {
     }
 
     public function _start_block($header) {
-        global $wgOut;
-        $wgOut->addHTML($header);
+        global $wgout;
+        $wgout->addHTML($header);
     }
 
     public function _end_block() {
@@ -1046,60 +1090,60 @@ class TableWikiDiffFormatterOld extends WikiDiffFormatter {
 
     }
 
-    public function addedLine($line) {
+    public function addedline($line) {
         return '<td>+</td><td class="diff-addedline">' .
                 $line . '</td>';
     }
 
-    public function deletedLine($line) {
+    public function deletedline($line) {
         return '<td>-</td><td class="diff-deletedline">' .
                 $line . '</td>';
     }
 
-    public function emptyLine() {
+    public function emptyline() {
         return '<td colspan="2">&nbsp;</td>';
     }
 
-    public function contextLine($line) {
+    public function contextline($line) {
         return '<td> </td><td class="diff-context">' . $line . '</td>';
     }
 
     public function _added($lines) {
-        global $wgOut;
+        global $wgout;
         foreach ($lines as $line) {
-            $wgOut->addHTML('<tr>' . $this->emptyLine() .
-                    $this->addedLine($line) . "</tr>\n");
+            $wgout->addHTML('<tr>' . $this->emptyline() .
+                    $this->addedline($line) . "</tr>\n");
         }
     }
 
     public function _deleted($lines) {
-        global $wgOut;
+        global $wgout;
         foreach ($lines as $line) {
-            $wgOut->addHTML('<tr>' . $this->deletedLine($line) .
-                    $this->emptyLine() . "</tr>\n");
+            $wgout->addHTML('<tr>' . $this->deletedline($line) .
+                    $this->emptyline() . "</tr>\n");
         }
     }
 
     public function _context($lines) {
-        global $wgOut;
+        global $wgout;
         foreach ($lines as $line) {
-            $wgOut->addHTML('<tr>' . $this->contextLine($line) .
-                    $this->contextLine($line) . "</tr>\n");
+            $wgout->addHTML('<tr>' . $this->contextline($line) .
+                    $this->contextline($line) . "</tr>\n");
         }
     }
 
     public function _changed($orig, $closing) {
-        global $wgOut;
-        $diff = new WordLevelWikiDiff($orig, $closing);
+        global $wgout;
+        $diff = new wordlevelwikidiff($orig, $closing);
         $del = $diff->orig();
         $add = $diff->closing();
 
         while ($line = array_shift($del)) {
             $aline = array_shift($add);
-            $wgOut->addHTML('<tr>' . $this->deletedLine($line) .
-                    $this->addedLine($aline) . "</tr>\n");
+            $wgout->addHTML('<tr>' . $this->deletedline($line) .
+                    $this->addedline($aline) . "</tr>\n");
         }
-        $this->_added($add); # If any leftovers
+        $this->_added($add); // If any leftovers.
     }
 
 }

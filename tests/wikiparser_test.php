@@ -19,8 +19,8 @@
  *
  * @package   mod_wiki
  * @category  phpunit
- * @copyrigth 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
- * @copyrigth 2009 Universitat Politecnica de Catalunya http://www.upc.edu
+ * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
+ * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
  * @author Jordi Piguillem
  * @author Marc Alier
@@ -38,20 +38,20 @@ require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
 
 class mod_socialwiki_wikiparser_test extends basic_testcase {
 
-    function testCreoleMarkup() {
-        $this->assertTestFiles('creole');
+    public function testcreolemarkup() {
+        $this->asserttestfiles('creole');
     }
 
-    function testNwikiMarkup() {
-        $this->assertTestFiles('nwiki');
+    public function testnwikimarkup() {
+        $this->asserttestfiles('nwiki');
     }
 
-    function testHtmlMarkup() {
-        $this->assertTestFiles('html');
+    public function testhtmlmarkup() {
+        $this->asserttestfiles('html');
     }
 
-    private function assertTestFile($num, $markup) {
-        if(!file_exists(__DIR__."/fixtures/input/$markup/$num") || !file_exists(__DIR__."/fixtures/output/$markup/$num")) {
+    private function asserttestfile($num, $markup) {
+        if (!file_exists(__DIR__."/fixtures/input/$markup/$num") || !file_exists(__DIR__."/fixtures/output/$markup/$num")) {
             return false;
         }
         $input = file_get_contents(__DIR__."/fixtures/input/$markup/$num");
@@ -59,7 +59,7 @@ class mod_socialwiki_wikiparser_test extends basic_testcase {
 
         $result = socialwiki_parser_proxy::parse($input, $markup, array('pretty_print' => true));
 
-        // removes line breaks to avoid line break encoding causing tests to fail.
+        // Removes line breaks to avoid line break encoding causing tests to fail.
         $result['parsed_text'] = preg_replace('~[\r\n]~', '', $result['parsed_text']);
         $output                = preg_replace('~[\r\n]~', '', $output);
 
@@ -67,9 +67,9 @@ class mod_socialwiki_wikiparser_test extends basic_testcase {
         return true;
     }
 
-    private function assertTestFiles($markup) {
+    private function asserttestfiles($markup) {
         $i = 1;
-        while($this->assertTestFile($i, $markup)) {
+        while ($this->asserttestfile($i, $markup)) {
             $i++;
         }
     }
