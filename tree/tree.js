@@ -2,6 +2,7 @@ var scrollbar;
 var element = document.getElementById('doublescroll');
 DoubleScroll();
 
+// Hide Button.
 $(".hider").click(function () {
     var img = $("#hid" + ($(this).attr("value")));
 
@@ -21,6 +22,7 @@ $(".hider").click(function () {
     scrollbar.firstChild.style.width = element.scrollWidth + 'px';
 });
 
+// Collapse Button.
 $(".collapser").click(function () {
     var img = $("#cop" + ($(this).attr("value")));
 
@@ -54,6 +56,7 @@ $(".collapser").click(function () {
     scrollbar.firstChild.style.width = element.scrollWidth + 'px';
 });
 
+// Double scroll bar above and below the area.
 function DoubleScroll() {
     scrollbar = document.createElement('div');
     scrollbar.appendChild(document.createElement('div'));

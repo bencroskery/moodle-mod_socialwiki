@@ -29,10 +29,10 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
+require('../../config.php');
+require($CFG->dirroot . '/mod/socialwiki/locallib.php');
+require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
+require($CFG->dirroot . '/mod/socialwiki/table/table.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course module ID.
 $tab = optional_param('tabid', 0, PARAM_INT); // Option ID.

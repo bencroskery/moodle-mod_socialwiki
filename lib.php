@@ -346,8 +346,6 @@ function socialwiki_print_recent_activity($course, $viewfullnames, $timestart) {
  * @todo Finish documenting this function
  * */
 function socialwiki_cron() {
-    global $CFG;
-
     return true;
 }
 

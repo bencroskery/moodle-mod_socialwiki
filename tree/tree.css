@@ -1,9 +1,14 @@
 /*Now the CSS*/
 
 .btngroup {
+    display: none;
+}
+
+.jsenabled .btngroup {
     cursor: pointer;
     position: relative;
     left: 40%;
+    display: inline;
 }
 
 .hider {
@@ -27,9 +32,6 @@
 .tree ul {
     padding-top: 20px; position: relative;
     margin : 0;
-    /*overflow:auto;
-    white-space: no wrap*/
-
     transition: all 0.5s;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
@@ -60,8 +62,7 @@
     border-left: 1px solid #ccc;
 }
 
-/*We need to remove left-right connectors from elements without
-  any siblings*/
+/*We need to remove left-right connectors from elements without any siblings*/
 .tree li:only-child::after, .tree li:only-child::before {
     display: none;
 }
@@ -71,8 +72,7 @@
     padding: 0;
 }
 
-/*Remove left connector from first child and
-  right connector from last child*/
+/*Remove left connector from first child and right connector from last child*/
 .tree li:first-child::before, .tree li:last-child::after {
     border: 0 none;
 }

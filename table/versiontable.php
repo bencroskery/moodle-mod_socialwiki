@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once($CFG->dirroot . "/mod/socialwiki/locallib.php");
-require_once($CFG->dirroot . "/mod/socialwiki/table/table.php");
-require_once($CFG->dirroot . "/mod/socialwiki/peer.php");
-
-Global $CFG, $PAGE, $USER;
-
 /*
  * how to do this:
  * 1 - get a list of pages from DB.

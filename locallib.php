@@ -941,6 +941,9 @@ function socialwiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         foreach ($comments as $commentid => $commentvalue) {
             socialwiki_delete_comment($commentid, $context, $pageid);
         }
+        
+        // Delete page likes.
+        socialwiki_delete_page_likes($pageid);
 
         // Delete page tags.
         $tags = tag_get_tags_array('socialwiki_pages', $pageid);
@@ -1313,6 +1316,12 @@ function socialwiki_delete_like($userid, $pageid) {
     Global $DB;
     $select = 'userid=? AND pageid=?';
     $DB->delete_records_select('socialwiki_likes', $select, array($userid, $pageid));
+}
+
+// Delete a like.
+function socialwiki_delete_page_likes($pageid) {
+    Global $DB;
+    $DB->delete_records_select('socialwiki_likes', 'pageid=?', array($pageid));
 }
 
 // Get the number of likes for a page.

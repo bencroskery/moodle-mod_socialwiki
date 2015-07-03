@@ -26,10 +26,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
+require('../../config.php');
+require($CFG->dirroot . '/mod/socialwiki/locallib.php');
+require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 
 $pageid = required_param('pageid', PARAM_INT); // Page ID.
 $delete = optional_param('delete', 0, PARAM_INT); // ID of the page to be deleted.
@@ -65,8 +64,8 @@ if (!empty($delete) && confirm_sesskey()) {
     // When current wiki page is deleted, then redirect user to create that page, as
     // current pageid is invalid after deletion.
     if ($pageid == $delete) {
-        $params = array('swid' => $page->subwikiid, 'title' => $page->title);
-        $url = new moodle_url('/mod/socialwiki/create.php', $params);
+        $params = array('id' => $page->subwikiid);
+        $url = new moodle_url('/mod/socialwiki/home.php', $params);
         redirect($url);
     }
 }

@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+Global $CFG;
+require_once($CFG->dirroot . '/mod/socialwiki/table/usertable.php');
+require_once($CFG->dirroot . '/mod/socialwiki/table/topictable.php');
+require_once($CFG->dirroot . '/mod/socialwiki/table/versiontable.php');
+require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
+
+
 abstract class socialwiki_table {
 
     protected $uid; // UID of user viewing.
@@ -98,6 +105,54 @@ abstract class socialwiki_table {
                 );
             default:
                 return array('error in getheaders: ' . $type);
+        }
+    }
+
+    public static function builder($userid, $swid, $tabletype) {
+        $trustcombiner = 'max';  // Default for now, should remove entirely.
+
+        $t = null;
+        switch ($tabletype) {
+            case "recentlikes":      // User likes.
+                $t = versiontable::likes_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "faves":            // User favourites.
+            case "userfaves":        // Favourites by another user.
+                $t = versiontable::favourites_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "mypageversions":   // User pages.
+            case "userpageversions": // Pages by another user.
+                $t = versiontable::user_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "versionsfollowed": // Versions by followed users.
+                $t = versiontable::followed_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "newpageversions":  // New versions.
+                $t = versiontable::new_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "allpageversions":  // All versions.
+                $t = versiontable::all_versiontable($userid, $swid, $trustcombiner);
+                break;
+            case "followedusers":    // Followed users.
+                $t = usertable::followed_usertable($userid, $swid);
+                break;
+            case "followers":        // Followers.
+                $t = usertable::followers_usertable($userid, $swid);
+                break;
+            case "allusers":         // All users.
+                $t = usertable::all_usertable($userid, $swid);
+                break;
+            case "alltopics":        // All pages (grouped versions).
+                $t = topictable::all_topictable($userid, $swid);
+                break;
+            default:
+                $tabletype = 'unknowntabletype ' . $tabletype;
+        }
+
+        if ($t != null) {
+            return $t->get_as_html();
+        } else {
+            return get_string('no' . $tabletype, 'socialwiki');
         }
     }
 }

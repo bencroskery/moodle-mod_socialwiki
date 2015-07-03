@@ -13,9 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-require_once('../../config.php');
-require_once($CFG->dirroot . '/mod/socialwiki/pagelib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/locallib.php');
+require('../../config.php');
+require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
+require($CFG->dirroot . '/mod/socialwiki/locallib.php');
+require($CFG->dirroot . '/mod/socialwiki/table/table.php');
+
 $subwikiid = required_param('subwikiid', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 
