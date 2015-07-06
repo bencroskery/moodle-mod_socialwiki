@@ -18,7 +18,7 @@
  * Code fragment to define the version of socialwiki
  * This fragment is called by moodle_needs_upgrading() and /admin/index.php
  *
- * @package    mod-socialwiki-1.0
+ * @package    mod_socialwiki
  * @copyright  2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *

@@ -62,21 +62,18 @@ class versiontable extends socialwiki_table {
             $contribstring = $this->make_multi_user_div($contributors);
 
             $linkpage = "<a style='margin:0;' class='socialwiki_link' href="
-                    . $CFG->wwwroot . "/mod/socialwiki/view.php?pageid=" . $page->id . ">" . $page->title . "</a>";
+                    . "$CFG->wwwroot/mod/socialwiki/view.php?pageid=$page->id>$page->title</a>";
 
             if (socialwiki_liked($this->uid, $page->id)) {
-                $unlikeimg = "<img style='width:22px;' class='socialwiki_unlikeimg unlikeimg_"
-                        . $page->id . "' alt='unlikeimg_" . $page->id . "' src='"
-                        . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
-                $likeimg = "<img style='width:22px; display:none;' class='socialwiki_likeimg likeimg_"
-                        . $page->id . "' alt='likeimg_" . $page->id . "' src='"
-                        . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
+                $unlikeimg = "<img style='width:22px;' class='socialwiki_unlikeimg unlikeimg_$page->id' "
+                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/img/icons/likefilled.png'></img>";
+                $likeimg = "<img style='width:22px; display:none;' class='socialwiki_likeimg likeimg_$page->id' "
+                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/img/icons/hollowlike.png'></img>";
             } else {
-                $unlikeimg = "<img style='width:22px; display:none;' class='socialwiki_unlikeimg unlikeimg_"
-                        . $page->id . "'  alt='unlikeimg_" . $page->id . "' src='"
-                        . $CFG->wwwroot . "/mod/socialwiki/img/icons/likefilled.png'></img>";
-                $likeimg = "<img style='width:22px;' class='socialwiki_likeimg likeimg_" . $page->id . "'  alt='likeimg_"
-                        . $page->id . "' src='" . $CFG->wwwroot . "/mod/socialwiki/img/icons/hollowlike.png'></img>";
+                $unlikeimg = "<img style='width:22px; display:none;' class='socialwiki_unlikeimg unlikeimg_$page->id'  "
+                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/img/icons/likefilled.png'></img>";
+                $likeimg = "<img style='width:22px;' class='socialwiki_likeimg likeimg_$page->id'  "
+                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/img/icons/hollowlike.png'></img>";
             }
 
             // Favourites.
@@ -92,16 +89,16 @@ class versiontable extends socialwiki_table {
             $distance = $this->combine_indicators($page, $combiner, "networkdistance");
 
             $row = array(
-                get_string('title', 'socialwiki') => "<div>$likeimg$unlikeimg$linkpage</div>",
-                get_string('contributors', 'socialwiki') => $contribstring,
-                get_string('updated', 'socialwiki') => $updated,
-                get_string('likes', 'socialwiki') => $likes,
-                get_string('views', 'socialwiki') => $views,
-                get_string('favourite', 'socialwiki') => $favdiv,
-                get_string('popularity', 'socialwiki') => substr($peerpop, 0, 4),
-                get_string('likesim', 'socialwiki') => substr($likesim, 0, 4),
-                get_string('followsim', 'socialwiki') => substr($followsim, 0, 4),
-                get_string('networkdistance', 'socialwiki') => substr($distance, 0, 4)
+                'title' => "<div>$likeimg$unlikeimg$linkpage</div>",
+                'contributors' => $contribstring,
+                'updated' => $updated,
+                'likes' => $likes,
+                'views' => $views,
+                'favourite' => $favdiv,
+                'popularity' => substr($peerpop, 0, 4),
+                'likesim' => substr($likesim, 0, 4),
+                'followsim' => substr($followsim, 0, 4),
+                'networkdistance' => substr($distance, 0, 4)
             );
             // Add trust values.
             $table[] = array_intersect_key($row, array_flip($this->headers)); // Filter to get only the requested headers.
@@ -117,7 +114,7 @@ class versiontable extends socialwiki_table {
         if ($num == 1) {
             $firstctr .= " and 1 other";
         } else if ($num > 1) {
-            $firstctr .= " and " . $num . " others";
+            $firstctr .= " and $num others";
         }
 
         $ctr = "";
@@ -129,12 +126,12 @@ class versiontable extends socialwiki_table {
         }
 
         if ($idfirst == $this->uid) {
-            $href = "href='".$CFG->wwwroot . "/mod/socialwiki/home.php?id=".$PAGE->cm->id."'";
+            $href = "href='$CFG->wwwroot/mod/socialwiki/home.php?id={$PAGE->cm->id}'";
         } else {
-            $href = "href='".$CFG->wwwroot."/mod/socialwiki/viewuserpages.php?userid=".$idfirst."&subwikiid=". $this->swid ."'";
+            $href = "href='$CFG->wwwroot/mod/socialwiki/viewuserpages.php?userid=$idfirst&subwikiid=$this->swid'";
         }
 
-        return "<a class='socialwiki_link' " . $href . " title='$ctr'>$firstctr</a>";
+        return "<a class='socialwiki_link' $href title='$ctr'>$firstctr</a>";
     }
 
     /**

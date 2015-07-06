@@ -43,19 +43,19 @@ abstract class socialwiki_table {
      */
     public function get_as_html($tableid = 'a_table') {
 
-        $t = "<table id=" . $tableid . " class='datatable'>";
+        $t = "<table id=$tableid class='datatable'>";
         $tabledata = $this->get_table_data();
         // Headers.
         $t .= "<thead><tr>";
         foreach ($this->headers as $h) {
-            $t .= "<th>" . $h . "</th>";
+            $t .= "<th title='" . get_string($h.'_help', 'socialwiki') . "'>" . get_string($h, 'socialwiki') . "</th>";
         }
         $t .= "</tr></thead><tbody>";
 
         foreach ($tabledata as $row) {
             $t .= "<tr>";
             foreach ($row as $k => $val) {
-                $t .= "<td>" . $val . "</td>";
+                $t .= "<td>$val</td>";
             }
             $t .= "</tr>";
         }
@@ -66,42 +66,42 @@ abstract class socialwiki_table {
 
     public static function getheaders($type) {
         switch ($type) {
-            case "version":
+            case 'version':
                 return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('contributors', 'socialwiki'),
-                    get_string('updated', 'socialwiki'),
-                    get_string('likes', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('favourite', 'socialwiki'),
-                    get_string('popularity', 'socialwiki'),
-                    get_string('likesim', 'socialwiki'),
-                    get_string('followsim', 'socialwiki'),
-                    get_string('networkdistance', 'socialwiki')
+                    'title',
+                    'contributors',
+                    'updated',
+                    'likes',
+                    'views',
+                    'favourite',
+                    'popularity',
+                    'likesim',
+                    'followsim',
+                    'networkdistance'
                 );
-            case "mystuff":
+            case 'mystuff':
                 return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('contributors', 'socialwiki'),
-                    get_string('updated', 'socialwiki'),
-                    get_string('likes', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('favourite', 'socialwiki')
+                    'title',
+                    'contributors',
+                    'updated',
+                    'likes',
+                    'views',
+                    'favourite'
                 );
-            case "topics":
+            case 'topics':
                 return array(
-                    get_string('title', 'socialwiki'),
-                    get_string('versions', 'socialwiki'),
-                    get_string('views', 'socialwiki'),
-                    get_string('likes', 'socialwiki')
+                    'title',
+                    'versions',
+                    'views',
+                    'likes'
                 );
-            case "user":
+            case 'user':
                 return array(
-                    get_string('name', 'socialwiki'),
-                    get_string('popularity', 'socialwiki'),
-                    get_string('likesim', 'socialwiki'),
-                    get_string('followsim', 'socialwiki'),
-                    get_string('networkdistance', 'socialwiki')
+                    'name',
+                    'popularity',
+                    'likesim',
+                    'followsim',
+                    'networkdistance'
                 );
             default:
                 return array('error in getheaders: ' . $type);
@@ -113,24 +113,24 @@ abstract class socialwiki_table {
 
         $t = null;
         switch ($tabletype) {
-            case "recentlikes":      // User likes.
+            case "mylikes":            // User likes.
                 $t = versiontable::likes_versiontable($userid, $swid, $trustcombiner);
                 break;
-            case "faves":            // User favourites.
+            case "myfaves":            // User favourites.
             case "userfaves":        // Favourites by another user.
                 $t = versiontable::favourites_versiontable($userid, $swid, $trustcombiner);
                 break;
-            case "mypageversions":   // User pages.
-            case "userpageversions": // Pages by another user.
+            case "mypages":   // User pages.
+            case "userpages": // Pages by another user.
                 $t = versiontable::user_versiontable($userid, $swid, $trustcombiner);
                 break;
-            case "versionsfollowed": // Versions by followed users.
+            case "pagesfollowed": // Versions by followed users.
                 $t = versiontable::followed_versiontable($userid, $swid, $trustcombiner);
                 break;
-            case "newpageversions":  // New versions.
+            case "newpages":  // New versions.
                 $t = versiontable::new_versiontable($userid, $swid, $trustcombiner);
                 break;
-            case "allpageversions":  // All versions.
+            case "allpages":  // All versions.
                 $t = versiontable::all_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "followedusers":    // Followed users.
@@ -148,11 +148,12 @@ abstract class socialwiki_table {
             default:
                 $tabletype = 'unknowntabletype ' . $tabletype;
         }
-
+        $output = '<h2>'.get_string($tabletype, 'socialwiki').'</h2>';
         if ($t != null) {
-            return $t->get_as_html();
+            $output .= $t->get_as_html();
         } else {
-            return get_string('no' . $tabletype, 'socialwiki');
+            $output .= get_string($tabletype . '_empty', 'socialwiki');
         }
+        return $output;
     }
 }

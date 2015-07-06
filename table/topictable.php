@@ -44,10 +44,10 @@ class topictable extends socialwiki_table {
                     . '&exact=1&option=1">' . $title . '</a>';
 
             $row = array(
-                get_string('title', 'socialwiki') => $titlelink,
-                get_string('versions', 'socialwiki') => $data["Versions"],
-                get_string('views', 'socialwiki') => $data["Views"],
-                get_string('likes', 'socialwiki') => $data["Likes"],
+                'title' => $titlelink,
+                'versions' => $data["Versions"],
+                'views' => $data["Views"],
+                'likes' => $data["Likes"],
             );
 
             $table[] = $row; // Add row to table.

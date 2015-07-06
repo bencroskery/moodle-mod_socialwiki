@@ -50,11 +50,11 @@ class socialwiki_node {
         Global $PAGE, $CFG, $OUTPUT;
         $user = socialwiki_get_user_info($page->userid);
         // Buttons to minimize and collapse.
-        $this->content = html_writer::start_tag('span', array('id' => 'bgroup' . $this->id, 'class' => 'btngroup'));
-            $this->content .= html_writer::start_tag('img', array('title' => 'Minimize', 'id' => 'hid' . $this->id,
+        $this->content = html_writer::start_tag('span', array('id' => "bgroup$this->id", 'class' => 'btngroup'));
+            $this->content .= html_writer::start_tag('img', array('title' => 'Minimize', 'id' => "hid$this->id",
                 'src' => $OUTPUT->pix_url('t/less'), 'class' => 'hider', 'value' => $this->id));
             $this->content .= html_writer::end_tag('img');
-            $this->content .= html_writer::start_tag('img', array('title' => 'Collapse', 'id' => 'cop' . $this->id,
+            $this->content .= html_writer::start_tag('img', array('title' => 'Collapse', 'id' => "cop$this->id",
                 'src' => $OUTPUT->pix_url('t/up'), 'class' => 'collapser', 'value' => $this->id));
             $this->content .= html_writer::end_tag('img');
         $this->content .= html_writer::end_tag('span');
@@ -62,8 +62,8 @@ class socialwiki_node {
         // Title, user and date.
         $this->content .= html_writer::start_tag('span', array('id' => 'content' . $this->id));
             $this->content .= html_writer::start_tag('span', array('class' => 'titletext'));
-            $this->content .= html_writer::link($CFG->wwwroot . '/mod/socialwiki/view.php?pageid='
-                    . $page->id, $page->title . ' ID: ' . $page->id, array('style' => 'padding:0px;'));
+            $this->content .= html_writer::link("$CFG->wwwroot/mod/socialwiki/view.php?pageid=$page->id",
+                    "$page->title ID: $page->id", array('style' => 'padding:0px;'));
             $this->content .= html_writer::end_tag('span');
             $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
             $this->content .= html_writer::link($userlink->out(false), fullname($user))
@@ -76,9 +76,9 @@ class socialwiki_node {
     }
 
     public function to_html_list() {
-        $branch = '<li><div class="tagcloud" rel="' . $this->trustvalue . '">' . $this->content . '</div>';
+        $branch = "<li><div class='tagcloud' rel='$this->trustvalue'>$this->content</div>";
         if (!empty($this->children)) {
-            $branch .= '<ul id="' . $this->id . '">';
+            $branch .= "<ul id='$this->id'>";
             foreach ($this->children as $child) {
                 $branch .= $child->to_html_list(); // Recursively display children.
             }
@@ -156,7 +156,7 @@ class socialwiki_tree {
             $peerarray = peer::socialwiki_get_peer($p, $swid, $USER->id)->to_array();
             $peerinfo .= '<li>';
             foreach ($peerarray as $k => $v) {
-                $peerinfo .= '<' . $k . '>' . $v . '</' . $k . '>';
+                $peerinfo .= "<$k>$v</$k>";
             }
             $peerinfo .= '</li>';
         }

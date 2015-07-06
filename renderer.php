@@ -17,7 +17,7 @@
 /**
  * Moodle socialwiki 2.0 Renderer
  *
- * @package   mod-socialwiki
+ * @package   mod_socialwiki
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -20,7 +20,7 @@
  * It contains the great majority of functions defined by Moodle
  * that are mandatory to develop a module.
  *
- * @package mod-wiki-2.0
+ * @package mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -370,7 +370,7 @@ function socialwiki_grades($wikiid) {
  * file serving callback
  *
  * @copyright Josep Arus
- * @package  mod_wiki
+ * @package  mod_socialwiki
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
@@ -454,7 +454,7 @@ function socialwiki_get_extra_capabilities() {
  * Capability check has been done in comment->check_permissions(), we
  * don't need to do it again here.
  *
- * @package  mod_wiki
+ * @package  mod_socialwiki
  * @category comment
  *
  * @param stdClass $commentparam {
@@ -481,7 +481,7 @@ function socialwiki_comment_permissions($commentparam) {
  *              itemid      => int itemid
  * }
  *
- * @package  mod_wiki
+ * @package  mod_socialwiki
  * @category comment
  *
  * @return boolean
@@ -553,8 +553,7 @@ function socialwiki_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'mod-socialwiki-*' => get_string('page-mod-socialwiki-x', 'socialwiki'),
         'mod-socialwiki-view' => get_string('page-mod-socialwiki-view', 'socialwiki'),
         'mod-socialwiki-comments' => get_string('page-mod-socialwiki-comments', 'socialwiki'),
-        'mod-socialwiki-history' => get_string('page-mod-socialwiki-history', 'socialwiki'),
-        'mod-socialwiki-manage' => get_string('page-mod-socialwiki-manage', 'socialwiki')
+        'mod-socialwiki-history' => get_string('page-mod-socialwiki-history', 'socialwiki')
     );
     return $modulepagetype;
 }

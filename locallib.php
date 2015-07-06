@@ -17,7 +17,7 @@
 /**
  * This contains functions and classes that will be used by scripts in wiki module
  *
- * @package mod-wiki-2.0
+ * @package mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -577,10 +577,10 @@ function socialwiki_increment_user_views($userid, $pageid) {
 // ----------------------------------------------------------
 
 /**
- * style formats
+ * Style formats
  */
 function socialwiki_get_styles() {
-    return array('classic', 'modern');
+    return array('classic'); // Style 'modern' removed for now.
 }
 
 /**
@@ -941,7 +941,7 @@ function socialwiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         foreach ($comments as $commentid => $commentvalue) {
             socialwiki_delete_comment($commentid, $context, $pageid);
         }
-        
+
         // Delete page likes.
         socialwiki_delete_page_likes($pageid);
 
@@ -1264,7 +1264,7 @@ function socialwiki_unfollow($userfromid, $usertoid, $subwikiid) {
     $DB->delete_records_select('socialwiki_follows', $select, array($userfromid, $usertoid, $subwikiid));
 }
 
-// Returns the number of poeple following the user.
+// Returns the number of people following the user.
 function socialwiki_get_followers($userid, $subwikiid) {
     Global $DB;
     $select = 'usertoid=? AND subwikiid=?';

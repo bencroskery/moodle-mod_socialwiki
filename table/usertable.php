@@ -96,7 +96,7 @@ class usertable extends socialwiki_table {
             $user = socialwiki_get_user_info($id);
             $name = "<a style='margin:0;' class='socialwiki_link' href='"
                     . $www . "/mod/socialwiki/viewuserpages.php?userid="
-                    . $user->id . "&subwikiid=" . $swid . "'>" . fullname($user) . "</a>";
+                    . $user->id . "&subwikiid=$swid'>" . fullname($user) . "</a>";
 
             $peer = peer::socialwiki_get_peer($id, $swid, $me);
             switch ($peer->depth) {
@@ -115,11 +115,11 @@ class usertable extends socialwiki_table {
             }
 
             $rowdata = array(
-                get_string('name', 'socialwiki') => $name,
-                get_string('popularity', 'socialwiki') => $peer->popularity,
-                get_string('likesim', 'socialwiki') => substr("$peer->likesim", 0, 4),
-                get_string('followsim', 'socialwiki') => substr("$peer->followsim", 0, 4),
-                get_string('networkdistance', 'socialwiki') => $following
+                'name' => $name,
+                'popularity' => $peer->popularity,
+                'likesim' => substr("$peer->likesim", 0, 4),
+                'followsim' => substr("$peer->followsim", 0, 4),
+                'networkdistance' => $following
             );
 
             foreach ($headers as $key) {

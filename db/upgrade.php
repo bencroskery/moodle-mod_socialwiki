@@ -25,7 +25,7 @@
  * to perform all the necessary actions to upgrade
  * your older installation to the current version.
  *
- * @package mod-socialwiki-2.0
+ * @package mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
