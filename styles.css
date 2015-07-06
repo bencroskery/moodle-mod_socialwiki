@@ -1,17 +1,18 @@
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* This file is part of Moodle - http://moodle.org/
+
+ Moodle is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Moodle is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * Wiki module style sheet
@@ -32,7 +33,6 @@
 /*
  *Starting here are the styles included by the regular wiki
  */
-
 .socialwiki_contentbox {
     width: 80%;
     margin: auto;
@@ -45,7 +45,7 @@
     margin: auto;
     margin-top: 10px;
     margin-bottom: 10px;
-    text-align:center;
+    text-align: center;
 }
 
 .socialwiki_previewbox {
@@ -184,12 +184,13 @@
     font-weight: normal;
 }
 
-.socialwiki_restore,.socialwiki_diffview,.socialwiki_difftime,.socialwiki_headingtime {
+.socialwiki_restore, .socialwiki_diffview, .socialwiki_difftime,
+    .socialwiki_headingtime {
     font-size: 0.8em;
     font-weight: normal;
 }
 
-.socialwiki_difftime,.socialwiki_headingtime {
+.socialwiki_difftime, .socialwiki_headingtime {
     font-style: oblique;
     text-align: center;
 }
@@ -208,7 +209,7 @@
     margin-right: 5%;
 }
 
-.socialwiki_diff_old,.socialwiki_diff_new {
+.socialwiki_diff_old, .socialwiki_diff_new {
     float: left;
     min-width: 200px;
     width: 40%;
@@ -354,23 +355,29 @@ a.socialwiki_edit_section {
 
 .socialwiki-diff-container {
     width: 98%;
-    margin: 10px auto;}
+    margin: 10px auto;
+}
+
 .socialwiki-diff-container .socialwiki-diff-leftside,
-.socialwiki-diff-container .socialwiki-diff-rightside {
+    .socialwiki-diff-container .socialwiki-diff-rightside {
     width: 49.5%;
     margin: 0;
     padding: 0;
     float: left;
 }
+
 .socialwiki-diff-container .socialwiki-diff-rightside {
     margin-left: 1%;
 }
+
 .socialwiki-diff-container .socialwiki-diff-heading,
-.socialwiki-diff-container .no-overflow {
+    .socialwiki-diff-container .no-overflow {
     padding: 10px;
     border: 1px solid #DDD;
 }
-.socialwiki-diff-container .socialwiki-diff-rightside .socialwiki_diffversion {
+
+.socialwiki-diff-container .socialwiki-diff-rightside .socialwiki_diffversion
+    {
     text-align: right;
 }
 

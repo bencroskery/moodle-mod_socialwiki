@@ -87,8 +87,8 @@ class peer {
     private function set_follow_sim($userid, $swid) {
         Global $DB;
         $sql = 'SELECT COUNT(usertoid) AS total, COUNT(DISTINCT usertoid) AS different
-		FROM {socialwiki_follows}
-		WHERE (userfromid=? OR userfromid=?) AND subwikiid=?';
+            FROM {socialwiki_follows}
+            WHERE (userfromid=? OR userfromid=?) AND subwikiid=?';
         $data = $DB->get_record_sql($sql, array($this->id, $userid, $swid));
         if ($data->total > 0) {
 
@@ -100,8 +100,8 @@ class peer {
     private function set_like_sim($userid, $swid) {
         Global $DB;
         $sql = 'SELECT COUNT(pageid) AS total, COUNT(DISTINCT pageid) AS different
-		FROM {socialwiki_likes}
-		WHERE (userid=? OR userid=?) AND subwikiid=?';
+            FROM {socialwiki_likes}
+            WHERE (userid=? OR userid=?) AND subwikiid=?';
         $data = $DB->get_record_sql($sql, array($this->id, $userid, $swid));
 
         // Get the similarity between likes and divide by unique likes.

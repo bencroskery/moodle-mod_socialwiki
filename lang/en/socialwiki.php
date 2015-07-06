@@ -120,7 +120,7 @@ $string['help'] = 'Help';
 $string['history'] = 'Versions';
 $string['history_help'] = 'The history lists links to previous versions of the page.';
 $string['html'] = 'HTML';
-$string['incorrectdeleteversions'] = "Page versions provided for deletion are incorrect.";
+$string['incorrectdeleteversions'] = 'Page versions provided for deletion are incorrect.';
 $string['insertcomment'] = 'Insert comment';
 $string['insertimage'] = 'Insert an image...';
 $string['insertimage_help'] = 'This drop-down list will insert an image to the wiki editor. If you need to add more images to the wiki, please use "Files" tab.';
@@ -137,6 +137,7 @@ $string['listall'] = 'List all';
 $string['listrelated'] = 'List related';
 $string['home'] = 'Home';
 $string['homemenu'] = 'Home menu';
+$string['hometitle'] = 'Social Wiki Home';
 $string['migrationfinished'] = 'Migration finished successfully';
 $string['migrationfinishednowikis'] = 'Migration finished, no wikis were migrated';
 $string['missingpages'] = 'Pages without content';
@@ -248,12 +249,12 @@ $string['teacherrating'] = 'Teacher rating';
 $string['teacherpages'] = 'Teacher\'s pages';
 $string['timesrating'] = 'This page has been rated  {$a->c} times with an average of: {$a->s}';
 $string['tree'] = 'Tree View';
-$string['updatedpages'] = "Updated pages";
-$string['updatedpages_help'] = "Recently updated wiki pages";
-$string['updatedwikipages'] = "Updated wiki pages";
-$string['upload'] = "Upload & Delete";
-$string['uploadname'] = "Filename";
-$string['uploadactions'] = "Actions";
+$string['updatedpages'] = 'Updated pages';
+$string['updatedpages_help'] = 'Recently updated wiki pages';
+$string['updatedwikipages'] = 'Updated wiki pages';
+$string['upload'] = 'Upload & Delete';
+$string['uploadname'] = 'Filename';
+$string['uploadactions'] = 'Actions';
 $string['uploadtitle'] = 'Attach files';
 $string['uploadfiletitle'] = 'Attachments';
 $string['versionerror'] = 'Version ID does not exist';
@@ -299,9 +300,11 @@ $string['socialwikipages'] = 'Social Wiki pages';
 $string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page history.';
 $string['socialwiki:managewiki'] = 'Manage Social Wiki';
 
+/*
+ * All table related strings
+ */
 
-
-// Table headers.
+// Headers.
 $string['title'] = 'Title';
 $string['title_help'] = 'The title of the page version.';
 $string['contributors'] = 'Contributors';
@@ -319,7 +322,7 @@ $string['versions_help'] = 'How many different versions this topic has.';
 $string['name'] = 'Name';
 $string['name_help'] = 'The name of the user.';
 
-$string['favourite'] = 'Favourited By';
+$string['favourite'] = 'Favourites';
 $string['favourite_help'] = 'A favourite is the most recent like in a topic';
 $string['popularity'] = 'Followers';
 $string['popularity_help'] = 'How many followers this user has';
@@ -331,31 +334,31 @@ $string['networkdistance'] = 'Social Distance';
 $string['networkdistance_help'] = 'How many steps away the user is in your network of follows';
 
 // Each table type and what is shown when the table is empty.
-$string['pagesfollowed'] = "From Users You Follow";
-$string['pagesfollowed_empty'] = "No unseen page versions liked by the users you follow.";
-$string['newpages'] = "New Page Versions";
-$string['newpages_empty'] = "No new page versions.";
-$string['allpages'] = "All Page Versions";
-$string['allpages_empty'] = "No page versions.";
-$string['alltopics'] = "All pages";
-$string['alltopics_empty'] = "No pages.";
-$string['myfaves'] = "My Favourites";
-$string['myfaves_empty'] = "You don't have any favourite pages.";
-$string['mylikes'] = "My Likes";
-$string['mylikes_empty'] = "You don't have any likes.";
-$string['mypages'] = "My Pages";
-$string['mypages_empty'] = "You haven't created any pages.";
-$string['followers'] = "Followers";
-$string['followers_empty'] = "You don't have any followers.";
-$string['followedusers'] = "Following";
-$string['followedusers_empty'] = "You don't follow anybody.";
-$string['allusers'] = "All Active Users";
-$string['allusers_empty'] = "No other users.";
-$string['userfaves'] = "Favourite Pages";
-$string['userfaves_empty'] = "This user has no favourite pages.";
-$string['userpages'] = "Created Pages";
-$string['userpages_empty'] = "This user has not created any pages.";
+$string['pagesfollowed'] = 'From Users You Follow';
+$string['pagesfollowed_empty'] = 'No unseen page versions liked by the users you follow.';
+$string['newpages'] = 'New Page Versions';
+$string['newpages_empty'] = 'No new page versions.';
+$string['allpages'] = 'All Page Versions';
+$string['allpages_empty'] = 'No page versions.';
+$string['alltopics'] = 'All pages';
+$string['alltopics_empty'] = 'No pages.';
+$string['myfaves'] = 'My Favourites';
+$string['myfaves_empty'] = 'You don\'t have any favourite pages.';
+$string['mylikes'] = 'My Likes';
+$string['mylikes_empty'] = 'You don\'t have any likes.';
+$string['mypages'] = 'My Pages';
+$string['mypages_empty'] = 'You haven\'t created any pages.';
+$string['followers'] = 'Followers';
+$string['followers_empty'] = 'You don\'t have any followers.';
+$string['followedusers'] = 'Following';
+$string['followedusers_empty'] = 'You don\'t follow anybody.';
+$string['allusers'] = 'All Active Users';
+$string['allusers_empty'] = 'No other users.';
+$string['userfaves'] = 'Favourite Pages';
+$string['userfaves_empty'] = 'This user has no favourite pages.';
+$string['userpages'] = 'Created Pages';
+$string['userpages_empty'] = 'This user has not created any pages.';
 
-$string['nopagesfound'] = "No Pages Found";
+$string['nopagesfound'] = 'No Pages Found';
 $string['searchresultsfor'] = 'Search results for';
 $string['makepage'] = 'Make a new Page';

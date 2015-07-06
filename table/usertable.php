@@ -26,8 +26,8 @@ class usertable extends socialwiki_table {
      * 1: use a specific DB access function to retrieve a subset of the users,
      *    it may be a superset of what we ultimately want.
      *    Examples:
-     * 	  - get all users
-     * 	  - get followers of some user
+     *    - get all users
+     *    - get followers of some user
      *
      * 2: refine select condition by applying a filter
      *

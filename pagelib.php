@@ -299,8 +299,8 @@ class page_socialwiki_view extends page_socialwiki {
         $thetitle .= format_string($this->page->title);
         $thetitle .= html_writer::end_tag('h1');
 
-        $unlikeicon = new moodle_url('/mod/socialwiki/img/icons/likefilled.png');
-        $likeicon = new moodle_url('/mod/socialwiki/img/icons/hollowlike.png');
+        $unlikeicon = new moodle_url('/mod/socialwiki/pix/icons/likefilled.png');
+        $likeicon = new moodle_url('/mod/socialwiki/pix/icons/hollowlike.png');
         $likeaction = new moodle_url('/mod/socialwiki/like.php');
 
         $theliker = '<noscript>' . html_writer::start_tag('form',
@@ -340,7 +340,7 @@ class page_socialwiki_view extends page_socialwiki {
         if (socialwiki_user_can_view($this->subwiki)) {
 
             if (!empty($this->page)) {
-                socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id); // Function in locallib.php.
+                socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id);
                 echo $this->wikioutput->prettyview_link($this->page);
             } else {
                 print_string('nocontent', 'socialwiki');
@@ -1284,7 +1284,7 @@ class page_socialwiki_home extends page_socialwiki {
         Global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
         $this->tab = $t;
-        $PAGE->set_title('Social Wiki Home');
+        $PAGE->set_title(get_string('hometitle', 'socialwiki'));
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
@@ -1312,7 +1312,7 @@ class page_socialwiki_home extends page_socialwiki {
         );
 
         // Print the home page heading.
-        echo $OUTPUT->heading('Social Wiki Home', 1, "socialwiki_headingtitle colourtext");
+        echo $OUTPUT->heading(get_string('hometitle', 'socialwiki'), 1, "socialwiki_headingtitle colourtext");
 
         $userheader = "<div class='home_picture'>";
         $userheader .= $OUTPUT->user_picture(socialwiki_get_user_info($USER->id), array('size' => 65));
@@ -2112,12 +2112,12 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
             // Make button to follow/unfollow.
             if (!socialwiki_is_following($USER->id, $user->id, $this->subwiki->id) && $USER->id != $this->uid) {
-                $icon = new moodle_url('/mod/socialwiki/img/icons/man-plus.png');
+                $icon = new moodle_url('/mod/socialwiki/pix/icons/man-plus.png');
                 $text = get_string('follow', 'socialwiki');
                 $tip = get_string('follow_tip', 'socialwiki');
             } else if ($USER->id != $this->uid) {
                 // Show like link.
-                $icon = new moodle_url('/mod/socialwiki/img/icons/man-minus.png');
+                $icon = new moodle_url('/mod/socialwiki/pix/icons/man-minus.png');
                 $text = get_string('unfollow', 'socialwiki');
                 $tip = get_string('unfollow_tip', 'socialwiki');
             }
