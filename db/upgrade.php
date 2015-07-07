@@ -34,6 +34,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  *
  */
+
+/**
+ * SocialWiki upgrade function.
+ *
+ * @param int $oldversion The old version.
+ * @return true
+ */
 function xmldb_socialwiki_upgrade($oldversion) {
     global $DB;
 
@@ -60,7 +67,7 @@ function xmldb_socialwiki_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, $revision, 'socialwiki'); // Socialwiki savepoint reached.
     }
-    
+
     // Remove locks, synonyms and links tables.
     $revision = 2015070100;
     if ($oldversion < 2015070100) {

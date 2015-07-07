@@ -198,9 +198,9 @@ abstract class page_socialwiki {
     }
 
     /**
-     * Method to set the current page
+     * Method to set the current page.
      *
-     * @param object $page Current page
+     * @param stdClass $page Current page
      */
     public function set_page($page) {
         global $PAGE;
@@ -1096,10 +1096,6 @@ class page_socialwiki_diff extends page_socialwiki {
 
     /**
      * Given two pages, prints a page displaying the differences between them.
-     *
-     * @global object $CFG
-     * @global object $OUTPUT
-     * @global object $PAGE
      */
     private function print_diff_content() {
         $pageid = $this->page->id;
@@ -1727,11 +1723,7 @@ class page_socialwiki_viewversion extends page_socialwiki {
     }
 
     /**
-     * Given an old page version, output the version content
-     *
-     * @global object $CFG
-     * @global object $OUTPUT
-     * @global object $PAGE
+     * Given an old page version, output the version content.
      */
     private function print_version_view() {
         global $OUTPUT;
@@ -1964,10 +1956,7 @@ class page_socialwiki_admin extends page_socialwiki {
     }
 
     /**
-     * Sets page url
-     *
-     * @global object $PAGE
-     * @global object $CFG
+     * Sets page url.
      */
     public function set_url() {
         global $PAGE, $CFG;
@@ -1975,9 +1964,7 @@ class page_socialwiki_admin extends page_socialwiki {
     }
 
     /**
-     * sets navigation bar for the page
-     *
-     * @global object $PAGE
+     * Sets navigation bar for the page.
      */
     protected function create_navbar() {
         global $PAGE;
@@ -2039,11 +2026,10 @@ class page_socialwiki_admin extends page_socialwiki {
 
     /**
      * helper function for print_delete_content. This will add data to the table.
-     *
-     * @global object $OUTPUT
+     * 
      * @param array $pages objects of wiki pages in subwiki
      * @param int $swid id of subwiki
-     * @param object $table reference to the table in which data needs to be added
+     * @param stdClass $table reference to the table in which data needs to be added
      */
     protected function add_page_delete_options($pages, &$table) {
         global $OUTPUT;

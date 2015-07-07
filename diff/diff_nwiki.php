@@ -554,7 +554,7 @@ class wikidiff {
      *
      * $diff = new wikidiff($lines1, $lines2);
      * $rev = $diff->reverse();
-     * @return object A wikidiff object representing the inverse of the original diff.
+     * @return stdClass A wikidiff object representing the inverse of the original diff.
      */
     public function reverse() {
         $rev = $this;

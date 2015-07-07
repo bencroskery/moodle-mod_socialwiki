@@ -134,9 +134,12 @@ class peer {
     }
 
     /**
-     * recalculate peer indicators.
-     * @param updatelikes: boolean: recalculate like similarity (after a like has happened)
-     * @param updatenetwork: boolean: recalculate follow similarity and network distance (after a follow has happened)
+     * Recalculate peer indicators.
+     * 
+     * @param bool $updatelikes Recalculate like similarity (after a like has happened).
+     * @param bool $updatenetwork Recalculate follow similarity and network distance (after a follow has happened).
+     * @param id $swid The subwiki ID.
+     * @param id $thisuser This user ID.
      */
     public static function socialwiki_update_peers($updatelikes, $updatenetwork, $swid, $thisuser = null) {
         Global $USER;

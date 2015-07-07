@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Post installation procedure
+ * Nothing to do here.
+ */
 function xmldb_socialwiki_install() {
-    global $DB;
 
 }
