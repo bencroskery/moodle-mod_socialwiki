@@ -69,6 +69,7 @@ function socialwiki_get_subwikis($wikiid) {
  * 
  * @param int $wikiid The wiki ID.
  * @param int $groupid The group ID.
+ * @param int $userid The user ID.
  * @return stdClass
  */
 function socialwiki_get_subwiki_by_group($wikiid, $groupid, $userid = 0) {
@@ -108,7 +109,7 @@ function socialwiki_add_subwiki($wikiid, $groupid, $userid = 0) {
 }
 
 /**
- * Get a wiki instance by pageid.
+ * Get a wiki instance by page ID.
  * 
  * @param int $pageid
  * @return stdClass
@@ -126,7 +127,7 @@ function socialwiki_get_wiki_from_pageid($pageid) {
 }
 
 /**
- * Get a wiki page by pageid.
+ * Get a wiki page by page ID.
  * 
  * @param int $pageid
  * @return stdClass
@@ -141,7 +142,7 @@ function socialwiki_get_page($pageid) {
  * 
  * @param int $userid The user ID.
  * @param int $swid The subwiki ID.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_get_pages_from_userid($userid, $swid) {
     Global $DB;
@@ -396,7 +397,7 @@ function socialwiki_get_wiki_page_version($pageid, $version) {
  * @param int $pageid The page ID.
  * @param int $limitfrom
  * @param int $limitnum
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_get_wiki_page_versions($pageid, $limitfrom, $limitnum) {
     global $DB;
@@ -418,7 +419,7 @@ function socialwiki_count_wiki_page_versions($pageid) {
  * Get pages which user has edited
  * @param int $swid The subwiki ID.
  * @param int $userid The user ID.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_get_contributions($swid, $userid) {
     global $DB;
@@ -436,7 +437,7 @@ function socialwiki_get_contributions($swid, $userid) {
  * Get pages list in wiki
  * @param int $swid subwiki ID.
  * @param bool $filter0likes Whether to skip the pages without likes.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_get_page_list($swid, $filter0likes = true) {
     global $DB;
@@ -453,6 +454,12 @@ function socialwiki_get_page_list($swid, $filter0likes = true) {
     }
 }
 
+/**
+ * Get the list of topics.
+ * 
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_topics($swid) {
     $records = socialwiki_get_page_list($swid);
     $pages = array();
@@ -471,6 +478,13 @@ function socialwiki_get_topics($swid) {
     return $pages;
 }
 
+/**
+ * Get a list of the user's pages.
+ * 
+ * @param int $uid The user ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_user_page_list($uid, $swid) {
     global $DB;
 
@@ -478,6 +492,13 @@ function socialwiki_get_user_page_list($uid, $swid) {
     return $records;
 }
 
+/**
+ * Get a list of the user's topics.
+ * 
+ * @param int $uid The user ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_user_topics($uid, $swid) {
     $records = socialwiki_get_user_page_list($uid, $swid);
     $pages = array();
@@ -501,7 +522,7 @@ function socialwiki_get_user_topics($uid, $swid) {
  * 
  * @param int $swid The subwiki ID.
  * @param string $title The title to search for.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_get_related_pages($swid, $title) {
     global $DB;
@@ -515,7 +536,7 @@ function socialwiki_get_related_pages($swid, $title) {
  * @param int $swid The subwiki ID.
  * @param string $search What to search for.
  * @param bool $exact Only an exact match if true.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_search_title($swid, $search, $exact = false) {
     global $DB;
@@ -539,7 +560,7 @@ function socialwiki_search_title($swid, $search, $exact = false) {
  * 
  * @param int $swid The subwiki ID.
  * @param string $search What to search for.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_search_content($swid, $search) {
     global $DB;
@@ -551,7 +572,7 @@ function socialwiki_search_content($swid, $search) {
  * 
  * @param int $swid subwiki ID.
  * @param string $search What to search for.
- * @return stdClass array
+ * @return stdClass[]
  */
 function socialwiki_search_all($swid, $search) {
     global $DB;
@@ -593,8 +614,8 @@ function socialwiki_increment_pageviews($page) {
  * Increase page view number for given user.
  * If this is the first time the user has viewed the page, a new entry will be added.
  * 
- * @param type $userid The user ID.
- * @param type $pageid The page ID.
+ * @param int $userid The user ID.
+ * @param int $pageid The page ID.
  */
 function socialwiki_increment_user_views($userid, $pageid) {
     global $DB;
@@ -622,7 +643,7 @@ function socialwiki_increment_user_views($userid, $pageid) {
 /**
  * Style formats.
  * 
- * @return array
+ * @return string[]
  */
 function socialwiki_get_styles() {
     return array('classic'); // Style 'modern' removed for now.
@@ -631,25 +652,21 @@ function socialwiki_get_styles() {
 /**
  * Text format supported by wiki module.
  * 
- * @return array
+ * @return string[]
  */
 function socialwiki_get_formats() {
     return array('html', 'creole', 'nwiki');
 }
 
 /**
- * Parses a string with the wiki markup language in $markup.
- *
- * @return Array or false when something wrong has happened.
- *
- * Returned array contains the following fields:
- *     'parsed_text' => String. Contains the parsed wiki content.
- *     'unparsed_text' => String. Constains the original wiki content.
- *     'link_count' => Array of array. Contains the internal wiki links found in the wiki content.
- *      'deleted_sections' => the list of deleted sections.
- *
+ * Parses a string with the wiki markup language.
+ * 
  * @author Josep Arús Pous
- * */
+ * @param string $markup The wiki markup language.
+ * @param string $pagecontent The page content.
+ * @param array $options Extra options.
+ * @return bool|array False when something wrong has happened.
+ */
 function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
     $subwiki = socialwiki_get_subwiki($options['swid']);
     $cm = get_coursemodule_from_instance("socialwiki", $subwiki->wikiid);
@@ -685,13 +702,12 @@ function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
  * !!!!!! IMPORTANT !!!!!!
  * It is critical that you call format_string on the content before it is used.
  *
- * @param string|page_wiki $link name of a page
- * @param array $options
+ * @param string|page_wiki $link Name of a page.
+ * @param array $options Extra options.
  * @return array Array('content' => string, 'url' => string, 'new' => bool, 'link_info' => array)
- *
- * @TODO Doc return and options
  */
 function socialwiki_parser_link($link, $options = null) {
+    // TODO: Doc return and options.
     global $CFG, $COURSE, $PAGE;
 
     $matches = array();
@@ -757,12 +773,13 @@ function socialwiki_parser_link($link, $options = null) {
 }
 
 /**
- * Returns the table fully parsed (HTML)
+ * Returns the table fully parsed (HTML).
  *
+ * @param array $table Table Data.
  * @return HTML for the table $table
  * @author Josep Arús Pous
  *
- * */
+ */
 function socialwiki_parser_table($table) {
     $htmltable = new html_table();
 
@@ -814,13 +831,15 @@ function socialwiki_parser_real_path($url, $context, $component, $filearea, $swi
 }
 
 /**
- * Returns the token used by a wiki language to represent a given tag or "object" (bold -> **)
+ * Returns the token used by a wiki language to represent a given tag or "object" (bold -> **).
  *
+ * @param string $markup The markup language.
+ * @param string $name Type to check.
  * @return A string when it has only one token at the beginning (f. ex. lists).
  *         An array composed by 2 strings when it has 2 tokens, one at the beginning
  *         and one at the end (f. ex. italics). Returns false otherwise.
  * @author Josep Arús Pous
- * */
+ */
 function socialwiki_parser_get_token($markup, $name) {
     return socialwiki_parser_proxy::get_token($name, $markup);
 }
@@ -962,7 +981,6 @@ function socialwiki_user_can_edit($subwiki) {
  * @param mixed $context Context in which page needs to be deleted.
  * @param mixed $pageids ID's of pages to be deleted.
  * @param int $subwikiid ID of the subwiki for which all pages should be deleted
- * @return type
  */
 function socialwiki_delete_pages($context, $pageids = null, $subwikiid = null) {
     global $DB;
@@ -1029,37 +1047,44 @@ function socialwiki_delete_page_versions($deleteversions) {
     }
 }
 
+/**
+ * Get a comment.
+ * 
+ * @param int $commentid The comment ID.
+ * @return stdClass
+ */
 function socialwiki_get_comment($commentid) {
     global $DB;
     return $DB->get_record('comments', array('id' => $commentid));
 }
 
 /**
- * Returns all comments by context and pageid
+ * Returns all comments by context and pageid.
  *
- * @param $contextid Current context
- * @param $pageid Current pageid
- * */
+ * @param int $contextid Current context ID.
+ * @param int $pageid Current page ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_comments($contextid, $pageid) {
     global $DB;
     return $DB->get_records('comments', array('contextid' => $contextid, 'itemid' => $pageid, 'commentarea' => 'socialwiki_page'));
 }
 
 /**
- * Add comments ro database
+ * Add comments to database.
  *
- * @param stdClass $context Current context
- * @param int $pageid Current pageid
- * @param string $content Content of the comment
+ * @param stdClass $context Current context.
+ * @param int $pageid Current page ID.
+ * @param string $content Content of the comment.
  * @param string $editor Version of editor we are using.
- * */
+ */
 function socialwiki_add_comment($context, $pageid, $content, $editor) {
     global $CFG;
     require_once($CFG->dirroot . '/comment/lib.php');
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    list($contextid, $course, $cm) = get_context_info_array($context->id);
     $cmt = new stdclass();
-    $cmt->context = $context;
+    $cmt->context = $contextid;
     $cmt->itemid = $pageid;
     $cmt->area = 'socialwiki_page';
     $cmt->course = $course;
@@ -1077,32 +1102,31 @@ function socialwiki_add_comment($context, $pageid, $content, $editor) {
 }
 
 /**
- * Delete comments from database
+ * Delete comments from database.
  *
- * @param $idcomment Id of comment which will be deleted
- * @param $context Current context
- * @param $pageid Current pageid
- * */
-function socialwiki_delete_comment($idcomment, $context, $pageid) {
+ * @param int $commentid ID of comment which will be deleted.
+ * @param stdClass $context Current context.
+ * @param int $pageid Current page ID.
+ */
+function socialwiki_delete_comment($commentid, $context, $pageid) {
     global $CFG;
     require_once($CFG->dirroot . '/comment/lib.php');
 
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    list($contextid, $course, $cm) = get_context_info_array($context->id);
     $cmt = new stdClass();
-    $cmt->context = $context;
+    $cmt->context = $contextid;
     $cmt->itemid = $pageid;
     $cmt->area = 'socialwiki_page';
     $cmt->course = $course;
     $cmt->component = 'mod_socialwiki';
 
     $manager = new comment($cmt);
-    $manager->delete($idcomment);
+    $manager->delete($commentid);
 }
 
 /**
- * Delete al comments from wiki
- *
- * */
+ * Delete all comments from the wiki
+ */
 function socialwiki_delete_comments_wiki() {
     global $PAGE, $DB;
 
@@ -1115,25 +1139,17 @@ function socialwiki_delete_comments_wiki() {
     $DB->delete_records_select($table, $select, array($context->id));
 }
 
-function socialwiki_add_progress($pageid, $oldversionid, $versionid, $progress) {
-    global $DB;
-    for ($v = $oldversionid + 1; $v <= $versionid; $v++) {
-        $user = socialwiki_get_wiki_page_id($pageid, $v);
-
-        $DB->insert_record('socialwiki_progress',
-                array('userid' => $user->userid, 'pageid' => $pageid, 'versionid' => $v, 'progress' => $progress));
-    }
-}
-
-function socialwiki_get_wiki_page_id($pageid, $id) {
-    global $DB;
-    return $DB->get_record('socialwiki_versions', array('pageid' => $pageid, 'id' => $id));
-}
-
-function socialwiki_print_page_content($page, $context, $subwikiid) {
+/**
+ * Print the page content.
+ * 
+ * @param stdClass $page The current page.
+ * @param stdClass $context The current context.
+ * @param int $swid The subwiki ID.
+ */
+function socialwiki_print_page_content($page, $context, $swid) {
     global $PAGE, $USER;
     $html = file_rewrite_pluginfile_urls($page->cachedcontent, 'pluginfile.php',
-            $context->id, 'mod_socialwiki', 'attachments', $subwikiid);
+            $context->id, 'mod_socialwiki', 'attachments', $swid);
     $html = format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true));
     $wikioutput = $PAGE->get_renderer('mod_socialwiki');
     // This is where the page content, from the title down, is rendered!
@@ -1149,11 +1165,10 @@ function socialwiki_print_page_content($page, $context, $subwikiid) {
 }
 
 /**
- * This function trims any given text and returns it with some dots at the end
+ * This function trims any given text and returns it with some dots at the end.
  *
- * @param string $text
+ * @param string $text 
  * @param string $limit
- *
  * @return string
  */
 function socialwiki_trim_string($text, $limit = 25) {
@@ -1164,10 +1179,13 @@ function socialwiki_trim_string($text, $limit = 25) {
 }
 
 /**
- * Prints default edit form fields and buttons
- *
- * @param string $format Edit form format (html, creole...)
- * @param integer $version Version number. A negative number means no versioning.
+ * Prints default edit form fields and buttons.
+ * 
+ * @param string $format Edit form format (ex. creole).
+ * @param int $pageid The page ID.
+ * @param int $version The version number. A negative number means no versioning.
+ * @param bool $upload 
+ * @param array $deleteuploads
  */
 function socialwiki_print_edit_form_default_fields($format, $pageid, $version = -1, $upload = false, $deleteuploads = array()) {
     global $CFG, $PAGE, $OUTPUT;
@@ -1214,11 +1232,12 @@ function socialwiki_print_edit_form_default_fields($format, $pageid, $version = 
 }
 
 /**
- * Prints a table with the files attached to a wiki page
- * @param stdClass $context
- * @param string $filearea
- * @param int $fileitemid
- * @param array deleteuploads
+ * Prints a table with the files attached to a wiki page.
+ * 
+ * @param stdClass $context Current context.
+ * @param string $filearea Location of the file.
+ * @param int $fileitemid The file ID.
+ * @param array $deleteuploads
  */
 function socialwiki_print_upload_table($context, $filearea, $fileitemid, $deleteuploads = array()) {
     global $CFG;
@@ -1252,8 +1271,12 @@ function socialwiki_print_upload_table($context, $filearea, $fileitemid, $delete
 }
 
 /**
- * Get updated pages from wiki
- * @param int $pageid
+ * Get updated pages from wiki.
+ * 
+ * @param int $swid The subwiki ID.
+ * @param int $userid The user ID.
+ * @param bool $filterunseen Don't show the pages that have no views.
+ * @return stdClass
  */
 function socialwiki_get_updated_pages_by_subwiki($swid, $userid = '', $filterunseen = true) {
     global $DB, $USER;
@@ -1279,8 +1302,11 @@ function socialwiki_get_updated_pages_by_subwiki($swid, $userid = '', $filteruns
 }
 
 /**
- * returns an array of all the people the user is following
- * @param int $userid the users id
+ * Returns all the people the user is following.
+ * 
+ * @param int $userid The user ID.
+ * @param int $subwikiid The subwiki ID.
+ * @return int[]
  */
 function socialwiki_get_follows($userid, $subwikiid) {
     global $DB;
@@ -1290,12 +1316,14 @@ function socialwiki_get_follows($userid, $subwikiid) {
     return $DB->get_records_sql($sql, array($userid, $subwikiid));
 }
 
-/*
- * checks if a user is following another user
- * @param int $userfromid the user doing the following
- * @param int $usertoid the user being followed
+/**
+ * Checks if a user is following another user.
+ * 
+ * @param int $userfromid The user doing the following.
+ * @param int $usertoid The user being followed.
+ * @param int $subwikiid The subwiki ID.
+ * @return bool
  */
-
 function socialwiki_is_following($userfromid, $usertoid, $subwikiid) {
     Global $DB;
     $sql = 'SELECT usertoid
@@ -1305,21 +1333,39 @@ function socialwiki_is_following($userfromid, $usertoid, $subwikiid) {
     return $DB->record_exists_sql($sql, array($userfromid, $usertoid, $subwikiid));
 }
 
-// Unfollow a user.
+/**
+ * Unfollow a user.
+ * 
+ * @param int $userfromid The user doing the following.
+ * @param int $usertoid The user being followed.
+ * @param int $subwikiid The subwiki ID.
+ */
 function socialwiki_unfollow($userfromid, $usertoid, $subwikiid) {
     Global $DB;
     $select = 'userfromid=? AND usertoid=? AND subwikiid=?';
     $DB->delete_records_select('socialwiki_follows', $select, array($userfromid, $usertoid, $subwikiid));
 }
 
-// Returns the number of people following the user.
+/**
+ * Returns the number of people following the user.
+ * 
+ * @param int $userid The user ID.
+ * @param int $subwikiid The subwiki ID.
+ * @return int
+ */
 function socialwiki_get_followers($userid, $subwikiid) {
     Global $DB;
     $select = 'usertoid=? AND subwikiid=?';
     return count($DB->get_records_select('socialwiki_follows', $select, array($userid, $subwikiid)));
 }
 
-// Returns the number of poeple following the user.
+/**
+ * Returns the number of people following the user.
+ * 
+ * @param int $userid The user ID.
+ * @param int $subwikiid The subwiki ID.
+ * @return int
+ */
 function socialwiki_get_follower_users($userid, $subwikiid) {
     Global $DB;
     $sql = 'SELECT userfromid
@@ -1331,6 +1377,12 @@ function socialwiki_get_follower_users($userid, $subwikiid) {
     }, $results);
 }
 
+/**
+ * Returns the number of likes a page has.
+ * 
+ * @param int $pageid The page ID.
+ * @return int
+ */
 function socialwiki_page_likes($pageid) {
     global $DB;
     $sql = 'SELECT *
@@ -1339,7 +1391,13 @@ function socialwiki_page_likes($pageid) {
     return $DB->record_exists_sql($sql, array($pageid));
 }
 
-// Returns true if the user likes the page.
+/**
+ * Returns true if the user likes the page.
+ * 
+ * @param int $userid The user ID.
+ * @param int $pageid The page ID.
+ * @return bool
+ */
 function socialwiki_liked($userid, $pageid) {
     global $DB;
     $sql = 'SELECT *
@@ -1349,7 +1407,13 @@ function socialwiki_liked($userid, $pageid) {
     return $DB->record_exists_sql($sql, array($userid, $pageid));
 }
 
-// Add a like.
+/**
+ * Add a like.
+ * 
+ * @param int $userid The user ID.
+ * @param int $pageid The page ID.
+ * @param int $subwikiid The subwiki ID.
+ */
 function socialwiki_add_like($userid, $pageid, $subwikiid) {
     Global $DB;
     $like = new stdClass();
@@ -1359,20 +1423,34 @@ function socialwiki_add_like($userid, $pageid, $subwikiid) {
     $DB->insert_record('socialwiki_likes', $like);
 }
 
-// Delete a like.
+/**
+ * Delete a like.
+ * 
+ * @param int $userid The user ID.
+ * @param int $pageid The page ID.
+ */
 function socialwiki_delete_like($userid, $pageid) {
     Global $DB;
     $select = 'userid=? AND pageid=?';
     $DB->delete_records_select('socialwiki_likes', $select, array($userid, $pageid));
 }
 
-// Delete a like.
+/**
+ * Delete all of the likes a page has.
+ * 
+ * @param int $pageid The page ID.
+ */
 function socialwiki_delete_page_likes($pageid) {
     Global $DB;
     $DB->delete_records_select('socialwiki_likes', 'pageid=?', array($pageid));
 }
 
-// Get the number of likes for a page.
+/**
+ * Get the number of likes for a page.
+ * 
+ * @param int $pageid The page ID.
+ * @return int
+ */
 function socialwiki_numlikes($pageid) {
     global $DB;
     $sql = 'SELECT *
@@ -1381,15 +1459,22 @@ function socialwiki_numlikes($pageid) {
     return count($DB->get_records_sql($sql, array($pageid)));
 }
 
-// Get all the pages from the users followed users.
-function socialwiki_get_pages_from_followed($userid, $subwikiid, $filterunseen = true) { // Pages liked by those $userid follows.
+/**
+ * Get all the pages from the users followed users.
+ * 
+ * @param int $userid The user ID.
+ * @param int $swid The subwiki ID.
+ * @param bool $filterunseen Hide pages without likes.
+ * @return stdClass[]
+ */
+function socialwiki_get_pages_from_followed($userid, $swid, $filterunseen = true) {
     global $DB;
 
     $sql = 'SELECT DISTINCT l.pageid
             FROM {socialwiki_follows} f INNER JOIN {socialwiki_likes} l
             ON f.usertoid=l.userid
             WHERE f.userfromid=? AND l.subwikiid=? AND f.subwikiid=?';
-    $params = array($userid, $subwikiid, $subwikiid);
+    $params = array($userid, $swid, $swid);
     if ($filterunseen) {
         $sql = $sql . 'AND NOT EXISTS
                       (SELECT 1 FROM {socialwiki_user_views} v
@@ -1402,16 +1487,28 @@ function socialwiki_get_pages_from_followed($userid, $subwikiid, $filterunseen =
     }, $results);
 }
 
-// Return all the pages the user likes.
-function socialwiki_get_user_likes($userid, $subwikiid) {
+/**
+ * Return all the pages the user likes.
+ * 
+ * @param int $userid The user ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
+function socialwiki_get_user_likes($userid, $swid) {
     global $DB;
     $sql = 'SELECT pageid
             FROM {socialwiki_likes}
             WHERE userid=? and subwikiid=?';
-    return $DB->get_records_sql($sql, array($userid, $subwikiid));
+    return $DB->get_records_sql($sql, array($userid, $swid));
 }
 
-// Return an array of all the users that like a page.
+/**
+ * Return an array of all the users that like a page.
+ * 
+ * @param int $pageid The page ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_page_likes($pageid, $swid) {
     global $DB;
     $sql = 'SELECT userid
@@ -1424,7 +1521,12 @@ function socialwiki_get_page_likes($pageid, $swid) {
     }, $res);
 }
 
-// Get page's author.
+/**
+ * Get page's author.
+ * 
+ * @param int $pageid The page ID.
+ * @return string
+ */
 function socialwiki_get_author($pageid) {
     global $DB;
     $sql = 'SELECT userid
@@ -1434,7 +1536,13 @@ function socialwiki_get_author($pageid) {
     return $DB->get_record_sql($sql, array($pageid));
 }
 
-// Get pages favourited by a user.
+/**
+ * Get pages favourited by a user.
+ * 
+ * @param int $userid The user ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_user_favourites($userid, $swid) {
     $results = socialwiki_get_user_likes($userid, $swid);
     $favourites = array();
@@ -1446,7 +1554,13 @@ function socialwiki_get_user_favourites($userid, $swid) {
     return $favourites;
 }
 
-// Get all users who favourite this page.
+/**
+ * Get all users who favourite this page.
+ * 
+ * @param int $pageid The page ID.
+ * @param int $swid The subwiki ID.
+ * @return int[]
+ */
 function socialwiki_get_page_favourites($pageid, $swid) {
     $results = socialwiki_get_page_likes($pageid, $swid);
     $favourites = array();
@@ -1458,7 +1572,14 @@ function socialwiki_get_page_favourites($pageid, $swid) {
     return $favourites;
 }
 
-// Check if a page is a user's favourite.
+/**
+ * Check if a page is a user's favourite.
+ * 
+ * @param int $userid The user ID.
+ * @param int $pageid The page ID.
+ * @param int $swid The subwiki ID.
+ * @return bool
+ */
 function socialwiki_is_user_favourite($userid, $pageid, $swid) {
     $likedpages = socialwiki_get_user_likes($userid, $swid);
     $p = socialwiki_get_page($pageid);
@@ -1474,7 +1595,12 @@ function socialwiki_is_user_favourite($userid, $pageid, $swid) {
     return true;
 }
 
-// Get the id of the parent page.
+/**
+ * Get the ID of the parent page.
+ * 
+ * @param int $pageid The page ID.
+ * @return stdClass
+ */
 function socialwiki_get_parent($pageid) {
     Global $DB;
     $sql = 'SELECT parent
@@ -1483,7 +1609,12 @@ function socialwiki_get_parent($pageid) {
     return $DB->get_record_sql($sql, array($pageid));
 }
 
-// Get all contributors: traverse the parent links to the root.
+/**
+ * Get all contributors, traverse the parent links to the root.
+ * 
+ * @param int $pageid The page ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_contributors($pageid) {
     Global $DB;
     if ($pageid == null) {
@@ -1511,7 +1642,12 @@ function socialwiki_get_contributors($pageid) {
     }
 }
 
-// Get all the children pages of a page.
+/**
+ * Get all the children pages of a page.
+ * 
+ * @param int $pageid The page ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_children($pageid) {
     Global $DB;
     $sql = 'SELECT *
@@ -1520,7 +1656,12 @@ function socialwiki_get_children($pageid) {
     return $DB->get_records_sql($sql, array($pageid));
 }
 
-// Get all the users of the subwiki.
+/**
+ * Get all the users of the subwiki.
+ * 
+ * @param int $swid The subwiki ID.
+ * @return int[]
+ */
 function socialwiki_get_subwiki_users($swid) {
     Global $PAGE;
     $context = context_module::instance($PAGE->cm->id);
@@ -1532,7 +1673,12 @@ function socialwiki_get_subwiki_users($swid) {
     return $uids;
 }
 
-// Get all the users who have contributed to the subwiki.
+/**
+ * Get all the users who have contributed to the subwiki.
+ * 
+ * @param int $swid The subwiki ID.
+ * @return int[]
+ */
 function socialwiki_get_active_subwiki_users($swid) {
     Global $DB;
     $sql = 'SELECT DISTINCT v.userid
@@ -1546,7 +1692,12 @@ function socialwiki_get_active_subwiki_users($swid) {
     return $uids;
 }
 
-// Returns an array with all the parent and child pages.
+/**
+ * Returns an array with all the parent and child pages.
+ * 
+ * @param int $pageid The page ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_relations($pageid) {
     $relations = array();
     $added = array(); // An array of page id's already added to $relations.
@@ -1570,15 +1721,25 @@ function socialwiki_get_relations($pageid) {
     return $relations;
 }
 
-// Returns the current style of the socialwiki.
-function socialwiki_get_currentstyle($wikiid) {
+/**
+ * Returns the current style of the socialwiki.
+ * 
+ * @param int $swid The wiki ID.
+ * @return string
+ */
+function socialwiki_get_currentstyle($swid) {
     Global $DB;
     $sql = 'SELECT style FROM {socialwiki} WHERE id=?';
-    return $DB->get_record_sql($sql, array($wikiid));
+    return $DB->get_record_sql($sql, array($swid));
 }
 
-// Returns the index of a page given page id and an array of pages.
-// Returns index if page is found -1 if the page isn't in the array.
+/**
+ * Returns the index of a page given page id and an array of pages, -1 if not found.
+ * 
+ * @param int $pageid The page ID.
+ * @param array $pages Set of pages.
+ * @return int
+ */
 function socialwiki_indexof_page($pageid, $pages) {
     for ($i = 0; $i < count($pages); $i++) {
         if ($pages[$i]->id == $pageid) {
@@ -1588,7 +1749,12 @@ function socialwiki_indexof_page($pageid, $pages) {
     return -1;
 }
 
-// Returns array of teachers as moodle allows multiple teachers per course.
+/**
+ * Returns array of teachers as moodle allows multiple teachers per course.
+ * 
+ * @param int $contextid The current context ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_teachers($contextid) {
     Global $DB;
     $sql = 'SELECT ra.userid AS id
@@ -1598,9 +1764,15 @@ function socialwiki_get_teachers($contextid) {
     return $DB->get_records_sql($sql, array($contextid));
 }
 
-// Checks if the user is a teacher.
-function socialwiki_is_teacher($context, $uid) {
-    $teachers = socialwiki_get_teachers($context);
+/**
+ * Checks if the user is a teacher.
+ * 
+ * @param int $contextid The current context ID.
+ * @param int $uid The current user ID.
+ * @return bool
+ */
+function socialwiki_is_teacher($contextid, $uid) {
+    $teachers = socialwiki_get_teachers($contextid);
     foreach ($teachers as $teacher) {
         if ($uid == $teacher->id) {
             return true;
@@ -1609,7 +1781,13 @@ function socialwiki_is_teacher($context, $uid) {
     return false;
 }
 
-// Returns an array of pages chosen based on peers likes and follows.
+/**
+ * Returns an array of pages chosen based on peers likes and follows.
+ * 
+ * @param int $userid The user ID.
+ * @param int $swid The subwiki ID.
+ * @return stdClass[]
+ */
 function socialwiki_get_recommended_pages($userid, $swid) {
     Global $CFG;
     require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
@@ -1641,7 +1819,13 @@ function socialwiki_get_recommended_pages($userid, $swid) {
     }
 }
 
-// Used to sort pages based on votes attribute.
+/**
+ * Used to sort pages based on votes attribute.
+ * 
+ * @param stdClass $p1 A page.
+ * @param stdClass $p2 A second page.
+ * @return int
+ */
 function socialwiki_page_comp($p1, $p2) {
     if ($p1->votes == $p2->votes) {
         return 0;
@@ -1649,7 +1833,12 @@ function socialwiki_page_comp($p1, $p2) {
     return ($p1->votes < $p2->votes) ? 1 : -1;
 }
 
-// Sorts an array of pages by likes.
+/**
+ * Sorts an array of pages by likes.
+ * 
+ * @param array $pages Set of pages.
+ * @return stdClass[]
+ */
 function socialwiki_order_by_likes($pages) {
     foreach ($pages as $page) {
         $page->votes = socialwiki_numlikes($page->id);
@@ -1658,7 +1847,12 @@ function socialwiki_order_by_likes($pages) {
     return $pages;
 }
 
-// Merge sort for leaf nodes.
+/**
+ * Merge sort for leaf nodes.
+ * 
+ * @param array $array
+ * @return array
+ */
 function socialwiki_merge_sort_nodes($array) {
     if (count($array) <= 1) {
         return $array;
@@ -1667,11 +1861,16 @@ function socialwiki_merge_sort_nodes($array) {
     $left = socialwiki_merge_sort_nodes(array_slice($array, 0, (int) (count($array) / 2)));
     $right = socialwiki_merge_sort_nodes(array_slice($array, (int) (count($array) / 2)));
 
-    $output = socialwiki_merge_nodes($left, $right);
-
-    return $output;
+    return socialwiki_merge_nodes($left, $right);
 }
 
+/**
+ * Merge two seperate nodes.
+ * 
+ * @param node $left
+ * @param node $right
+ * @return array
+ */
 function socialwiki_merge_nodes($left, $right) {
     $result = array();
     while (count($left) > 0 && count($right) > 0) {
@@ -1693,7 +1892,8 @@ function socialwiki_merge_nodes($left, $right) {
  * 
  * @param array $peers Peer objects.
  * @param array $pages Set of pages.
- * @return stdClass array
+ * @param array $scale Scale of each indicator.
+ * @return stdClass[]
  */
 function socialwiki_order_pages_using_peers($peers, $pages, $scale) {
     foreach ($pages as $page) {
@@ -1725,7 +1925,8 @@ function socialwiki_order_pages_using_peers($peers, $pages, $scale) {
  * @param int $userto
  * @param int $swid The subwiki ID.
  * @param int $depth
- * @param int array $checked Is an array of users that have already been checked.
+ * @param int[] $checked An array of users that have already been checked.
+ * @return int
  */
 function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checked = array()) {
     if (socialwiki_is_following($userfrom, $userto, $swid)) {
@@ -1753,8 +1954,8 @@ function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checke
 /**
  * Gives the time in a readable format.
  *
- * @param int $time Time in system format.
- * @param bool $timeago If true format how long ago instead of date.
+ * @param int $time The time in system format.
+ * @param bool $timeago If true, format how long ago instead of date.
  * @return string
  */
 function socialwiki_format_time($time, $timeago = true) {

@@ -164,28 +164,35 @@
     margin: auto;
 }
 
-.socialwiki_versionuser {
+.socialwiki_diff {
+    width: 49%;
+    margin: 0.5em 0.5%;
     float: left;
 }
 
-.socialwiki_diffuserleft {
+.socialwiki_diffheading,
+.socialwiki_diffcontent {
+    padding: 10px;
+    border: 1px solid #DDD;
+}
+
+.socialwiki_diffheading{
+    border-bottom: none;
+}
+
+.socialwiki_diffleft {
+    float: left;
+}
+
+.socialwiki_diffright {
     float: right;
 }
 
-.dir-rtl .socialwiki_diffuserleft {
-    float: left;
+.socialwiki_difftime {
+    margin-top: 1.2em;
 }
 
-.socialwiki_diffuserright {
-    float: left;
-}
-
-.socialwiki_compareheading {
-    font-weight: normal;
-}
-
-.socialwiki_restore, .socialwiki_diffview, .socialwiki_difftime,
-    .socialwiki_headingtime {
+.socialwiki_restore, .socialwiki_difftime, .socialwiki_headingtime {
     font-size: 0.8em;
     font-weight: normal;
 }
@@ -195,29 +202,13 @@
     text-align: center;
 }
 
-.socialwiki_diff_oldpaging {
+.socialwiki_diffpaging {
     float: left;
-    width: 40%;
-    min-width: 200px;
-    margin-left: 5%;
-}
-
-.socialwiki_diff_newpaging {
-    float: right;
-    width: 40%;
-    min-width: 200px;
-    margin-right: 5%;
-}
-
-.socialwiki_diff_old, .socialwiki_diff_new {
-    float: left;
-    min-width: 200px;
-    width: 40%;
-}
-
-.socialwiki_difftable td {
     width: 50%;
-    float: left;
+}
+
+.socialwiki_diffbutton {
+    text-align: center;
 }
 
 .socialwiki_histdate {
@@ -334,51 +325,9 @@ a.socialwiki_edit_section {
     text-decoration: underline;
 }
 
-.socialwiki_diff_boxes {
-    width: 100%;
-    clear: both;
-}
-
-.socialwiki_diff_paging {
-    width: 100%;
-    clear: both;
-}
-
-.socialwiki_grayline {
-    color: gray
-}
-
 .socialwikisearchresults {
     padding-left: 50px;
     padding-top: 20px;
-}
-
-.socialwiki-diff-container {
-    width: 98%;
-    margin: 10px auto;
-}
-
-.socialwiki-diff-container .socialwiki-diff-leftside,
-    .socialwiki-diff-container .socialwiki-diff-rightside {
-    width: 49.5%;
-    margin: 0;
-    padding: 0;
-    float: left;
-}
-
-.socialwiki-diff-container .socialwiki-diff-rightside {
-    margin-left: 1%;
-}
-
-.socialwiki-diff-container .socialwiki-diff-heading,
-    .socialwiki-diff-container .no-overflow {
-    padding: 10px;
-    border: 1px solid #DDD;
-}
-
-.socialwiki-diff-container .socialwiki-diff-rightside .socialwiki_diffversion
-    {
-    text-align: right;
 }
 
 .socialwikieditor-toolbar img {
@@ -403,10 +352,6 @@ a.socialwiki_edit_section {
     border-style: solid;
     margin-bottom: 0px;
     padding: 10px;
-}
-
-.socialwiki_diffbutton {
-    text-align: center;
 }
 
 .slidecontainer {

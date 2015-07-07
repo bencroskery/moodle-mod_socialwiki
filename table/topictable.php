@@ -21,6 +21,14 @@
  * @copyright  NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/**
+ * Topic Table Class.
+ *
+ * @package    mod_socialwiki
+ * @copyright  NMAI-lab
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class topictable extends socialwiki_table {
 
     /**
@@ -59,7 +67,7 @@ class topictable extends socialwiki_table {
 
         return new topictable($uid, $swid, $topics, 'topics');
     }
-    
+
     /**
      * Build the table data structure.
      * 

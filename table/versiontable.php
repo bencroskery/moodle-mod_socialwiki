@@ -21,6 +21,14 @@
  * @copyright  NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+/**
+ * Version Table Class.
+ *
+ * @package    mod_socialwiki
+ * @copyright  NMAI-lab
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class versiontable extends socialwiki_table {
 
     /**
@@ -29,14 +37,14 @@ class versiontable extends socialwiki_table {
      * @var array
      */
     private $allpeers;
-    
+
     /**
      * Maps pageid to page object, with additional field $p->likers containing array of likers (peerids).
      * 
      * @var array
      */
     private $allpages;
-    
+
     /**
      * Way of combining user trust indicators.
      * 

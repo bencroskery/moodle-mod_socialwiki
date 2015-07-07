@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The standard table.
+ *
+ * @package    mod_socialwiki
+ * @copyright  NMAI-lab
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 Global $CFG;
 require_once($CFG->dirroot . '/mod/socialwiki/table/usertable.php');
 require_once($CFG->dirroot . '/mod/socialwiki/table/topictable.php');
@@ -21,8 +29,10 @@ require_once($CFG->dirroot . '/mod/socialwiki/table/versiontable.php');
 require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
 
 /**
- * The standard table.
+ * Table Class.
  *
+ * Never used by itself. Extended by Topic, User and Version Tables.
+ * 
  * @package    mod_socialwiki
  * @copyright  NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,14 +45,14 @@ abstract class socialwiki_table {
      * @var int
      */
     protected $uid;
-    
+
     /**
      * The subwiki ID.
      * 
      * @var int
      */
     protected $swid;
-    
+
     /**
      * Array of headers for the table.
      * 
