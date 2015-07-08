@@ -18,7 +18,7 @@
  * The standard table.
  *
  * @package    mod_socialwiki
- * @copyright  NMAI-lab
+ * @copyright (c) 2015, NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,37 +32,37 @@ require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
  * Table Class.
  *
  * Never used by itself. Extended by Topic, User and Version Tables.
- * 
+ *
  * @package    mod_socialwiki
- * @copyright  NMAI-lab
+ * @copyright (c) 2015, NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class socialwiki_table {
 
     /**
      * The user ID.
-     * 
+     *
      * @var int
      */
     protected $uid;
 
     /**
      * The subwiki ID.
-     * 
+     *
      * @var int
      */
     protected $swid;
 
     /**
      * Array of headers for the table.
-     * 
+     *
      * @var string[]
      */
     protected $headers;
 
     /**
      * Create a table.
-     * 
+     *
      * @param int $u The current user ID.
      * @param int $s The current subwiki ID.
      * @param string $h Table header options.
@@ -80,7 +80,7 @@ abstract class socialwiki_table {
 
     /**
      * Gets the table in HTML format.
-     * 
+     *
      * @param string $tableid The HTML id of the table.
      * @return string HTML table
      */
@@ -108,7 +108,7 @@ abstract class socialwiki_table {
 
     /**
      * Gets the correct headers for the table.
-     * 
+     *
      * @param string $type The type of table.
      * @return string array
      */
@@ -158,7 +158,7 @@ abstract class socialwiki_table {
 
     /**
      * Builds any given table.
-     * 
+     *
      * @param int $userid The user's id.
      * @param int $swid The current subwikiid.
      * @param string $tabletype The table type to build.
