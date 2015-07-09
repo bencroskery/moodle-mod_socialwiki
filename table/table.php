@@ -18,7 +18,7 @@
  * The standard table.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
  * Never used by itself. Extended by Topic, User and Version Tables.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class socialwiki_table {

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Moodle socialwiki Renderer
+ * Moodle socialwiki Renderer.
  *
  * @package   mod_socialwiki
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
@@ -43,18 +43,12 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     public function diff($pageid, $old, $new) {
         global $CFG;
         $page = socialwiki_get_page($pageid);
-        if (!empty($options['total'])) {
-            $total = $options['total'];
-        } else {
-            $total = 0;
-        }
-
         $strdatetime = get_string('strftimedatetime', 'langconfig');
 
         // View old version link.
-        $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $old->pageid));
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php',
                 array('userid' => $old->user->id, 'subwikiid' => $page->subwikiid));
+        $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $old->pageid));
 
         // Userinfo container.
         $oldheading = $this->output->container_start('socialwiki_diffright');
@@ -71,9 +65,9 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $oldheading .= $this->output->container_end();
 
         // View new version link.
-        $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $new->pageid));
         $userlink = new moodle_url('/mod/socialwiki/viewuserpages.php',
                 array('userid' => $new->user->id, 'subwikiid' => $page->subwikiid));
+        $versionlink = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $new->pageid));
 
         // New user info.
         $newheading = $this->output->container_start('socialwiki_diffleft');
@@ -89,24 +83,24 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $newheading .= userdate($new->timecreated, $strdatetime);
         $newheading .= $this->output->container_end();
 
-        $oldheading = html_writer::tag('div', $oldheading, array('class' => 'socialwiki_diffheading'));
-        $newheading = html_writer::tag('div', $newheading, array('class' => 'socialwiki_diffheading'));
+        $oldheading = $this->output->container($oldheading, array('class' => 'socialwiki_diffheading'));
+        $newheading = $this->output->container($newheading, array('class' => 'socialwiki_diffheading'));
 
-        $olddiff = html_writer::tag('div', $old->diff, array('class' => 'socialwiki_diffcontent'));
-        $newdiff = html_writer::tag('div', $new->diff, array('class' => 'socialwiki_diffcontent'));
+        $olddiff = $this->output->container($old->diff, array('class' => 'socialwiki_diffcontent'));
+        $newdiff = $this->output->container($new->diff, array('class' => 'socialwiki_diffcontent'));
 
-        $html = html_writer::start_tag('div', array('class' => 'socialwiki_clear'));
-        $html .= html_writer::tag('div', $oldheading . $olddiff, array('class' => 'socialwiki_diff'));
-        $html .= html_writer::tag('div', $newheading . $newdiff, array('class' => 'socialwiki_diff'));
-        $html .= html_writer::end_tag('div');
+        $html = $this->output->container_start('socialwiki_clear');
+        $html .= $this->output->container($oldheading . $olddiff, array('class' => 'socialwiki_diff'));
+        $html .= $this->output->container($newheading . $newdiff, array('class' => 'socialwiki_diff'));
+        $html .= $this->output->container_end();
 
         // Add the paging bars.
-        $html .= html_writer::start_tag('div', array('class' => 'socialwiki_clear'));
+        $html .= $this->output->container_start('socialwiki_clear');
         $html .= $this->output->container($this->diff_paging_bar($old->pageid, "$CFG->wwwroot/mod/socialwiki/diff.php?pageid="
                 . "$pageid&amp;comparewith=$new->pageid&amp;compare="), 'socialwiki_diffpaging');
         $html .= $this->output->container($this->diff_paging_bar($new->pageid, "$CFG->wwwroot/mod/socialwiki/diff.php?pageid="
                 . "$pageid&amp;compare=$old->pageid&amp;comparewith="), 'socialwiki_diffpaging');
-        $html .= html_writer::end_tag('div');
+        $html .= $this->output->container_end();
 
         return $html;
     }
@@ -505,7 +499,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
      * @param stdClass $page The page itself.
      * @return string HTML
      */
-    public function viewing_area($pagetitle, $pagecontent, $page) {
+    public function viewing_area($pagecontent, $page) {
         global $PAGE;
 
         $html = html_writer::start_div('wikipage');
@@ -521,7 +515,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         foreach (array_reverse($contributors) as $contrib) {
             $user = socialwiki_get_user_info($contrib);
             $userlink = self::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
-            // Prepend to list (to get them in chronological order).
+            // Pretend to list (to get them in chronological order).
             $contriblinks .= '<br/>' . html_writer::link($userlink->out(false), fullname($user));
         }
 

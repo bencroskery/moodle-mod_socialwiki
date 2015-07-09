@@ -18,7 +18,7 @@
  * The version table for showing the page versions.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,7 +26,7 @@
  * Version Table Class.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class versiontable extends socialwiki_table {

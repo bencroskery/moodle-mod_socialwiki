@@ -18,7 +18,7 @@
  * The user table for showing the wiki users.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,7 +26,7 @@
  * User Table Class.
  *
  * @package    mod_socialwiki
- * @copyright (c) 2015, NMAI-lab
+ * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class usertable extends socialwiki_table {

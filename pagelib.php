@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/tag/lib.php');
 /**
  * The standard overriden socialwiki page class.
  *
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class page_socialwiki {
@@ -44,14 +44,14 @@ abstract class page_socialwiki {
     /**
      * Current subwiki.
      *
-     * @var object
+     * @var stdClass
      */
     protected $subwiki;
 
     /**
      * Current wiki.
      *
-     * @var object
+     * @var stdClass
      */
     protected $wiki;
 
@@ -79,7 +79,7 @@ abstract class page_socialwiki {
     /**
      * Module context object.
      *
-     * @var object
+     * @var stdClass
      */
     protected $modcontext;
 
@@ -110,7 +110,7 @@ abstract class page_socialwiki {
     /**
      * Wiki renderer.
      *
-     * @var object
+     * @var stdClass
      */
     protected $wikioutput;
 
@@ -310,7 +310,7 @@ abstract class page_socialwiki {
 /**
  * The socialwiki view page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_view extends page_socialwiki {
@@ -452,7 +452,7 @@ class page_socialwiki_view extends page_socialwiki {
 /**
  * The socialwiki edit page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_edit extends page_socialwiki {
@@ -678,7 +678,7 @@ class page_socialwiki_edit extends page_socialwiki {
 /**
  * The socialwiki comments page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_comments extends page_socialwiki {
@@ -798,7 +798,7 @@ class page_socialwiki_comments extends page_socialwiki {
 /**
  * The socialwiki edit comment page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_editcomment extends page_socialwiki {
@@ -835,7 +835,7 @@ class page_socialwiki_editcomment extends page_socialwiki {
     /**
      * Setup page tabs.
      */
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
     }
 
@@ -905,7 +905,7 @@ class page_socialwiki_editcomment extends page_socialwiki {
 /**
  * The socialwiki search page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_search extends page_socialwiki {
@@ -1034,7 +1034,7 @@ class page_socialwiki_search extends page_socialwiki {
 /**
  * The socialwiki create page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_create extends page_socialwiki {
@@ -1160,7 +1160,7 @@ class page_socialwiki_create extends page_socialwiki {
 /**
  * The socialwiki preview page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_preview extends page_socialwiki_edit {
@@ -1198,7 +1198,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
     /**
      * Setup page tabs.
      */
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'view', 'activetab' => 'view'));
     }
 
@@ -1264,7 +1264,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
 /**
  * The socialwiki difference page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_diff extends page_socialwiki {
@@ -1351,7 +1351,7 @@ class page_socialwiki_diff extends page_socialwiki {
 /**
  * The socialwiki history (version) page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_history extends page_socialwiki {
@@ -1398,7 +1398,7 @@ class page_socialwiki_history extends page_socialwiki {
     /**
      * Setup page tabs.
      */
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'versions', 'activetab' => 'versions'));
     }
 
@@ -1504,7 +1504,7 @@ class page_socialwiki_history extends page_socialwiki {
 /**
  * The socialwiki home page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_home extends page_socialwiki {
@@ -1788,7 +1788,7 @@ class page_socialwiki_home extends page_socialwiki {
 /**
  * The socialwiki delete comment page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_deletecomment extends page_socialwiki {
@@ -1815,7 +1815,7 @@ class page_socialwiki_deletecomment extends page_socialwiki {
     /**
      * Setup page tabs.
      */
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'comments', 'activetab' => 'comments'));
     }
 
@@ -1863,7 +1863,7 @@ class page_socialwiki_deletecomment extends page_socialwiki {
 /**
  * The sociawiki save page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_save extends page_socialwiki_edit {
@@ -1966,7 +1966,7 @@ class page_socialwiki_save extends page_socialwiki_edit {
 /**
  * The socialwiki view version class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_viewversion extends page_socialwiki {
@@ -1997,7 +1997,7 @@ class page_socialwiki_viewversion extends page_socialwiki {
     /**
      * Setup page tabs.
      */
-    protected function setup_tabs() {
+    protected function setup_tabs($options = array()) {
         parent::setup_tabs(array('linkedwhenactive' => 'history', 'activetab' => 'history', 'inactivetabs' => array('edit')));
     }
 
@@ -2058,7 +2058,7 @@ class page_socialwiki_viewversion extends page_socialwiki {
 /**
  * The socialwiki confirm restore page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_confirmrestore extends page_socialwiki_save {
@@ -2100,7 +2100,7 @@ class page_socialwiki_confirmrestore extends page_socialwiki_save {
 /**
  * The socialwiki pretty view page (for printing) class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_prettyview extends page_socialwiki {
@@ -2154,7 +2154,7 @@ class page_socialwiki_prettyview extends page_socialwiki {
 /**
  * The socialwiki page for handling comments class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_handlecomments extends page_socialwiki {
@@ -2248,7 +2248,7 @@ class page_socialwiki_handlecomments extends page_socialwiki {
 /**
  * The socialwiki administration page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_admin extends page_socialwiki {
@@ -2395,7 +2395,7 @@ class page_socialwiki_admin extends page_socialwiki {
 /**
  * The socialwiki user profile page class.
  * 
- * @copyright (c) 2015, NMAI-lab
+ * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page_socialwiki_viewuserpages extends page_socialwiki {
