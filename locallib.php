@@ -307,7 +307,6 @@ function socialwiki_save_page($page, $newcontent, $uid) {
         $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
         $parseroutput = socialwiki_parse_content($version->contentformat, $newcontent, $options);
         $page->cachedcontent = $parseroutput['toc'] . $parseroutput['parsed_text'];
-        $page->timerendered = time();
         $DB->update_record('socialwiki_pages', $page);
         return array('page' => $page, 'sections' => $parseroutput['repeated_sections'], 'version' => $version->version);
     } else {
@@ -362,10 +361,8 @@ function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
     $page->cachedcontent = '';
     $page->timecreated = $version->timecreated;
     $page->timemodified = $version->timecreated;
-    $page->timerendered = $version->timecreated;
     $page->userid = $uid;
     $page->pageviews = 0;
-    $page->readonly = 0;
     $page->parent = $parent;
 
     $pid = $DB->insert_record('socialwiki_pages', $page);
@@ -1195,7 +1192,7 @@ function socialwiki_print_edit_form_default_fields($format, $pid, $version = -1,
     socialwiki_print_upload_table($context, 'socialwiki_upload', $pid, $deleteuploads);
     echo $OUTPUT->container_end();
     echo "</fieldset>";
-    
+
     $btnhtml = '<input class="socialwiki_button" type="submit" name="editoption" value="';
     echo $btnhtml . get_string('save', 'socialwiki') . '"/>';
     echo $btnhtml . get_string('upload', 'socialwiki') . '"/>';
@@ -1283,8 +1280,8 @@ function socialwiki_get_updated_pages_by_subwiki($swid, $uid = '', $filterunseen
 function socialwiki_get_follows($uid, $swid) {
     global $DB;
     $sql = 'SELECT usertoid
-        FROM {socialwiki_follows}
-        WHERE userfromid=? AND subwikiid=?';
+            FROM {socialwiki_follows}
+            WHERE userfromid=? AND subwikiid=?';
     return $DB->get_records_sql($sql, array($uid, $swid));
 }
 
@@ -1299,9 +1296,8 @@ function socialwiki_get_follows($uid, $swid) {
 function socialwiki_is_following($userfromid, $usertoid, $swid) {
     Global $DB;
     $sql = 'SELECT usertoid
-        FROM {socialwiki_follows}
-        WHERE userfromid=? AND usertoid=? AND subwikiid= ?';
-
+            FROM {socialwiki_follows}
+            WHERE userfromid=? AND usertoid=? AND subwikiid= ?';
     return $DB->record_exists_sql($sql, array($userfromid, $usertoid, $swid));
 }
 
@@ -1341,8 +1337,8 @@ function socialwiki_get_followers($uid, $swid) {
 function socialwiki_get_follower_users($uid, $swid) {
     Global $DB;
     $sql = 'SELECT userfromid
-          FROM {socialwiki_follows}
-          WHERE usertoid=? AND subwikiid= ?';
+            FROM {socialwiki_follows}
+            WHERE usertoid=? AND subwikiid= ?';
     $results = $DB->get_records_sql($sql, array($uid, $swid));
     return array_map(function($obj) {
         return $obj->userfromid;
@@ -1373,9 +1369,8 @@ function socialwiki_page_likes($pid) {
 function socialwiki_liked($uid, $pid) {
     global $DB;
     $sql = 'SELECT *
-        FROM {socialwiki_likes}
-        WHERE userid=? AND pageid=?';
-
+            FROM {socialwiki_likes}
+            WHERE userid=? AND pageid=?';
     return $DB->record_exists_sql($sql, array($uid, $pid));
 }
 
@@ -1504,7 +1499,6 @@ function socialwiki_get_author($pid) {
     $sql = 'SELECT userid
             FROM {socialwiki_pages}
             WHERE id=?';
-
     return $DB->get_record_sql($sql, array($pid));
 }
 
@@ -1534,37 +1528,38 @@ function socialwiki_get_user_favourites($uid, $swid) {
  * @return int[]
  */
 function socialwiki_get_page_favourites($pid, $swid) {
-    $results = socialwiki_get_page_likes($pid, $swid);
+    $likers = socialwiki_get_page_likes($pid, $swid);
     $favourites = array();
-    foreach ($results as $r) {
-        if (socialwiki_is_user_favourite($r, $pid, $swid)) {
-            array_push($favourites, $r);
+    foreach ($likers as $userid) {
+        if (socialwiki_is_user_favourite($userid, $pid, $swid)) {
+            array_push($favourites, $userid);
         }
     }
     return $favourites;
 }
 
 /**
- * Check if a page is a user's favourite.
+ * Check if a page is a user's favorite.
  *
  * @param int $uid The user ID.
  * @param int $pid The page ID.
  * @param int $swid The subwiki ID.
- * @return bool
+ * @return boolean
  */
 function socialwiki_is_user_favourite($uid, $pid, $swid) {
-    $likedpages = socialwiki_get_user_likes($uid, $swid);
-    $p = socialwiki_get_page($pid);
-
-    foreach ($likedpages as $pages) {
-        $page = socialwiki_get_page($pages->pageid);
-        if ($page->title == $p->title) {
-            if ($page->timemodified > $p->timemodified) {
-                return false;
-            }
-        }
+    global $DB;
+    $page = socialwiki_get_page($pid);
+    $sql = 'SELECT pageid
+            FROM {socialwiki_likes} l
+            INNER JOIN {socialwiki_pages} p
+            ON l.pageid=p.id
+            WHERE l.userid=? and p.title=? and l.subwikiid=?
+            ORDER BY p.timemodified DESC LIMIT 1';
+    $out = $DB->get_record_sql($sql, array($uid, $page->title, $swid));
+    if (isset($out->pageid)) {
+        return ($out->pageid == $pid);
     }
-    return true;
+    return false;
 }
 
 /**
@@ -1576,8 +1571,8 @@ function socialwiki_is_user_favourite($uid, $pid, $swid) {
 function socialwiki_get_parent($pid) {
     Global $DB;
     $sql = 'SELECT parent
-        FROM {socialwiki_pages}
-        WHERE id=?';
+            FROM {socialwiki_pages}
+            WHERE id=?';
     return $DB->get_record_sql($sql, array($pid));
 }
 
@@ -1589,29 +1584,23 @@ function socialwiki_get_parent($pid) {
  */
 function socialwiki_get_contributors($pid) {
     Global $DB;
-    if ($pid == null) {
-        return array();
+    $sql = 'SELECT userid, parent
+            FROM {socialwiki_pages}
+            WHERE id=?';
+    $result = $DB->get_record_sql($sql, array($pid));
+
+    if (isset($result->parent)) {
+        $contribs = socialwiki_get_contributors($result->parent); // Recursion.
     } else {
-        $sql = 'SELECT userid, parent
-              FROM {socialwiki_pages}
-              WHERE id=?';
-        $result = $DB->get_record_sql($sql, array($pid));
-
-        $maybe = ($result == null);
-        if (isset($result->parent)) {
-            $contribs = socialwiki_get_contributors($result->parent); // Recursion.
-        } else {
-            $contribs = array();
-        }
-        if (isset($result->userid)) {
-            $contribs = array_diff($contribs, array($result->userid));
-            $contribs[] = $result->userid;
-        } else {
-            return $contribs;
-        }
-
-        return $contribs;
+        $contribs = array();
     }
+
+    if (isset($result->userid)) {
+        $contribs = array_diff($contribs, array($result->userid));
+        $contribs[] = $result->userid;
+    }
+
+    return $contribs;
 }
 
 /**
@@ -1623,8 +1612,8 @@ function socialwiki_get_contributors($pid) {
 function socialwiki_get_children($pid) {
     Global $DB;
     $sql = 'SELECT *
-        FROM {socialwiki_pages}
-        WHERE parent=?';
+            FROM {socialwiki_pages}
+            WHERE parent=?';
     return $DB->get_records_sql($sql, array($pid));
 }
 
@@ -1654,7 +1643,8 @@ function socialwiki_get_subwiki_users($swid) {
 function socialwiki_get_active_subwiki_users($swid) {
     Global $DB;
     $sql = 'SELECT DISTINCT v.userid
-            FROM {socialwiki_user_views} v join {socialwiki_pages} p on v.pageid=p.id where p.subwikiid=?';
+            FROM {socialwiki_user_views} v
+            JOIN {socialwiki_pages} p ON v.pageid=p.id WHERE p.subwikiid=?';
 
     $users = $DB->get_records_sql($sql, array($swid));
     $uids = array();
@@ -1730,9 +1720,9 @@ function socialwiki_indexof_page($pid, $pages) {
 function socialwiki_get_teachers($contextid) {
     Global $DB;
     $sql = 'SELECT ra.userid AS id
-        FROM {role_assignments} ra
-        JOIN {role} r ON r.id=ra.roleid
-        WHERE contextid=? AND (shortname="teacher" OR shortname="editingteacher")';
+            FROM {role_assignments} ra
+            JOIN {role} r ON r.id=ra.roleid
+            WHERE contextid=? AND (shortname="teacher" OR shortname="editingteacher")';
     return $DB->get_records_sql($sql, array($contextid));
 }
 

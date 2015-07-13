@@ -16,7 +16,7 @@
 
 /**
  * Peers used for social data.
- * 
+ *
  * @package mod_socialwiki
  * @copyright 2015 NMAI-lab
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ require_once("$CFG->dirroot/mod/socialwiki/locallib.php");
 
 /**
  * Class that describes the similarity between the current user and another student in the activity.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,49 +35,49 @@ class peer {
 
     /**
      * Trust indicator value = 1/distance or 0.
-     * 
+     *
      * @var int
      */
     public $trust = 0;
-    
+
     /**
      * The user ID.
-     * 
+     *
      * @var int
      */
     public $id;
-    
+
     /**
      * The similarity between likes of the peer and user.
-     * 
+     *
      * @var int
      */
     public $likesim = 0;
-    
+
     /**
      * The similarity between the people the user and peer are following.
-     * 
+     *
      * @var int
      */
     public $followsim = 0;
-    
+
     /**
      * Percent popularity.
-     * 
+     *
      * @var int
      */
     public $popularity;
-    
+
     /**
      * Social distance: 1 for I'm following this user, 2 for friend of a friend, etc.
-     * 
+     *
      * @var int
      */
     public $depth;
 
     /**
      * Creates a new peer.
-     * 
+     *
      * @param array $arr Data for the peer.
      */
     public function __construct($arr) {
@@ -90,7 +90,7 @@ class peer {
 
     /**
      * Creates a new peer and computes its trust indicators.
-     * 
+     *
      * @param int $id A user ID.
      * @param int $swid The subwiki ID.
      * @param int $currentuser The current user ID.
@@ -120,7 +120,7 @@ class peer {
 
     /**
      * Calculates how far away another user is in your network.
-     * 
+     *
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      */
@@ -130,7 +130,7 @@ class peer {
 
     /**
      * Returns an array of the peer data.
-     * 
+     *
      * @return array
      */
     public function to_array() {
@@ -143,7 +143,7 @@ class peer {
 
     /**
      * Sets the follow similarity.
-     * 
+     *
      * @param int $uid The user ID.
      * @param the $swid The subwiki ID.
      */
@@ -162,7 +162,7 @@ class peer {
 
     /**
      * Sets the like similarity.
-     * 
+     *
      * @param int $uid The user ID.
      * @param the $swid The subwiki ID.
      */
@@ -182,7 +182,7 @@ class peer {
     /**
      * Gets a peer.
      * KEEP PEERS in SESSION variable!
-     * 
+     *
      * @param int $id A user ID.
      * @param int $swid The subwiki ID.
      * @param int $thisuser The current user ID.

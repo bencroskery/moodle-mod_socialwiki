@@ -303,6 +303,7 @@ $string['socialwiki:managewiki'] = 'Manage Social Wiki';
 /*
  * All table related strings.
  */
+
 // Headers.
 $string['title'] = 'Title';
 $string['title_help'] = 'The title of the page version.';

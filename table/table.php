@@ -79,31 +79,29 @@ abstract class socialwiki_table {
     abstract protected function get_table_data();
 
     /**
-     * Gets the table in HTML format.
+     * Prints the table in HTML format.
      *
      * @param string $tableid The HTML id of the table.
-     * @return string HTML table
      */
-    public function get_as_html($tableid = 'a_table') {
-        $t = "<table id=$tableid class='datatable'>";
+    public function print_html($tableid = 'a_table') {
+        echo "<table id=$tableid class='datatable'>";
         $tabledata = $this->get_table_data();
         // Headers.
-        $t .= "<thead><tr>";
+        echo "<thead><tr>";
         foreach ($this->headers as $h) {
-            $t .= "<th title='" . get_string($h.'_help', 'socialwiki') . "'>" . get_string($h, 'socialwiki') . "</th>";
+            echo "<th title='" . get_string($h.'_help', 'socialwiki') . "'>" . get_string($h, 'socialwiki') . "</th>";
         }
-        $t .= "</tr></thead><tbody>";
+        echo "</tr></thead><tbody>";
 
         foreach ($tabledata as $row) {
-            $t .= "<tr>";
+            echo "<tr>";
             foreach ($row as $k => $val) {
-                $t .= "<td>$val</td>";
+                echo "<td>$val</td>";
             }
-            $t .= "</tr>";
+            echo "</tr>";
         }
 
-        $t .= "</tbody></table>";
-        return $t;
+        echo "</tbody></table>";
     }
 
     /**
@@ -204,12 +202,11 @@ abstract class socialwiki_table {
             default:
                 $tabletype = 'unknowntabletype ' . $tabletype;
         }
-        $output = '<h2>'.get_string($tabletype, 'socialwiki').'</h2>';
+        echo '<h2>'.get_string($tabletype, 'socialwiki').'</h2>';
         if ($t != null) {
-            $output .= $t->get_as_html();
+            $t->print_html();
         } else {
-            $output .= get_string($tabletype . '_empty', 'socialwiki');
+            echo get_string($tabletype . '_empty', 'socialwiki');
         }
-        return $output;
     }
 }

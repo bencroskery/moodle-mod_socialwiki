@@ -87,5 +87,24 @@ function xmldb_socialwiki_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015070100, 'socialwiki'); // Socialwiki savepoint reached.
     }
 
+    // Remove locks, synonyms and links tables.
+    if ($oldversion < 2015070900) {
+        $table = new xmldb_table('socialwiki_pages');
+        if ($dbman->table_exists($table)) {
+
+            $timerendered = new xmldb_field('timerendered');
+            if ($dbman->field_exists($table, $timerendered)) {
+                $dbman->drop_field($table, $timerendered);
+            }
+
+            $readonly = new xmldb_field('readonly');
+            if ($dbman->field_exists($table, $readonly)) {
+                $dbman->drop_field($table, $readonly);
+            }
+        }
+
+        upgrade_mod_savepoint(true, 2015070900, 'socialwiki'); // Socialwiki savepoint reached.
+    }
+
     return true;
 }

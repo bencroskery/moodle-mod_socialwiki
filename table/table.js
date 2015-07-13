@@ -41,7 +41,7 @@ $(document).ready(function () {
 
 /**
  * Sort function for updated time ago column.
- * 
+ *
  * @param string d The text in the box.
  * @returns string
  */

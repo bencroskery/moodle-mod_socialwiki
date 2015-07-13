@@ -212,7 +212,7 @@ abstract class page_socialwiki {
         global $OUTPUT;
         $html = '';
         $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading(format_string($this->title), 1, 'socialwiki_headingtitle');
+        $html .= $OUTPUT->heading(format_string($this->title), 1, 'socialwiki_title');
         $html .= $OUTPUT->container_end();
         echo $html;
     }
@@ -309,7 +309,7 @@ abstract class page_socialwiki {
 
 /**
  * The socialwiki view page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -441,7 +441,7 @@ class page_socialwiki_view extends page_socialwiki {
 
     /**
      * Sets the current course module.
-     * 
+     *
      * @param int $id
      */
     public function set_coursemodule($id) {
@@ -451,7 +451,7 @@ class page_socialwiki_view extends page_socialwiki {
 
 /**
  * The socialwiki edit page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -551,9 +551,7 @@ class page_socialwiki_edit extends page_socialwiki {
         if (isset($this->section)) {
             $title .= ' : ' . $this->section;
         }
-        echo $OUTPUT->container_start('socialwiki_clear');
-        echo $OUTPUT->heading(format_string($title), 1, 'socialwiki_headingtitle');
-        echo $OUTPUT->container_end();
+        echo $OUTPUT->heading(format_string($title), 1, 'socialwiki_title');
     }
 
     /**
@@ -677,7 +675,7 @@ class page_socialwiki_edit extends page_socialwiki {
 
 /**
  * The socialwiki comments page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -797,7 +795,7 @@ class page_socialwiki_comments extends page_socialwiki {
 
 /**
  * The socialwiki edit comment page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -904,7 +902,7 @@ class page_socialwiki_editcomment extends page_socialwiki {
 
 /**
  * The socialwiki search page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1033,7 +1031,7 @@ class page_socialwiki_search extends page_socialwiki {
 
 /**
  * The socialwiki create page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1109,7 +1107,7 @@ class page_socialwiki_create extends page_socialwiki {
 
     /**
      * Prints the page content.
-     * 
+     *
      * @param string $pagetitle The page title.
      */
     public function print_content($pagetitle = '') {
@@ -1159,7 +1157,7 @@ class page_socialwiki_create extends page_socialwiki {
 
 /**
  * The socialwiki preview page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1263,7 +1261,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
 
 /**
  * The socialwiki difference page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1350,7 +1348,7 @@ class page_socialwiki_diff extends page_socialwiki {
 
 /**
  * The socialwiki history (version) page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1503,7 +1501,7 @@ class page_socialwiki_history extends page_socialwiki {
 
 /**
  * The socialwiki home page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1588,7 +1586,7 @@ class page_socialwiki_home extends page_socialwiki {
         );
 
         // Print the home page heading.
-        echo $OUTPUT->heading(get_string('hometitle', 'socialwiki'), 1, "socialwiki_headingtitle colourtext");
+        echo $OUTPUT->heading(get_string('hometitle', 'socialwiki'), 1, "socialwiki_title colourtext");
 
         $userheader = "<div class='home_picture'>";
         $userheader .= $OUTPUT->user_picture(socialwiki_get_user_info($USER->id), array('size' => 65));
@@ -1619,7 +1617,7 @@ class page_socialwiki_home extends page_socialwiki {
 
         $followdata = html_writer::start_tag('h3', array('class' => 'home_user'));
         $followdata .= html_writer::tag('span', get_string('followers', 'socialwiki') . ": $followers | "
-                . get_string('followedusers', 'socialwiki') . ": $following", array('class' => 'socialwiki_label'));
+                . get_string('followedusers', 'socialwiki') . ": $following", array('class' => 's_label'));
         $followdata .= html_writer::end_tag('h3');
         return $followdata;
     }
@@ -1650,9 +1648,9 @@ class page_socialwiki_home extends page_socialwiki {
      */
     public function print_explore_tab() {
         global $USER;
-        echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'pagesfollowed'); // Versions from Following Table.
-        echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'newpages'); // New Versions Table.
-        echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'allpages'); // All Versions Table.
+        socialwiki_table::builder($USER->id, $this->subwiki->id, 'pagesfollowed'); // Versions from Following Table.
+        socialwiki_table::builder($USER->id, $this->subwiki->id, 'newpages'); // New Versions Table.
+        socialwiki_table::builder($USER->id, $this->subwiki->id, 'allpages'); // All Versions Table.
     }
 
     /**
@@ -1661,7 +1659,7 @@ class page_socialwiki_home extends page_socialwiki {
     public function print_topics_tab() {
         global $USER;
         // Make a new Page button.
-        echo "<h2><a style='float:right' class='socialwiki_label' href='create.php?action=new"
+        echo "<h2><a style='float:right' class='s_label' href='create.php?action=new"
         . "&swid={$this->subwiki->id}'>" . get_string('makepage', 'socialwiki') . "</a></h2>";
         echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'alltopics'); // All Pages Table.
     }
@@ -1787,7 +1785,7 @@ class page_socialwiki_home extends page_socialwiki {
 
 /**
  * The socialwiki delete comment page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1862,7 +1860,7 @@ class page_socialwiki_deletecomment extends page_socialwiki {
 
 /**
  * The sociawiki save page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1965,7 +1963,7 @@ class page_socialwiki_save extends page_socialwiki_edit {
 
 /**
  * The socialwiki view version class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2057,7 +2055,7 @@ class page_socialwiki_viewversion extends page_socialwiki {
 
 /**
  * The socialwiki confirm restore page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2099,7 +2097,7 @@ class page_socialwiki_confirmrestore extends page_socialwiki_save {
 
 /**
  * The socialwiki pretty view page (for printing) class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2153,7 +2151,7 @@ class page_socialwiki_prettyview extends page_socialwiki {
 
 /**
  * The socialwiki page for handling comments class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2247,7 +2245,7 @@ class page_socialwiki_handlecomments extends page_socialwiki {
 
 /**
  * The socialwiki administration page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2394,7 +2392,7 @@ class page_socialwiki_admin extends page_socialwiki {
 
 /**
  * The socialwiki user profile page class.
- * 
+ *
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
