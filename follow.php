@@ -51,7 +51,7 @@ if ($pageid > -1) {
     }
 
     // Get the author of the current page.
-    $page = socialwiki_get_wiki_page_version($pageid, 0);
+    $page = socialwiki_get_page($pageid, 0);
     $user2 = $page->userid;
     // Check if the user is following themselves.
     if ($USER->id == $user2) {

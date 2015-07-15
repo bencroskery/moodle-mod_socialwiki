@@ -78,7 +78,7 @@ class versiontable extends socialwiki_table {
         $table = array();
 
         foreach ($this->allpages as $page) {
-            $updated = socialwiki_format_time($page->timemodified);
+            $updated = socialwiki_format_time($page->timecreated);
             $views = $page->pageviews;
             $likes = socialwiki_numlikes($page->id);
 
@@ -86,7 +86,7 @@ class versiontable extends socialwiki_table {
             $contributors = socialwiki_get_contributors($page->id);
             $contribstring = $this->make_multi_user_div($contributors);
 
-            $linkpage = "<a style='margin:0;' class='socialwiki_link' href="
+            $linkpage = "<a style='margin:0;' class='socialwiki-link' href="
                     . "$CFG->wwwroot/mod/socialwiki/view.php?pageid=$page->id>$page->title</a>";
 
             if (socialwiki_liked($this->uid, $page->id)) {
@@ -162,7 +162,7 @@ class versiontable extends socialwiki_table {
             $href = "href='$CFG->wwwroot/mod/socialwiki/viewuserpages.php?userid=$idfirst&subwikiid=$this->swid'";
         }
 
-        return "<a class='socialwiki_link' $href title='$ctr'>$firstctr</a>";
+        return "<a class='socialwiki-link' $href title='$ctr'>$firstctr</a>";
     }
 
     /**

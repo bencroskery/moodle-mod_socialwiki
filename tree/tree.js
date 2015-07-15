@@ -35,12 +35,14 @@ $(".hider").click(function () {
         img.attr("src", img.attr("src").substring(0, img.attr("src").length - 4) + "more");
         img.attr("title", "Maximize");
         $("#bgroup" + ($(this).attr("value"))).css("left", "0");
+        $("#bgroup" + ($(this).attr("value"))).css("margin-right", "0");
         $("#content" + ($(this).attr("value"))).css("display", "none");
         $("#comp" + ($(this).attr("value"))).css("display", "none");
     } else {
         img.attr("src", img.attr("src").substring(0, img.attr("src").length - 4) + "less");
         img.attr("title", "Minimize");
-        $("#bgroup" + ($(this).attr("value"))).css("left", "40%");
+        $("#bgroup" + ($(this).attr("value"))).css("left", "50%");
+        $("#bgroup" + ($(this).attr("value"))).css("margin-right", "29px");
         $("#content" + ($(this).attr("value"))).css("display", "initial");
         $("#comp" + ($(this).attr("value"))).css("display", "block");
     }
@@ -57,6 +59,7 @@ $(".collapser").click(function () {
         img.attr("src", img.attr("src").substring(0, img.attr("src").length - 2) + "down");
         img.attr("title", "Expand");
         $("#bgroup" + ($(this).attr("value"))).css("left", "0");
+        $("#bgroup" + ($(this).attr("value"))).css("margin-right", "0");
         $("#content" + ($(this).attr("value"))).css("display", "none");
         $("#hid" + ($(this).attr("value"))).css("display", "none");
         if ($("#comp" + ($(this).attr("value")))) {
@@ -68,7 +71,8 @@ $(".collapser").click(function () {
     } else {
         img.attr("src", img.attr("src").substring(0, img.attr("src").length - 4) + "up");
         img.attr("title", "Collapse");
-        $("#bgroup" + ($(this).attr("value"))).css("left", "40%");
+        $("#bgroup" + ($(this).attr("value"))).css("left", "50%");
+        $("#bgroup" + ($(this).attr("value"))).css("margin-right", "29px");
         $("#hid" + ($(this).attr("value"))).css("display", "inline");
         if ($("#hid" + ($(this).attr("value"))).title !== "Maximize") {
             $("#content" + ($(this).attr("value"))).css("display", "block");

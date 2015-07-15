@@ -699,10 +699,10 @@ function ouwiki_diff_html($html1, $html2) {
     $lines1 = ouwiki_diff_html_to_lines($html1);
     $lines2 = ouwiki_diff_html_to_lines($html2);
     list($deleted, $added) = ouwiki_diff_words($lines1, $lines2);
-    $result1 = ouwiki_diff_add_markers($html1, $deleted, 'ouw_deleted', '<strong class="accesshide">'
+    $result1 = ouwiki_diff_add_markers($html1, $deleted, 'ouw-deleted', '<strong class="accesshide">'
             . get_string('deletedbegins', 'socialwiki') . '</strong>', '<strong class="accesshide">'
             . get_string('deletedends', 'socialwiki') . '</strong>');
-    $result2 = ouwiki_diff_add_markers($html2, $added, 'ouw_added', '<strong class="accesshide">'
+    $result2 = ouwiki_diff_add_markers($html2, $added, 'ouw-added', '<strong class="accesshide">'
             . get_string('addedbegins', 'socialwiki') . '</strong>', '<strong class="accesshide">'
             . get_string('addedends', 'socialwiki') . '</strong>');
     return array($result1, $result2);

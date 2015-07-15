@@ -17,9 +17,9 @@
 /**
  * Peers used for social data.
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 global $CFG;
 

@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Delete wiki pages or versions
+ * Delete wiki pages
  *
- * This will show options for deleting wiki pages or purging page versions
+ * This will show options for deleting wiki pages
  * If user have wiki:managewiki ability then only this page will show delete
  * options
  *
@@ -34,8 +34,6 @@ $pageid = required_param('pageid', PARAM_INT); // Page ID.
 $delete = optional_param('delete', 0, PARAM_INT); // ID of the page to be deleted.
 $option = optional_param('option', 1, PARAM_INT); // Option ID.
 $listall = optional_param('listall', 0, PARAM_INT); // List all pages.
-$toversion = optional_param('toversion', 0, PARAM_INT); // Max version to be deleted.
-$fromversion = optional_param('fromversion', 0, PARAM_INT); // Min version to be deleted.
 
 if (!$page = socialwiki_get_page($pageid)) {
     print_error('incorrectpageid', 'socialwiki');
@@ -65,29 +63,6 @@ if (!empty($delete) && confirm_sesskey()) {
         $params = array('id' => $cm->id);
         $url = new moodle_url('/mod/socialwiki/home.php', $params);
         redirect($url);
-    }
-}
-
-// Delete version if toversion and fromversion are set.
-if (!empty($toversion) && !empty($fromversion) && confirm_sesskey()) {
-    // Make sure all versions should not be deleted...
-    $versioncount = socialwiki_count_wiki_page_versions($pageid);
-    $versioncount -= 1; // Ignore version 0.
-    $totalversionstodelete = $toversion - $fromversion;
-    $totalversionstodelete += 1; // Added 1 as toversion should be included.
-
-    if (($totalversionstodelete >= $versioncount) || ($versioncount <= 1)) {
-        print_error('incorrectdeleteversions', 'socialwiki');
-    } else {
-        $versions = array();
-        for ($i = $fromversion; $i <= $toversion; $i++) {
-            // Add all version to deletion list which exist.
-            if (socialwiki_get_wiki_page_version($pageid, $i)) {
-                array_push($versions, $i);
-            }
-        }
-        $purgeversions[$pageid] = $versions;
-        socialwiki_delete_page_versions($purgeversions);
     }
 }
 

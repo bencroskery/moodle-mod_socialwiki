@@ -28,8 +28,7 @@
 /**
  * @TODO: Doc this function
  */
-function socialwiki_print_editor_html($pageid, $content,
-        $version = -1, $section = null, $upload = false, $deleteuploads = array()) {
+function socialwiki_print_editor_html($pageid, $content, $section = null, $upload = false, $deleteuploads = array()) {
     global $CFG, $OUTPUT;
 
     $OUTPUT->heading(strtoupper(get_string('formathtml', 'socialwiki')));
@@ -43,8 +42,8 @@ function socialwiki_print_editor_html($pageid, $content,
     echo $OUTPUT->container_start('mdl-align');
     echo '<form method="post" action="' . $action . '">';
     echo $OUTPUT->container(print_textarea(true, 20, 100, 0, 0, "newcontent",
-            $content, 0, true, '', 'form-textarea-advanced'), 'socialwiki_editor');
-    socialwiki_print_edit_form_default_fields('html', $pageid, $version, $upload, $deleteuploads);
+            $content, 0, true, '', 'form-textarea-advanced'), 'socialwiki-editor');
+    socialwiki_print_edit_form_default_fields('html', $pageid, $upload, $deleteuploads);
     echo '</form>';
     echo $OUTPUT->container_end();
 }

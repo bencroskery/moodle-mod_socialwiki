@@ -109,7 +109,7 @@ class usertable extends socialwiki_table {
         // Define function to build a row from a user.
         $buildfunction = function ($id) use ($headers, $me, $swid, $www) {
             $user = socialwiki_get_user_info($id);
-            $name = "<a style='margin:0;' class='socialwiki_link' href='"
+            $name = "<a style='margin:0;' class='socialwiki-link' href='"
                     . $www . "/mod/socialwiki/viewuserpages.php?userid="
                     . $user->id . "&subwikiid=$swid'>" . fullname($user) . "</a>";
 

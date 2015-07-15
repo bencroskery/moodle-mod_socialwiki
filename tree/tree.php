@@ -17,9 +17,9 @@
 /**
  * The SocialWiki Tree.
  *
- * @package    mod_socialwiki
- * @copyright  2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_socialwiki
+ * @copyright 2015 NMAI-lab
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -133,7 +133,7 @@ class socialwiki_node {
             $this->content .= html_writer::end_tag('span');
             $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
             $this->content .= html_writer::link($userlink->out(false), fullname($user))
-                    . "&nbsp; " . socialwiki_format_time($page->timemodified);
+                    . "&nbsp; " . socialwiki_format_time($page->timecreated);
         $this->content .= html_writer::end_tag('span');
     }
 
@@ -262,7 +262,7 @@ class socialwiki_tree {
         if (!empty($this->roots)) { // If it's empty there's no tree and no peers so we're ok.
             $swid = $this->roots[0]->swid;
         }
-        $peerinfo = '<div id="peerinfo" style="display:none"><ul>';
+        $peerinfo = '<div id="peer-info" style="display:none"><ul>';
         foreach ($allpeerset as $p) {
             $peerarray = peer::socialwiki_get_peer($p, $swid, $USER->id)->to_array();
             $peerinfo .= '<li>';
