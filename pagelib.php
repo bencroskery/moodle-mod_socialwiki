@@ -1405,7 +1405,6 @@ class page_socialwiki_history extends page_socialwiki {
         if (count($tree->nodes) > 1) {
             echo $OUTPUT->container_start('socialwiki-diffbutton');
             echo html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'socialwiki-form-button',
-                                                       'style' => 'margin-top:15px',
                                                        'value' => get_string('comparesel', 'socialwiki')));
             echo $OUTPUT->container_end();
         }

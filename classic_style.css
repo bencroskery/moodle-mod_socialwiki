@@ -22,6 +22,10 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+h1, h2, h3, h4, h5, h6 {
+    text-align: left;
+}
+
 .socialwiki_wikicontent .s-label {
     display: inline;
     padding: .2em .6em .3em;
