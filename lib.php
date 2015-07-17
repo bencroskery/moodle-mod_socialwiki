@@ -532,7 +532,7 @@ function socialwiki_comment_validate($commentparam) {
 
 /**
  * Return a list of page types.
- * 
+ *
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block

@@ -199,9 +199,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
             if ($tab == 'comments' && !has_capability('mod/socialwiki:viewcomment', $context)) {
                 continue;
             }
-            if ($tab == 'files' && !has_capability('mod/socialwiki:viewpage', $context)) {
-                continue;
-            }
             if (($tab == 'view' || $tab == 'home' || $tab == 'history') && !has_capability('mod/socialwiki:viewpage', $context)) {
                 continue;
             }
@@ -244,20 +241,11 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
      * @param stdClass $wiki The current wiki.
      * @param stdClass $subwiki The current subwiki.
      * @param stdClass $page The current page.
-     * @param string $pagetype What tab is active right now.
      */
-    public function socialwiki_print_subwiki_selector($wiki, $subwiki, $page, $pagetype = 'view') {
+    public function socialwiki_print_subwiki_selector($wiki, $subwiki, $page) {
         global $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
-        switch ($pagetype) {
-            case 'files':
-                $baseurl = new moodle_url('/mod/socialwiki/files.php');
-                break;
-            case 'view':
-            default:
-                $baseurl = new moodle_url('/mod/socialwiki/view.php');
-                break;
-        }
+        $baseurl = new moodle_url('/mod/socialwiki/view.php');
 
         $cm = get_coursemodule_from_instance('socialwiki', $wiki->id);
         $context = context_module::instance($cm->id);
@@ -285,9 +273,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
                         echo $this->output->container_start('socialwiki-right');
                         $params = array('wid' => $wiki->id, 'title' => $page->title);
-                        if ($pagetype == 'files') {
-                            $params['pageid'] = $page->id;
-                        }
                         $baseurl->params($params);
                         $name = 'uid';
                         $selected = $subwiki->userid;
@@ -303,9 +288,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                 if ($wiki->wikimode == 'collaborative') {
                     // We need to print a select to choose a course group.
                     $params = array('wid' => $wiki->id, 'title' => $page->title);
-                    if ($pagetype == 'files') {
-                        $params['pageid'] = $page->id;
-                    }
                     $baseurl->params($params);
 
                     echo $this->output->container_start('socialwiki-right');
@@ -344,9 +326,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                     }
                     echo $this->output->container_start('socialwiki-right');
                     $params = array('wid' => $wiki->id, 'title' => $page->title);
-                    if ($pagetype == 'files') {
-                        $params['pageid'] = $page->id;
-                    }
                     $baseurl->params($params);
                     $name = 'groupanduser';
                     $selected = $subwiki->groupid . '-' . $subwiki->userid;
@@ -363,9 +342,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
                     // We need to print a select to choose a course group
                     // moodle_url will take care of encoding for us.
                     $params = array('wid' => $wiki->id, 'title' => $page->title);
-                    if ($pagetype == 'files') {
-                        $params['pageid'] = $page->id;
-                    }
                     $baseurl->params($params);
 
                     echo $this->output->container_start('socialwiki-right');
@@ -389,9 +365,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
                     echo $this->output->container_start('socialwiki-right');
                     $params = array('wid' => $wiki->id, 'title' => $page->title);
-                    if ($pagetype == 'files') {
-                        $params['pageid'] = $page->id;
-                    }
                     $baseurl->params($params);
                     $name = 'groupanduser';
                     $selected = $subwiki->groupid . '-' . $subwiki->userid;
@@ -433,17 +406,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
             'courseid' => $COURSE->id, 'cmid' => $cmid, 'exact' => $exact)), 'option', $selectoptions, $currentselect);
         $select->label = get_string('searchmenu', 'socialwiki') . ': ';
         return $this->output->container($this->output->render($select), 'midpad colourtext');
-    }
-
-    /**
-     * Makes a new files tree.
-     *
-     * @param stdClass $context The current context.
-     * @param stdClass $subwiki The current subwiki.
-     * @return socialwiki_files_tree
-     */
-    public function socialwiki_files_tree($context, $subwiki) {
-        return $this->render(new socialwiki_files_tree($context, $subwiki));
     }
 
     /**
@@ -580,49 +542,5 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= $this->content_area_end();
         return $html;
-    }
-}
-
-/**
- * SocialWiki Files Tree Class.
- *
- * @package   mod_socialwiki
- * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class socialwiki_files_tree implements renderable {
-
-    /**
-     * The current context.
-     *
-     * @var stdClass
-     */
-    public $context;
-
-    /**
-     * The file tree data.
-     *
-     * @var string
-     */
-    public $dir;
-
-    /**
-     * The current subwiki.
-     *
-     * @var stdClass
-     */
-    public $subwiki;
-
-    /**
-     * Creates a new file tree.
-     *
-     * @param stdClass $context The current context.
-     * @param stdClass $subwiki The current subwiki
-     */
-    public function __construct($context, $subwiki) {
-        $fs = get_file_storage();
-        $this->context = $context;
-        $this->subwiki = $subwiki;
-        $this->dir = $fs->get_area_tree($context->id, 'mod_socialwiki', 'attachments', $subwiki->id);
     }
 }

@@ -1,4 +1,4 @@
-@mod @mod_wiki
+@mod @mod_socialwiki
 Feature: There is a choice of formats for editing a wiki page
   In order to allow users to use their favourite wiki format
   As a user

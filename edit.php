@@ -34,9 +34,7 @@ require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 
 $pageid = required_param('pageid', PARAM_INT);
-$contentformat = optional_param('contentformat', '', PARAM_ALPHA);
 $option = optional_param('editoption', '', PARAM_TEXT);
-$section = optional_param('section', "", PARAM_TEXT);
 $attachments = optional_param('attachments', 0, PARAM_INT);
 $deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);
 // 1 means create the empty first version of the page.
@@ -67,10 +65,6 @@ if (!$cm = get_coursemodule_from_instance('socialwiki', $wiki->id)) {
 
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
-if (!empty($section) && !$sectioncontent = socialwiki_get_section_page($page, $section)) {
-    print_error('invalidsection', 'socialwiki');
-}
-
 require_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
@@ -81,7 +75,7 @@ if ($option == get_string('save', 'socialwiki')) {
         print_error(get_string('invalidsesskey', 'socialwiki'));
     }
     if ($makenew == 0) {
-        $newpageid = socialwiki_create_page($subwiki->id, $page->title, $contentformat, $USER->id, $page->id);
+        $newpageid = socialwiki_create_page($subwiki->id, $page->title, $USER->id, $page->id);
         $newpage = socialwiki_get_page($newpageid);
 
         $wikipage = new page_socialwiki_save($wiki, $subwiki, $cm, $makenew);
@@ -103,25 +97,13 @@ if ($option == get_string('save', 'socialwiki')) {
 
     $wikipage->set_upload(true);
 } else {
-    if ($option == get_string('preview')) {
-        if (!confirm_sesskey()) {
-            print_error(get_string('invalidsesskey', 'socialwiki'));
-        }
-        $wikipage = new page_socialwiki_preview($wiki, $subwiki, $cm);
-        $wikipage->set_page($page);
+    if ($option == get_string('cancel')) {
+        redirect($CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $pageid);
     } else {
-        if ($option == get_string('cancel')) {
-            redirect($CFG->wwwroot . '/mod/socialwiki/view.php?pageid=' . $pageid);
-        } else {
-            $wikipage = new page_socialwiki_edit($wiki, $subwiki, $cm, $makenew);
-            $wikipage->set_page($page);
-            $wikipage->set_upload($option == get_string('upload', 'socialwiki'));
-        }
+        $wikipage = new page_socialwiki_edit($wiki, $subwiki, $cm, $makenew);
+        $wikipage->set_page($page);
+        $wikipage->set_upload($option == get_string('upload', 'socialwiki'));
     }
-}
-
-if (!empty($section)) {
-    $wikipage->set_section($sectioncontent, $section);
 }
 
 if (!empty($attachments)) {
@@ -132,13 +114,7 @@ if (!empty($deleteuploads)) {
     $wikipage->set_deleteuploads($deleteuploads);
 }
 
-if (!empty($contentformat)) {
-    $wikipage->set_format($contentformat);
-}
-
 $wikipage->print_header();
-
 $wikipage->print_content();
-
 $wikipage->print_footer();
 

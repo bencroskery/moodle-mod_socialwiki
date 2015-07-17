@@ -116,17 +116,6 @@ $capabilities = array(
         )
     ),
 
-    'mod/socialwiki:managefiles' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-
     'mod/socialwiki:managewiki' => array(
 
         'captype' => 'write',

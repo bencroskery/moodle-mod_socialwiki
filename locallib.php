@@ -31,12 +31,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/tag/lib.php');
 
-define('SOCIALFORMAT_CREOLE', '37');
-define('SOCIALFORMAT_NWIKI', '38');
 define('SOCIAL_NO_VALID_RATE', '-999');
 define('SOCIALIMPROVEMENT', '+');
 define('SOCIALEQUAL', '=');
@@ -151,16 +148,6 @@ function socialwiki_get_pages_from_userid($uid, $swid) {
 }
 
 /**
- * Get page section.
- *
- * @param stdClass $page
- * @param string $section
- */
-function socialwiki_get_section_page($page, $section) {
-    return socialwiki_parser_proxy::get_section($page->content, $page->format, $section);
-}
-
-/**
  * Get a wiki page by page title.
  *
  * @param int $swid The subwiki ID.
@@ -220,30 +207,6 @@ function socialwiki_get_first_page($swid, $module = null) {
 }
 
 /**
- * Save a page section.
- *
- * @param stdClass $page The page that is modified.
- * @param string $sectiontitle The title of the section.
- * @param string $sectioncontent The content in the section.
- * @param int $uid The ID of the user.
- * @return bool|array
- */
-function socialwiki_save_section($page, $sectiontitle, $sectioncontent, $uid) {
-    $wiki = socialwiki_get_wiki_from_pageid($page->id);
-    $cm = get_coursemodule_from_instance('socialwiki', $wiki->id);
-    $context = context_module::instance($cm->id);
-
-    if (has_capability('mod/socialwiki:editpage', $context)) {
-        $content = socialwiki_parser_proxy::get_section($page->content, $page->format, $sectiontitle, true);
-        $newcontent = $content[0] . $sectioncontent . $content[2];
-
-        return socialwiki_save_page($page, $newcontent, $uid);
-    } else {
-        return false;
-    }
-}
-
-/**
  * Save page content.
  *
  * @param stdClass $page The page to modify.
@@ -262,25 +225,10 @@ function socialwiki_save_page($page, $newcontent, $uid) {
         $page->userid = $uid;
         $page->content = $newcontent;
         $DB->update_record('socialwiki_pages', $page);
-        $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
-        $parseroutput = socialwiki_parse_content($page->format, $newcontent, $options);
-        return array('page' => $page, 'sections' => $parseroutput['repeated_sections']);
+        return $page;
     } else {
         return false;
     }
-}
-
-/**
- * Restore a page.
- *
- * @param stdClass $page The page to modify.
- * @param string $newcontent The content in the page.
- * @param int $uid The ID of the user.
- * @return stdClass
- */
-function socialwiki_restore_page($page, $newcontent, $uid) {
-    $return = socialwiki_save_page($page, $newcontent, $uid);
-    return $return['page'];
 }
 
 /**
@@ -288,12 +236,11 @@ function socialwiki_restore_page($page, $newcontent, $uid) {
  *
  * @param int $swid The subwiki ID.
  * @param string $title The page title.
- * @param string $format The format type.
  * @param int $uid The user ID.
  * @param int $parent The parent page ID.
  * @return int
  */
-function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
+function socialwiki_create_page($swid, $title, $uid, $parent = null) {
     global $DB;
     $subwiki = socialwiki_get_subwiki($swid);
     $cm = get_coursemodule_from_instance('socialwiki', $subwiki->wikiid);
@@ -306,7 +253,6 @@ function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
     $page->title = $title;
     $page->content = '';
     $page->timecreated = time();
-    $page->format = $format;
     $page->userid = $uid;
     $page->pageviews = 0;
     $page->parent = $parent;
@@ -516,55 +462,12 @@ function socialwiki_increment_user_views($uid, $pid) {
 // ----------------------------------------------------------
 
 /**
- * Style formats.
+ * Different styles available for the wiki.
  *
  * @return string[]
  */
 function socialwiki_get_styles() {
     return array('classic'); // Style 'modern' removed for now.
-}
-
-/**
- * Text format supported by wiki module.
- *
- * @return string[]
- */
-function socialwiki_get_formats() {
-    return array('html', 'creole', 'nwiki');
-}
-
-/**
- * Parses a string with the wiki markup language.
- *
- * @author Josep Arús Pous
- * @param string $markup The wiki markup language.
- * @param string $pagecontent The page content.
- * @param array $options Extra options.
- * @return bool|array False when something wrong has happened.
- */
-function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
-    $subwiki = socialwiki_get_subwiki($options['swid']);
-    $cm = get_coursemodule_from_instance("socialwiki", $subwiki->wikiid);
-    $context = context_module::instance($cm->id);
-
-    $parseroptions = array(
-        'link_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_link',
-        'link_callback_args' => array('swid' => $options['swid']),
-        'table_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_table',
-        'real_path_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_real_path',
-        'real_path_callback_args' => array(
-            'context' => $context,
-            'component' => 'mod_socialwiki',
-            'filearea' => 'attachments',
-            'subwikiid' => $subwiki->id,
-            'pageid' => $options['pageid']
-        ),
-        'pageid' => $options['pageid'],
-        'pretty_print' => (isset($options['pretty_print']) && $options['pretty_print']),
-        'printable' => (isset($options['printable']) && $options['printable'])
-    );
-
-    return socialwiki_parser_proxy::parse($pagecontent, $markup, $parseroptions);
 }
 
 /**
@@ -636,78 +539,6 @@ function socialwiki_parser_link($link, $options = null) {
                 'link_info' => array('link' => $link, 'new' => true, 'pageid' => 0));
         }
     }
-}
-
-/**
- * Returns the table fully parsed (HTML).
- *
- * @param array $table Table Data.
- * @return HTML for the table $table
- * @author Josep Arús Pous
- *
- */
-function socialwiki_parser_table($table) {
-    $htmltable = new html_table();
-
-    $headers = $table[0];
-    $htmltable->head = array();
-    foreach ($headers as $h) {
-        $htmltable->head[] = $h[1];
-    }
-
-    array_shift($table);
-    $htmltable->data = array();
-    foreach ($table as $row) {
-        $rowdata = array();
-        foreach ($row as $r) {
-            $rowdata[] = $r[1];
-        }
-        $htmltable->data[] = $rowdata;
-    }
-
-    return html_writer::table($htmltable);
-}
-
-/**
- * Returns an absolute path link, unless there is no such link.
- *
- * @param string $url Link's URL or filename
- * @param stdClass $context filearea params
- * @param string $component The component the file is associated with
- * @param string $filearea The filearea the file is stored in
- * @param int $swid Sub wiki id
- *
- * @return string URL for files full path
- */
-function socialwiki_parser_real_path($url, $context, $component, $filearea, $swid) {
-    global $CFG;
-
-    if (preg_match("/^(?:http|ftp)s?\:\/\// ", $url)) {
-        return $url;
-    } else {
-
-        $file = 'pluginfile.php';
-        if (!$CFG->slasharguments) {
-            $file = $file . '?file=';
-        }
-        $baseurl = "$CFG->wwwroot/$file/{$context->id}/$component/$filearea/$swid/";
-        // It is a file in current file area.
-        return $baseurl . $url;
-    }
-}
-
-/**
- * Returns the token used by a wiki language to represent a given tag or "object" (bold -> **).
- *
- * @param string $markup The markup language.
- * @param string $name Type to check.
- * @return A string when it has only one token at the beginning (f. ex. lists).
- *         An array composed by 2 strings when it has 2 tokens, one at the beginning
- *         and one at the end (f. ex. italics). Returns false otherwise.
- * @author Josep Arús Pous
- */
-function socialwiki_parser_get_token($markup, $name) {
-    return socialwiki_parser_proxy::get_token($name, $markup);
 }
 
 /**
@@ -930,16 +761,6 @@ function socialwiki_add_comment($context, $pid, $content, $editor) {
     $cmt->area = 'socialwiki_page';
     $cmt->course = $course;
     $cmt->component = 'mod_socialwiki';
-
-    $manager = new comment($cmt);
-
-    if ($editor == 'creole') {
-        $manager->add($content, SOCIALFORMAT_CREOLE);
-    } else if ($editor == 'html') {
-        $manager->add($content, FORMAT_HTML);
-    } else if ($editor == 'nwiki') {
-        $manager->add($content, SOCIALFORMAT_NWIKI);
-    }
 }
 
 /**
@@ -989,8 +810,7 @@ function socialwiki_delete_comments_wiki() {
  */
 function socialwiki_print_page_content($page, $context, $swid) {
     global $PAGE, $USER;
-    $content = socialwiki_parse_content($page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id));
-    $html = file_rewrite_pluginfile_urls($content['parsed_text'], 'pluginfile.php',
+    $html = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php',
             $context->id, 'mod_socialwiki', 'attachments', $swid);
     $wikioutput = $PAGE->get_renderer('mod_socialwiki');
     // This is where the page content, from the title down, is rendered!
@@ -1003,92 +823,6 @@ function socialwiki_print_page_content($page, $context, $swid) {
         socialwiki_increment_pageviews($page);
         socialwiki_increment_user_views($USER->id, $page->id);
     }
-}
-
-/**
- * Prints default edit form fields and buttons.
- *
- * @param string $format Edit form format (ex. creole).
- * @param int $pid The page ID.
- * @param bool $upload
- * @param array $deleteuploads
- */
-function socialwiki_print_edit_form_default_fields($format, $upload = false, $deleteuploads = array()) {
-    global $CFG, $PAGE, $OUTPUT;
-
-    // Hidden values.
-    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-    echo '<input type="hidden" name="format" value="' . $format . '"/>';
-
-    // Attachments.
-    require_once($CFG->dirroot . '/lib/form/filemanager.php');
-
-    $filemanager = new moodlequickform_filemanager('attachments', get_string('wikiattachments', 'socialwiki'),
-            array('id' => 'attachments'), array('subdirs' => false, 'maxfiles' => 99, 'maxbytes' => $CFG->maxbytes));
-
-    $value = file_get_submitted_draft_itemid('attachments');
-    if (!empty($value) && !$upload) {
-        $filemanager->setvalue($value);
-    }
-
-    echo '<fieldset class="socialwiki-upload-section clearfix"><legend class="ftoggler">'
-        . get_string("uploadtitle", 'socialwiki') . '</legend>';
-    echo $OUTPUT->container_start('mdl-align socialwiki-form-center aaaaa');
-    echo $filemanager->tohtml();
-    echo $OUTPUT->container_end();
-
-    $cm = $PAGE->cm;
-    $context = context_module::instance($cm->id);
-
-    echo $OUTPUT->container_start('mdl-align socialwiki-form-center socialwiki-upload-table');
-    socialwiki_print_upload_table($context, 'socialwiki_upload', $value, $deleteuploads);
-    echo $OUTPUT->container_end();
-    echo "</fieldset>";
-
-    $btnhtml = '<input class="socialwiki-button" type="submit" name="editoption" value="';
-    echo $btnhtml . get_string('save', 'socialwiki') . '"/>';
-    echo $btnhtml . get_string('upload', 'socialwiki') . '"/>';
-    echo $btnhtml . get_string('preview') . '"/>';
-    echo $btnhtml . get_string('cancel') . '" />';
-}
-
-/**
- * Prints a table with the files attached to a wiki page.
- *
- * @param stdClass $context Current context.
- * @param string $filearea Location of the file.
- * @param int $fileitemid The file ID.
- * @param array $deleteuploads
- */
-function socialwiki_print_upload_table($context, $filearea, $fileitemid, $deleteuploads = array()) {
-    global $CFG;
-
-    $htmltable = new html_table();
-
-    $htmltable->head = array(get_string('deleteupload', 'socialwiki'),
-        get_string('uploadname', 'socialwiki'), get_string('uploadactions', 'socialwiki'));
-
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_socialwiki', $filearea, $fileitemid); // TODO: this is weird.
-
-    foreach ($files as $file) {
-        if (!$file->is_directory()) {
-            $checkbox = '<input type="checkbox" name="deleteupload[]", value="' . $file->get_pathnamehash() . '"';
-
-            if (in_array($file->get_pathnamehash(), $deleteuploads)) {
-                $checkbox .= ' checked="checked"';
-            }
-
-            $checkbox .= " />";
-
-            $htmltable->data[] = array($checkbox, '<a href="'
-                . file_encode_url($CFG->wwwroot . '/pluginfile.php', '/' . $context->id . '/socialwiki_upload/'
-                        . $fileitemid . '/' . $file->get_filename()) . '">' . $file->get_filename() . '</a>', "");
-        }
-    }
-
-    echo '<h3 class="upload-table-title">' . get_string('uploadfiletitle', 'socialwiki') . "</h3>";
-    echo html_writer::table($htmltable);
 }
 
 /**

@@ -1,4 +1,4 @@
-@mod @mod_wiki
+@mod @mod_socialwiki
 Feature: Edited wiki pages may be previewed before saving
   In order to avoid silly mistakes
   As a user

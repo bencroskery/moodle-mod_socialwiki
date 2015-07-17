@@ -107,7 +107,7 @@ switch ($action) {
         break;
     case 'new':
         // Go straight to editing if we know the page title and we're in force format mode.
-        if ((int) $wiki->forceformat == 1 && $title != get_string('newpage', 'socialwiki')) {
+        if ($title != get_string('newpage', 'socialwiki')) {
             $newpageid = $wikipage->create_page($title);
             // Have the user like the page they are creating.
             socialwiki_add_like($USER->id, $newpageid, $subwiki->id);

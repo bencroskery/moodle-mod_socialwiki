@@ -78,20 +78,6 @@ class mod_socialwiki_mod_form extends moodleform_mod {
         // Style.
         $mform->addElement('select', 'style', get_string('style', 'socialwiki'), $styleoptions);
 
-        // Format.
-        $mform->addElement('header', 'wikifieldset', get_string('format'));
-
-        $formats = socialwiki_get_formats();
-        $editoroptions = array();
-        foreach ($formats as $format) {
-            $editoroptions[$format] = get_string($format, 'socialwiki');
-        }
-        $mform->addElement('select', 'defaultformat', get_string('defaultformat', 'socialwiki'), $editoroptions);
-        $mform->addHelpButton('defaultformat', 'defaultformat', 'socialwiki');
-
-        $mform->addElement('checkbox', 'forceformat', get_string('forceformat', 'socialwiki'));
-        $mform->addHelpButton('forceformat', 'forceformat', 'socialwiki');
-
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
         // Add standard buttons, common to all modules.

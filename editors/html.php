@@ -28,22 +28,17 @@
 /**
  * @TODO: Doc this function
  */
-function socialwiki_print_editor_html($pageid, $content, $section = null, $upload = false, $deleteuploads = array()) {
+function socialwiki_print_editor_html($pageid, $content = null) {
     global $CFG, $OUTPUT;
-
-    $OUTPUT->heading(strtoupper(get_string('formathtml', 'socialwiki')));
 
     $action = $CFG->wwwroot . '/mod/socialwiki/edit.php?pageid=' . $pageid;
 
-    if (!empty($section)) {
-        $action .= "&section=" . urlencode($section);
-    }
-
-    echo $OUTPUT->container_start('mdl-align');
     echo '<form method="post" action="' . $action . '">';
     echo $OUTPUT->container(print_textarea(true, 20, 100, 0, 0, "newcontent",
             $content, 0, true, '', 'form-textarea-advanced'), 'socialwiki-editor');
-    socialwiki_print_edit_form_default_fields('html', $pageid, $upload, $deleteuploads);
+    echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+    $btnhtml = '<input class="socialwiki-button" type="submit" name="editoption" value="';
+    echo $btnhtml . get_string('save', 'socialwiki') . '"/>';
+    echo $btnhtml . get_string('cancel') . '" />';
     echo '</form>';
-    echo $OUTPUT->container_end();
 }

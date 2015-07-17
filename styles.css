@@ -67,6 +67,18 @@
     color: red;
 }
 
+.socialwiki_wikicontent #fitem_id_newcontent_editor .feditor {
+    margin-left: 0;
+}
+
+.socialwiki_wikicontent #fitem_id_newcontent_editor .fitemtitle {
+    display: none;
+}
+
+.socialwiki_wikicontent #fgroup_id_buttonar .fgroup {
+    margin-left: 0;
+}
+
 .socialwiki_wikicontent .socialwiki-toc {
     border: 1px solid #BBB;
     background: #EEE;
@@ -102,32 +114,6 @@
     text-align: center;
     margin: auto;
     width: 320px;
-}
-
-.socialwiki_wikicontent .socialwiki-upload-table {
-    margin: 8px auto;
-    clear: both;
-}
-
-.socialwiki_wikicontent .socialwiki-upload-table table {
-    margin: auto;
-}
-
-.socialwiki_wikicontent .socialwiki-upload-table h3 {
-    margin: 4px 0;
-    text-align: center;
-}
-
-.socialwiki_wikicontent .socialwiki-upload-section {
-    border: 1px solid #EEE;
-    width: 400px;
-    margin: 8px auto;
-}
-
-.socialwiki_wikicontent .socialwiki-upload-section legend {
-    font-weight: bold;
-    font-size: 0.9em;
-    margin-left: 16px;
 }
 
 .socialwiki_wikicontent .socialwiki-tags {
@@ -169,6 +155,10 @@
 .socialwiki_wikicontent .socialwiki-diffcontent {
     padding: 10px;
     border: 1px solid #DDD;
+}
+
+.socialwiki_wikicontent .socialwiki-diffcontent .text_to_html {
+    overflow: auto;
 }
 
 .socialwiki_wikicontent .socialwiki-diffheading {

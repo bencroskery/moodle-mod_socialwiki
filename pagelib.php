@@ -464,24 +464,9 @@ class page_socialwiki_edit extends page_socialwiki {
      */
     public static $attachmentoptions;
 
-    /**
-     * The section name.
-     *
-     * @var string
-     */
-    protected $section;
-
-    /**
-     * The section content.
-     *
-     * @var string
-     */
-    protected $sectioncontent;
-
     protected $upload = false;
     protected $attachments = 0;
     protected $deleteuploads = array();
-    protected $format;
     protected $makenew;
 
     /**
@@ -497,7 +482,7 @@ class page_socialwiki_edit extends page_socialwiki {
         parent::__construct($wiki, $subwiki, $cm);
         $this->makenew = $makenew;
         self::$attachmentoptions = array('subdirs' => false,
-            'maxfiles' => - 1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => '*');
+            'maxfiles' => -1, 'maxbytes' => $CFG->maxbytes, 'accepted_types' => '*');
     }
 
     /**
@@ -507,11 +492,8 @@ class page_socialwiki_edit extends page_socialwiki {
         global $PAGE, $CFG;
 
         $params = array('pageid' => $this->page->id);
-
-        if (isset($this->section)) {
-            $params['section'] = $this->section;
-        }
         $params['makenew'] = $this->makenew;
+
         $PAGE->set_url("$CFG->wwwroot/mod/socialwiki/edit.php?makenew=$this->makenew", $params);
     }
 
@@ -520,9 +502,7 @@ class page_socialwiki_edit extends page_socialwiki {
      */
     protected function set_session_url() {
         global $SESSION;
-
-        $SESSION->wikipreviousurl = array('page' => 'edit',
-            'params' => array('pageid' => $this->page->id, 'section' => $this->section));
+        $SESSION->wikipreviousurl = array('page' => 'edit', 'params' => array('pageid' => $this->page->id));
     }
 
     /**
@@ -539,12 +519,7 @@ class page_socialwiki_edit extends page_socialwiki {
      */
     protected function print_pagetitle() {
         global $OUTPUT;
-
-        $title = $this->page->title;
-        if (isset($this->section)) {
-            $title .= ' : ' . $this->section;
-        }
-        echo $OUTPUT->heading(format_string($title), 1, 'socialwiki-title');
+        echo $OUTPUT->heading(format_string($this->page->title), 1, 'socialwiki-title');
     }
 
     /**
@@ -556,26 +531,6 @@ class page_socialwiki_edit extends page_socialwiki {
         } else {
             echo get_string('cannoteditpage', 'socialwiki');
         }
-    }
-
-    /**
-     * Sets section information.
-     *
-     * @param string $sectioncontent The section content.
-     * @param string $section The section name.
-     */
-    public function set_section($sectioncontent, $section) {
-        $this->sectioncontent = $sectioncontent;
-        $this->section = $section;
-    }
-
-    /**
-     * Sets the page formatting style.
-     *
-     * @param string $format The formatting style.
-     */
-    public function set_format($format) {
-        $this->format = $format;
     }
 
     public function set_upload($upload) {
@@ -598,52 +553,30 @@ class page_socialwiki_edit extends page_socialwiki {
     protected function print_edit($content = null) {
         global $CFG;
 
-        $format = $this->page->format;
-
         if ($content == null) {
-            if (empty($this->section)) {
-                $content = $this->page->content;
-            } else {
-                $content = $this->sectioncontent;
-            }
+            $content = $this->page->content;
         }
 
         $url = $CFG->wwwroot . '/mod/socialwiki/edit.php?pageid=' . $this->page->id . '&makenew=' . $this->makenew;
-        if (!empty($this->section)) {
-            $url .= "&section=" . urlencode($this->section);
-        }
 
         $params = array(
             'attachmentoptions' => self::$attachmentoptions,
-            'format' => $this->page->format,
             'pagetitle' => $this->page->title,
             'contextid' => $this->modcontext->id
         );
 
         $data = new stdClass();
         $data->newcontent = $content;
-        $data->format = $format;
 
-        switch ($format) {
-            case 'html':
-                $data->newcontentformat = FORMAT_HTML;
-                // Append editor context to editor options, giving preference to existing context.
-                self::$attachmentoptions = array_merge(
-                        array('context' => $this->modcontext), self::$attachmentoptions);
-                $data = file_prepare_standard_editor($data, 'newcontent', self::$attachmentoptions,
-                        $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
-                break;
-            default:
-                break;
-        }
+        $data->newcontentformat = FORMAT_HTML;
+        // Append editor context to editor options, giving preference to existing context.
+        self::$attachmentoptions = array_merge(
+                array('context' => $this->modcontext), self::$attachmentoptions);
+        $editor = file_prepare_standard_editor($data, 'newcontent', self::$attachmentoptions,
+                $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
 
-        if ($this->page->format != 'html') {
-            $params['fileitemid'] = $this->subwiki->id;
-            $params['component'] = 'mod_socialwiki';
-            $params['filearea'] = 'attachments';
-        }
         $form = new mod_socialwiki_edit_form($url, $params);
-        $form->set_data($data);
+        $form->set_data($editor);
         $form->display();
     }
 }
@@ -691,7 +624,6 @@ class page_socialwiki_comments extends page_socialwiki {
         }
 
         $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id);
-        $format = $this->page->format;
 
         if (empty($comments)) {
             echo $OUTPUT->heading(get_string('nocomments', 'socialwiki'));
@@ -721,17 +653,7 @@ class page_socialwiki_comments extends page_socialwiki {
             $row2 = new html_table_row();
             $row2->cells[] = $cell3;
 
-            if ($format != 'html') {
-                if ($format == 'creole') {
-                    $parsedcontent = socialwiki_parse_content('creole', $comment->content, $options);
-                } else if ($format == 'nwiki') {
-                    $parsedcontent = socialwiki_parse_content('nwiki', $comment->content, $options);
-                }
-
-                $cell4->text = format_text(html_entity_decode($parsedcontent['parsed_text'], ENT_QUOTES, 'UTF-8'), FORMAT_HTML);
-            } else {
-                $cell4->text = format_text($comment->content, FORMAT_HTML);
-            }
+            $cell4->text = format_text($comment->content, FORMAT_HTML);
 
             $row2->cells[] = $cell4;
 
@@ -778,7 +700,6 @@ class page_socialwiki_editcomment extends page_socialwiki {
     private $comment;
     private $action;
     private $form;
-    private $format;
 
     /**
      * Sets the URL of the page.
@@ -830,45 +751,24 @@ class page_socialwiki_editcomment extends page_socialwiki {
 
         $this->action = $action;
         $this->comment = $comment;
-        $this->format = $this->page->format;
 
-        if ($this->format == 'html') {
-            $destination = $CFG->wwwroot . '/mod/socialwiki/instancecomments.php?pageid=' . $this->page->id;
-            $this->form = new mod_socialwiki_comments_form($destination);
-        }
+        $destination = $CFG->wwwroot . '/mod/socialwiki/instancecomments.php?pageid=' . $this->page->id;
+        $this->form = new mod_socialwiki_comments_form($destination);
     }
 
     private function add_comment_form() {
         global $CFG;
-        require_once($CFG->dirroot . '/mod/socialwiki/editors/socialwiki_editor.php');
+        require_once($CFG->dirroot . '/mod/socialwiki/editors/html.php');
 
-        if ($this->format == 'html') {
-            $com = new stdClass();
-            $com->action = 'add';
-            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
-            $this->form->set_data($com);
-            $this->form->display();
-        } else {
-            socialwiki_print_editor_wiki($this->page->id, null, $this->format, null, false, null, 'addcomments');
-        }
+        socialwiki_print_editor_html($this->page->id);
     }
 
     private function edit_comment_form($com) {
         global $CFG;
         require_once($CFG->dirroot . '/mod/socialwiki/comments_form.php');
-        require_once($CFG->dirroot . '/mod/socialwiki/editors/socialwiki_editor.php');
+        require_once($CFG->dirroot . '/mod/socialwiki/editors/html.php');
 
-        if ($this->format == 'html') {
-            $com->action = 'edit';
-            $com->entrycomment_editor['text'] = $com->content;
-            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
-
-            $this->form->set_data($com);
-            $this->form->display();
-        } else {
-            socialwiki_print_editor_wiki($this->page->id,
-                    $com->content, $this->format, null, false, array(), 'editcomments', $com->id);
-        }
+        socialwiki_print_editor_html($this->page->id, $com->content);
     }
 
 }
@@ -1010,7 +910,6 @@ class page_socialwiki_search extends page_socialwiki {
  */
 class page_socialwiki_create extends page_socialwiki {
 
-    private $format;
     private $swid;
     private $wid;
     private $action;
@@ -1046,10 +945,6 @@ class page_socialwiki_create extends page_socialwiki {
         $PAGE->navbar->add($this->title);
     }
 
-    public function set_format($format) {
-        $this->format = $format;
-    }
-
     public function set_wid($wid) {
         $this->wid = $wid;
     }
@@ -1069,9 +964,7 @@ class page_socialwiki_create extends page_socialwiki {
         require_once(dirname(__FILE__) . '/create_form.php');
         $url = new moodle_url('/mod/socialwiki/create.php',
                 array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'group' => $this->gid, 'uid' => $this->uid));
-        $formats = socialwiki_get_formats();
-        $options = array('formats' => $formats, 'defaultformat' => $PAGE->activityrecord->defaultformat,
-            'forceformat' => $PAGE->activityrecord->forceformat, 'groups' => $this->groups);
+        $options = array('groups' => $this->groups);
         if ($this->title != get_string('newpage', 'socialwiki')) {
             $options['disable_pagetitle'] = true;
         }
@@ -1092,7 +985,6 @@ class page_socialwiki_create extends page_socialwiki {
         if (!empty($pagetitle)) {
             $data->pagetitle = $pagetitle;
         }
-        $data->pageformat = $PAGE->activityrecord->defaultformat;
 
         $this->mform->set_data($data);
         $this->mform->display();
@@ -1118,114 +1010,13 @@ class page_socialwiki_create extends page_socialwiki {
         }
         if ($data) {
             $this->set_title($data->pagetitle);
-            $id = socialwiki_create_page($this->subwiki->id, $data->pagetitle, $data->pageformat, $USER->id);
+            $id = socialwiki_create_page($this->subwiki->id, $data->pagetitle, $USER->id);
         } else {
             $this->set_title($pagetitle);
-            $id = socialwiki_create_page($this->subwiki->id, $pagetitle, $PAGE->activityrecord->defaultformat, $USER->id);
+            $id = socialwiki_create_page($this->subwiki->id, $pagetitle, $USER->id);
         }
         $this->page = $id;
         return $id;
-    }
-}
-
-/**
- * The socialwiki preview page class.
- *
- * @copyright 2015 NMAI-lab
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class page_socialwiki_preview extends page_socialwiki_edit {
-
-    private $newcontent;
-
-    /**
-     * Creates a new preview page.
-     *
-     * @param stdClass $wiki The current wiki.
-     * @param stdClass $subwiki The current subwiki.
-     * @param stdClass $cm The current course module.
-     */
-    public function __construct($wiki, $subwiki, $cm) {
-        global $PAGE, $OUTPUT;
-        parent::__construct($wiki, $subwiki, $cm, 0);
-        $buttons = $OUTPUT->update_module_button($cm->id, 'socialwiki');
-        $PAGE->set_button($buttons);
-    }
-
-    /**
-     * Sets the URL of the page.
-     */
-    public function set_url() {
-        global $PAGE, $CFG;
-
-        $params = array('pageid' => $this->page->id);
-        if (isset($this->section)) {
-            $params['section'] = $this->section;
-        }
-
-        $PAGE->set_url($CFG->wwwroot . '/mod/socialwiki/edit.php', $params);
-    }
-
-    /**
-     * Setup page tabs.
-     */
-    protected function setup_tabs($options = array()) {
-        parent::setup_tabs(array('linkedwhenactive' => 'view', 'activetab' => 'view'));
-    }
-
-    /**
-     * Prints the page content.
-     */
-    public function print_content() {
-        require_capability('mod/socialwiki:editpage', $this->modcontext, null, true, 'noeditpermission', 'socialwiki');
-        $this->print_preview();
-    }
-
-    public function set_newcontent($newcontent) {
-        $this->newcontent = $newcontent;
-    }
-
-    protected function print_preview() {
-        global $CFG, $OUTPUT;
-
-        $content = $this->page->content;
-
-        $url = $CFG->wwwroot . '/mod/socialwiki/edit.php?pageid=' . $this->page->id;
-        if (!empty($this->section)) {
-            $url .= "&section=" . urlencode($this->section);
-        }
-        $params = array(
-            'attachmentoptions' => page_socialwiki_edit::$attachmentoptions,
-            'format' => $this->format,
-            'contextid' => $this->modcontext->id
-        );
-
-        if ($this->format != 'html') {
-            $params['component'] = 'mod_socialwiki';
-            $params['filearea'] = 'attachments';
-            $params['fileitemid'] = $this->page->id;
-        }
-        $form = new mod_socialwiki_edit_form($url, $params);
-
-        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true);
-
-        if ($data = $form->get_data()) {
-            if (isset($data->newcontent)) {
-                // Wiki format.
-                $text = $data->newcontent;
-            } else {
-                // HTML format.
-                $text = $data->newcontent_editor['text'];
-            }
-            $parseroutput = socialwiki_parse_content($data->contentformat, $text, $options);
-            $this->set_newcontent($text);
-            echo $OUTPUT->notification(get_string('previewwarning', 'socialwiki'), 'notifyproblem socialwiki-info');
-            $content = format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv' => true, 'filter' => false));
-            echo $OUTPUT->box($content, 'generalbox socialwiki-previewbox');
-            $content = $this->newcontent;
-        }
-
-        $this->print_edit($content);
     }
 }
 
@@ -1303,7 +1094,7 @@ class page_socialwiki_diff extends page_socialwiki {
                     'pluginfile.php', $this->modcontext->id, 'mod_socialwiki', 'attachments', $this->subwiki->id));
             $newtext = format_text(file_rewrite_pluginfile_urls($newversion->content,
                     'pluginfile.php', $this->modcontext->id, 'mod_socialwiki', 'attachments', $this->subwiki->id));
-            list($diff1, $diff2) = ouwiki_diff_html($oldtext, $newtext);
+            list($diff1, $diff2) = socialwiki_diff_html($oldtext, $newtext);
             $oldversion->diff = $diff1;
             $oldversion->user = socialwiki_get_user_info($oldversion->userid);
             $newversion->diff = $diff2;
@@ -1862,57 +1653,24 @@ class page_socialwiki_save extends page_socialwiki_edit {
         global $CFG, $USER;
 
         $url = $CFG->wwwroot . '/mod/socialwiki/edit.php?pageid=' . $this->page->id . '&makenew=' . $this->makenew;
-        if (!empty($this->section)) {
-            $url .= "&section=" . urlencode($this->section);
-        }
 
         $params = array(
             'attachmentoptions' => page_socialwiki_edit::$attachmentoptions,
-            'format' => $this->format,
             'contextid' => $this->modcontext->id
         );
-
-        if ($this->format != 'html') {
-            $params['fileitemid'] = $this->page->id;
-            $params['component'] = 'mod_socialwiki';
-            $params['filearea'] = 'attachments';
-        }
 
         $form = new mod_socialwiki_edit_form($url, $params);
 
         $save = false;
         $data = false;
         if ($data = $form->get_data()) {
-            if ($this->format == 'html') {
-                $data = file_postupdate_standard_editor($data, 'newcontent', page_socialwiki_edit::$attachmentoptions,
-                        $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
-            }
+            $data = file_postupdate_standard_editor($data, 'newcontent', page_socialwiki_edit::$attachmentoptions,
+                    $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
 
-            if (isset($this->section)) {
-                echo "line 2236";
-                $save = socialwiki_save_section($this->page, $this->section, $data->newcontent, $USER->id);
-                echo "line 2238";
-            } else {
-                $save = socialwiki_save_page($this->page, $data->newcontent, $USER->id);
-            }
+            $save = socialwiki_save_page($this->page, $data->newcontent, $USER->id);
         }
 
         if ($save && $data) {
-
-            $message = '<p>' . get_string('saving', 'socialwiki') . '</p>';
-
-            if (!empty($save['sections'])) {
-                foreach ($save['sections'] as $s) {
-                    $message .= '<p>' . get_string('repeatedsection', 'socialwiki', $s) . '</p>';
-                }
-            }
-
-            if (isset($errors) && !empty($errors)) {
-                foreach ($errors as $e) {
-                    $message .= "<p>" . get_string('filenotuploadederror', 'socialwiki', $e->get_filename()) . "</p>";
-                }
-            }
-
             $url = new moodle_url('/mod/socialwiki/view.php',
                                   array('pageid' => $this->page->id, 'group' => $this->subwiki->groupid));
             redirect($url);
@@ -1964,12 +1722,8 @@ class page_socialwiki_prettyview extends page_socialwiki {
      * Prints out the pretty view content.
      */
     private function print_pretty_view() {
-        $content = socialwiki_parse_content($this->page->format, $this->page->content,
-                                            array('printable' => true, 'swid' => $this->subwiki->id,
-                                                  'pageid' => $this->page->id, 'pretty_print' => true));
-
         echo '<div id="socialwiki-printable-content">';
-        echo format_text($content['parsed_text'], FORMAT_HTML);
+        echo format_text($this->page->content, FORMAT_HTML);
         echo '</div>';
     }
 
@@ -1986,8 +1740,6 @@ class page_socialwiki_handlecomments extends page_socialwiki {
     private $action;
     private $content;
     private $commentid;
-    private $format;
-
 
     /**
      * Prints out the header at the top of the page.
@@ -2037,7 +1789,6 @@ class page_socialwiki_handlecomments extends page_socialwiki {
         $this->action = $action;
         $this->commentid = $commentid;
         $this->content = $content;
-        $this->format = $this->page->format;
     }
 
     private function add_comment($content, $idcomment) {

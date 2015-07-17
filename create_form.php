@@ -28,35 +28,12 @@ class mod_socialwiki_create_form extends moodleform {
     protected function definition() {
         $mform = $this->_form;
 
-        $formats = $this->_customdata['formats'];
-        $defaultformat = $this->_customdata['defaultformat'];
-        $forceformat = $this->_customdata['forceformat'];
-
         $mform->addElement('header', 'general', get_string('newpagehdr', 'socialwiki'));
 
         $textoptions = array();
         $mform->addElement('text', 'pagetitle', get_string('newpagetitle', 'socialwiki'), $textoptions);
         $mform->setType('pagetitle', PARAM_TEXT);
         $mform->addRule('pagetitle', get_string('required'), 'required', null, 'client');
-
-        if ($forceformat) {
-            $mform->addElement('hidden', 'pageformat', $defaultformat);
-        } else {
-            $mform->addElement('static', 'format', get_string('format', 'socialwiki'));
-            $mform->addHelpButton('format', 'format', 'socialwiki');
-            foreach ($formats as $format) {
-                if ($format == $defaultformat) {
-                    $attr = array('checked' => 'checked');
-                } else if (!empty($forceformat)) {
-                    $attr = array('disabled' => 'disabled');
-                } else {
-                    $attr = array();
-                }
-                $mform->addElement('radio', 'pageformat', '', get_string('format' . $format, 'socialwiki'), $format, $attr);
-            }
-        }
-        $mform->setType('pageformat', PARAM_ALPHANUMEXT);
-        $mform->addRule('pageformat', get_string('required'), 'required', null, 'client');
 
         if (!empty($this->_customdata['groups']->availablegroups)) {
             foreach ($this->_customdata['groups']->availablegroups as $groupdata) {

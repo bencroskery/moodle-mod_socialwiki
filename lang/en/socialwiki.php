@@ -41,8 +41,6 @@ $string['cannoteditpage'] = 'You can not edit this page.';
 $string['cannotfollow'] = 'You can not follow yourself';
 $string['connotlike'] = 'You must be an enrolled user to like a page';
 $string['deniedfollow'] = 'You do not have permission to follow people';
-$string['cannotmanagefiles'] = 'You don\'t have permission to manage the wiki files.';
-$string['cannotviewfiles'] = 'You don\'t have permission to view the wiki files.';
 $string['cannotviewpage'] = 'You can not view this page.';
 $string['classic'] = 'Classic';
 $string['comparesel'] = 'Compare selected';
@@ -56,11 +54,6 @@ $string['creating'] = 'Creating a wiki page';
 $string['createpage'] = 'Create page';
 $string['createddate'] = 'Created: {$a->date} by {$a->username}';
 $string['creole'] = 'Creole';
-$string['defaultformat'] = 'Default format';
-$string['defaultformat_help'] = 'This setting determines the default format used when editing wiki pages.
-* HTML - The HTML editor is available
-* Creole - A common wiki markup language for which a small edit toolbar is available
-* Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
 $string['follow'] = 'Follow';
 $string['follow_tip'] = 'Click to follow this user';
 $string['unfollow'] = 'Unfollow';
@@ -83,49 +76,20 @@ $string['diff_help'] = 'Selected versions of the page may be compared in order t
 $string['edit'] = 'Edit';
 $string['editcomment'] = 'Edit comment';
 $string['editblocks'] = 'Turn edit blocks on';
-$string['editfiles'] = 'Edit wiki files';
 $string['editing'] = 'Editing wiki page';
 $string['editingcomment'] = 'Editing comment';
 $string['editingpage'] = 'Editing this page \'{$a}\'';
-$string['editsection'] = 'edit';
-$string['files'] = 'Files';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
 $string['filtername'] = 'Social Wiki auto-linking';
 $string['firstpagetitle'] = 'First page name';
 $string['firstpagetitle_help'] = 'Title of the first page of the wiki.';
-$string['forceformat'] = 'Force format';
-$string['forceformat_help'] = 'If the format is forced (checkbox ticked), there is no option to choose a format when editing a wiki page.';
-$string['format'] = 'Format';
-$string['format_help'] = '* HTML - The HTML editor is available
-* Creole - A common wiki markup language for which a small edit toolbar is available
-* Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
-$string['formathtml'] = 'HTML format';
-$string['formathtml_help'] = 'The HTML editor may be used for formatting content.
-
-To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
-To link to a page copy the page url double square brackets with an existing page title inside links to a search for that page.';
-$string['formatcreole'] = 'Creole format';
-$string['formatcreole_help'] = 'Creole is a common wiki markup language with an edit toolbar for inserting appropriate markup.
-
-To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
-To link to a page copy the page url, double square brackets with an existing page title inside links to a search for that page.';
-$string['formatcreole_link'] = 'mod/socialwiki/creole';
-$string['formatnwiki'] = 'NWiki format';
-$string['formatnwiki_help'] = 'Nwiki is the Mediawiki-like markup language used in the contributed Nwiki module.
-
-To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
-To link to a page copy the page url double square brackets with an existing page title inside links to a search for that page.';
-$string['formatnwiki_link'] = 'mod/socialwiki/nwiki';
 $string['help'] = 'Help';
 $string['history'] = 'Versions';
 $string['history_help'] = 'The history lists links to previous versions of the page.';
-$string['html'] = 'HTML';
 $string['incorrectdeleteversions'] = 'Page versions provided for deletion are incorrect.';
 $string['insertcomment'] = 'Insert comment';
 $string['insertimage'] = 'Insert an image...';
-$string['insertimage_help'] = 'This drop-down list will insert an image to the wiki editor. If you need to add more images to the wiki, please use "Files" tab.';
 $string['invalidparameters'] = 'Invalid parameters have been given.';
-$string['invalidsection'] = 'Invalid section.';
 $string['invalidsesskey'] = 'The given sesskey is not valid. Please resend data again';
 $string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
 $string['links_help'] = 'There are 3 diffrent ways to add links: <br/>
@@ -166,7 +130,6 @@ $string['navigationto_help'] = 'Links to other pages';
 $string['newpage'] = 'New';
 $string['newpagehdr'] = 'New page';
 $string['newpagetitle'] = 'New page title';
-$string['noattachments'] = '<strong>No files attached</strong>';
 $string['nocontent'] = 'There is no content for this page';
 $string['nocontribs'] = 'You have no contributions in this wiki';
 $string['nocomments'] = 'There are no comments';
@@ -216,7 +179,6 @@ $string['rating'] = 'Rating';
 $string['ratingmode'] = 'Rating mode';
 $string['recommended'] = 'Recommended Pages';
 $string['reparsetimeout'] = 'Reparsing default timeout';
-$string['repeatedsection'] = 'Wiki error: Section name cannot be repeated \'{$a}\'';
 $string['restore'] = 'Restore';
 $string['removeallwikitags'] = 'Remove all wiki tags';
 $string['removepages'] = 'Remove pages';
@@ -255,7 +217,6 @@ $string['updatedwikipages'] = 'Updated wiki pages';
 $string['upload'] = 'Upload & Delete';
 $string['uploadname'] = 'Filename';
 $string['uploadactions'] = 'Actions';
-$string['uploadtitle'] = 'Attach files';
 $string['uploadfiletitle'] = 'Attachments';
 $string['versionerror'] = 'Version ID does not exist';
 $string['versionnum'] = 'Version #{$a}';
@@ -271,7 +232,6 @@ $string['wikiattachments'] = 'Wiki attachments';
 $string['wikiboldtext'] = 'Bold text';
 $string['wikiexternalurl'] = 'External URL';
 $string['wikifiletable'] = 'Uploaded file list';
-$string['wikifiles'] = 'Wiki files';
 $string['wikiheader'] = 'Level {$a} Header';
 $string['wikihr'] = 'Horizontal rule';
 $string['wikiimage'] = 'Image';
@@ -293,7 +253,6 @@ $string['socialwiki:editcomment'] = 'Add comments to pages';
 $string['socialwiki:editpage'] = 'Save wiki pages';
 $string['socialwiki:managecomment'] = 'Manage wiki comments';
 $string['socialwiki:manage_socialwiki'] = 'Manage wiki settings';
-$string['socialwiki:managefiles'] = 'Manage wiki files';
 $string['socialwiki:viewcomment'] = 'View page comments';
 $string['socialwiki:viewpage'] = 'View wiki pages';
 $string['socialwikipages'] = 'Social Wiki pages';

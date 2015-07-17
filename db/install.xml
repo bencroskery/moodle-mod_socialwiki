@@ -15,8 +15,6 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="firstpagetitle" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="First Page" SEQUENCE="false" COMMENT="Wiki first page's name"/>
         <FIELD NAME="wikimode" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="collaborative" SEQUENCE="false" COMMENT="Wiki mode (individual, collaborative)"/>
-        <FIELD NAME="defaultformat" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="creole" SEQUENCE="false" COMMENT="Wiki's default editor"/>
-        <FIELD NAME="forceformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Forces the default editor"/>
         <FIELD NAME="editbegin" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="editbegin"/>
         <FIELD NAME="editend" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="editend"/>
         <FIELD NAME="style" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="classic" SEQUENCE="false"/>
@@ -47,7 +45,6 @@
         <FIELD NAME="subwikiid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Subwiki instance of this page"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="title" SEQUENCE="false" COMMENT="Page name"/>
         <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Cache wiki content"/>
-        <FIELD NAME="format" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="creole" SEQUENCE="false" COMMENT="Markup used to write content"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page creation timestamp"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition author"/>
         <FIELD NAME="pageviews" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of page views"/>
