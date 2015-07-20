@@ -133,7 +133,7 @@
 .socialwiki_wikicontent .dataTables_scrollBody {
     *margin-top: -1px;
     -webkit-overflow-scrolling: touch;
-    max-height: 200px;
+    max-height: 300px;
 }
 
 .socialwiki_wikicontent table.dataTable tbody tr {

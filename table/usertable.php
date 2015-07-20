@@ -29,7 +29,7 @@
  * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class usertable extends socialwiki_table {
+class socialwiki_usertable extends socialwiki_table {
 
     /**
      * Create a topic table.
@@ -57,7 +57,7 @@ class usertable extends socialwiki_table {
             return ($i != $me);
         });
 
-        return new usertable($me, $swid, $ids, 'user');
+        return new socialwiki_usertable($me, $swid, $ids, 'user');
     }
 
     /**
@@ -74,7 +74,7 @@ class usertable extends socialwiki_table {
             return null;
         }
 
-        return new usertable($uid, $swid, $ids, 'user');
+        return new socialwiki_usertable($uid, $swid, $ids, 'user');
     }
 
     /**
@@ -89,7 +89,7 @@ class usertable extends socialwiki_table {
         if (empty($ids)) {
             return null;
         }
-        return new usertable($uid, $swid, $ids, 'user');
+        return new socialwiki_usertable($uid, $swid, $ids, 'user');
     }
 
     /**
@@ -113,7 +113,7 @@ class usertable extends socialwiki_table {
                     . $www . "/mod/socialwiki/viewuserpages.php?userid="
                     . $user->id . "&subwikiid=$swid'>" . fullname($user) . "</a>";
 
-            $peer = peer::socialwiki_get_peer($id, $swid, $me);
+            $peer = socialwiki_peer::socialwiki_get_peer($id, $swid, $me);
             switch ($peer->depth) {
                 case 0:
                     $following = "Not in your network";

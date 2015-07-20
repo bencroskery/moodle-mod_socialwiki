@@ -48,7 +48,7 @@ if (socialwiki_liked($USER->id, $pageid)) {
 
     // TODO: could optimize which peers we recompute: only those who have likes in common.
 }
-peer::socialwiki_update_peers(true, false, $subwiki->id, $USER->id); // Update like similarity to other peers.
+socialwiki_peer::socialwiki_update_peers(true, false, $subwiki->id, $USER->id); // Update like similarity to other peers.
 
 // Refresh without javascript otherwise send back likes.
 if ($refresh) {

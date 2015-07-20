@@ -168,36 +168,36 @@ abstract class socialwiki_table {
         $t = null;
         switch ($tabletype) {
             case "mylikes":       // User likes.
-                $t = versiontable::likes_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::likes_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "myfaves":       // User favourites.
             case "userfaves":     // Favourites by another user.
-                $t = versiontable::favourites_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::favourites_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "mypages":       // User pages.
             case "userpages":     // Pages by another user.
-                $t = versiontable::user_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::user_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "pagesfollowed": // Versions by followed users.
-                $t = versiontable::followed_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::followed_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "newpages":      // New versions.
-                $t = versiontable::new_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::new_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "allpages":      // All versions.
-                $t = versiontable::all_versiontable($userid, $swid, $trustcombiner);
+                $t = socialwiki_versiontable::all_versiontable($userid, $swid, $trustcombiner);
                 break;
             case "followedusers": // Followed users.
-                $t = usertable::followed_usertable($userid, $swid);
+                $t = socialwiki_usertable::followed_usertable($userid, $swid);
                 break;
             case "followers":     // Followers.
-                $t = usertable::followers_usertable($userid, $swid);
+                $t = socialwiki_usertable::followers_usertable($userid, $swid);
                 break;
             case "allusers":      // All users.
-                $t = usertable::all_usertable($userid, $swid);
+                $t = socialwiki_usertable::all_usertable($userid, $swid);
                 break;
             case "alltopics":     // All pages (grouped versions).
-                $t = topictable::all_topictable($userid, $swid);
+                $t = socialwiki_topictable::all_topictable($userid, $swid);
                 break;
             default:
                 $tabletype = 'unknowntabletype ' . $tabletype;

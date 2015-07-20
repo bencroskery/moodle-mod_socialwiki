@@ -73,6 +73,7 @@
 
 .socialwiki_wikicontent #fitem_id_newcontent_editor .fitemtitle {
     display: none;
+    height: 0;
 }
 
 .socialwiki_wikicontent #fgroup_id_buttonar .fgroup {
@@ -199,13 +200,13 @@
     text-align: center;
 }
 
-.socialwiki_wikicontent .ouw-deleted {
+.socialwiki_wikicontent .socialwiki-diff-deleted {
     background: #FFFFAA;
     color: red;
     text-decoration: line-through;
 }
 
-.socialwiki_wikicontent .ouw-added {
+.socialwiki_wikicontent .socialwiki-diff-added {
     background: #CCFFCC;
     color: red;
 }

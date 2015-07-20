@@ -16,10 +16,11 @@
 
 /**
  * Standard diff function plus some extras for handling XHTML diffs.
- * @copyright &copy; 2007 The Open University
- * @author s.marshall@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package mod_socialwiki
+ * 
+ * @copyright 2007 The Open University
+ * @author    s.marshall@open.ac.uk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package   mod_socialwiki
  */
 
 /**
@@ -401,7 +402,7 @@ function socialwiki_diff_html_to_lines($content) {
         }
         $taglist .= "<$blocktag>|<\\/$blocktag>";
     }
-    
+
     // Now go through splitting each line.
     $lines = array();
     $index = 1;
@@ -417,14 +418,6 @@ function socialwiki_diff_html_to_lines($content) {
         $pos = $nextline + 1;
     }
     return $lines;
-}
-
-/**
- * Represents a changed area of the page and where it is located in the two source pages.
- */
-class socialwiki_diffcontent_range {
-    public $file1start, $file1count;
-    public $file2start, $file2count;
 }
 
 /**
@@ -462,7 +455,7 @@ class socialwiki_diffcontent_changes {
                 if ($inrange === -1) {
                     // Not already in a range, start a new one at array end.
                     $inrange = count($this->changes);
-                    $this->changes[$inrange] = new socialwiki_diffcontent_range;
+                    $this->changes[$inrange] = new stdClass();
                     $this->changes[$inrange]->file1start = $index1;
                     $this->changes[$inrange]->file1count = 1;
                     $this->changes[$inrange]->file2start = $matchbefore + 1; // Last valid from file2.
@@ -694,11 +687,11 @@ function socialwiki_diff_html($html1, $html2) {
     $lines1 = socialwiki_diff_html_to_lines($html1);
     $lines2 = socialwiki_diff_html_to_lines($html2);
     list($deleted, $added) = socialwiki_diff_words($lines1, $lines2);
-    $result1 = socialwiki_diff_add_markers($html1, $deleted, 'ouw-deleted', '<strong class="accesshide">'
-            . get_string('deletedbegins', 'socialwiki') . '</strong>', '<strong class="accesshide">'
-            . get_string('deletedends', 'socialwiki') . '</strong>');
-    $result2 = socialwiki_diff_add_markers($html2, $added, 'ouw-added', '<strong class="accesshide">'
-            . get_string('addedbegins', 'socialwiki') . '</strong>', '<strong class="accesshide">'
-            . get_string('addedends', 'socialwiki') . '</strong>');
+    $result1 = socialwiki_diff_add_markers($html1, $deleted, 'socialwiki-diff-deleted',
+            '<strong class="accesshide">' . get_string('deletedbegins', 'socialwiki') . '</strong>',
+            '<strong class="accesshide">' . get_string('deletedends', 'socialwiki') . '</strong>');
+    $result2 = socialwiki_diff_add_markers($html2, $added, 'socialwiki-diff-added',
+            '<strong class="accesshide">' . get_string('addedbegins', 'socialwiki') . '</strong>',
+            '<strong class="accesshide">' . get_string('addedends', 'socialwiki') . '</strong>');
     return array($result1, $result2);
 }
