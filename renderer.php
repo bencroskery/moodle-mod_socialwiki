@@ -446,6 +446,20 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         return $this->render(new socialwiki_files_tree($context, $subwiki));
     }
 
+    public function render_socialwiki_files_tree(socialwiki_files_tree $tree) {
+        if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
+            $html = $this->output->box(get_string('nofilesavailable', 'repository'));
+        } else {
+            $htmlid = 'socialwiki_files_tree_'.uniqid();
+            $module = array('name'=>'mod_socialwiki', 'fullpath'=>'/mod/socialwiki/module.js');
+            $this->page->requires->js_init_call('M.mod_socialwiki.init_tree', array(false, $htmlid), false, $module);
+            $html = '<div id="'.$htmlid.'">';
+            $html .= $this->htmllize_tree($tree, $tree->dir);
+            $html .= '</div>';
+        }
+        return $html;
+    }
+    
     /**
      * Builds the menu for the admin page.
      *

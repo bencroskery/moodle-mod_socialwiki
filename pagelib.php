@@ -986,7 +986,7 @@ class page_socialwiki_search extends page_socialwiki {
         global $USER, $CFG;
         require($CFG->dirroot . '/mod/socialwiki/table/table.php');
         $pages = $this->searchresult;
-        echo versionTable::html_versiontable($USER->id, $this->subwiki->id, $pages, 'version');
+        echo socialwiki_versiontable::html_versiontable($USER->id, $this->subwiki->id, $pages, 'version');
     }
 
     /**
@@ -2269,7 +2269,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         $context = context_module::instance($PAGE->cm->id);
         $numpeers = count(get_enrolled_users($context)) - 1;
         // Get this user's peer score.
-        $peer = peer::socialwiki_get_peer($user->id, $this->subwiki->id, $USER->id, $numpeers, $scale);
+        $peer = socialwiki_peer::socialwiki_get_peer($user->id, $this->subwiki->id, $USER->id, $numpeers, $scale);
 
         // USER INFO OUTPUT.
         $html = $OUTPUT->heading(fullname($user), 1, 'colourtext');

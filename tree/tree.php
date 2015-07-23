@@ -264,7 +264,7 @@ class socialwiki_tree {
         }
         $peerinfo = '<div id="peer-info" style="display:none"><ul>';
         foreach ($allpeerset as $p) {
-            $peerarray = peer::socialwiki_get_peer($p, $swid, $USER->id)->to_array();
+            $peerarray = socialwiki_peer::socialwiki_get_peer($p, $swid, $USER->id)->to_array();
             $peerinfo .= '<li>';
             foreach ($peerarray as $k => $v) {
                 $peerinfo .= "<$k>$v</$k>";

@@ -29,7 +29,7 @@
  * @copyright  2015 NMAI-lab
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class versiontable extends socialwiki_table {
+class socialwiki_versiontable extends socialwiki_table {
 
     /**
      * Maps peerid to peer object for all peers.
@@ -252,7 +252,7 @@ class versiontable extends socialwiki_table {
 
         // Define function to get peer from userid.
         $buildfunction = function ($id) use ($me, $swid) {
-            return peer::socialwiki_get_peer($id, $swid, $me);
+            return socialwiki_peer::socialwiki_get_peer($id, $swid, $me);
         };
         return array_combine($ids, array_map($buildfunction, $ids));
         // Will return an associative array with peerid => peer object for each peerid.
@@ -268,11 +268,11 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function favourites_versiontable($uid, $swid, $combiner = 'avg') {
         if ($favs = socialwiki_get_user_favourites($uid, $swid)) {
-            return new versiontable($uid, $swid, $favs, 'mystuff', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $favs, 'mystuff', $combiner);
         }
         return null;
     }
@@ -283,7 +283,7 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function likes_versiontable($uid, $swid, $combiner = 'avg') {
         $ids = socialwiki_get_user_likes($uid, $swid);
@@ -293,7 +293,7 @@ class versiontable extends socialwiki_table {
         }
 
         if (!empty($likes)) {
-            return new versiontable($uid, $swid, $likes, 'mystuff', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $likes, 'mystuff', $combiner);
         }
         return null;
     }
@@ -304,13 +304,13 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function followed_versiontable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_pages_from_followed($uid, $swid);
 
         if ($pages) {
-            return new versiontable($uid, $swid, $pages, 'version', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $pages, 'version', $combiner);
         }
         return null;
     }
@@ -321,13 +321,13 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function new_versiontable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_updated_pages_by_subwiki($swid, $uid);
 
         if ($pages) {
-            return new versiontable($uid, $swid, $pages, 'version', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $pages, 'version', $combiner);
         }
         return null;
     }
@@ -338,13 +338,13 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function all_versiontable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_page_list($swid);
 
         if (!empty($pages)) {
-            return new versiontable($uid, $swid, $pages, 'version', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $pages, 'version', $combiner);
         }
         return null;
     }
@@ -355,13 +355,13 @@ class versiontable extends socialwiki_table {
      * @param int $uid The user ID.
      * @param int $swid The subwiki ID.
      * @param string $combiner How to combine the peers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function user_versiontable($uid, $swid, $combiner = 'avg') {
         $pages = socialwiki_get_user_page_list($uid, $swid);
 
         if (!empty($pages)) {
-            return new versiontable($uid, $swid, $pages, 'mystuff', $combiner);
+            return new socialwiki_versiontable($uid, $swid, $pages, 'mystuff', $combiner);
         }
         return null;
     }
@@ -373,10 +373,10 @@ class versiontable extends socialwiki_table {
      * @param int $swid The subwiki ID.
      * @param array $pages All the pages to show in the table.
      * @param string $type The type of table decides the headers.
-     * @return \versiontable
+     * @return \socialwiki_versiontable
      */
     public static function html_versiontable($uid, $swid, $pages, $type) {
-        $thetable = new versiontable($uid, $swid, $pages, $type);
+        $thetable = new socialwiki_versiontable($uid, $swid, $pages, $type);
         return $thetable->get_as_html(); // Defined in parent class.
     }
 }

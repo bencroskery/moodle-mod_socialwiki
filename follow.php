@@ -95,7 +95,7 @@ if ($pageid > -1) {
         $record->subwikiid = $subwiki->id;
         $DB->insert_record('socialwiki_follows', $record);
     }
-    peer::socialwiki_update_peers(false, true, $swid, $USER->id); // Update peer info in session vars.
+    socialwiki_peer::socialwiki_update_peers(false, true, $swid, $USER->id); // Update peer info in session vars.
     // Go back to the page you came from.
     redirect($from);
 } else {
