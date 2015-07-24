@@ -17,9 +17,9 @@
 /**
  * The standard table.
  *
- * @package    mod_socialwiki
- * @copyright  2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_socialwiki
+ * @copyright 2015 NMAI-lab
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 Global $CFG;
@@ -33,9 +33,9 @@ require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
  *
  * Never used by itself. Extended by Topic, User and Version Tables.
  *
- * @package    mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class socialwiki_table {
 
@@ -84,24 +84,25 @@ abstract class socialwiki_table {
      * @param string $tableid The HTML id of the table.
      */
     public function print_html($tableid = 'a_table') {
-        echo "<table id=$tableid class='datatable'>";
+        $output = "<table id=$tableid class='datatable'>";
         $tabledata = $this->get_table_data();
         // Headers.
-        echo "<thead><tr>";
+        $output .= "<thead><tr>";
         foreach ($this->headers as $h) {
-            echo "<th title='" . get_string($h.'_help', 'socialwiki') . "'>" . get_string($h, 'socialwiki') . "</th>";
+            $output .= "<th title='" . get_string($h.'_help', 'socialwiki') . "'>" . get_string($h, 'socialwiki') . "</th>";
         }
-        echo "</tr></thead><tbody>";
+        $output .= "</tr></thead><tbody>";
 
         foreach ($tabledata as $row) {
-            echo "<tr>";
+            $output .= "<tr>";
             foreach ($row as $k => $val) {
-                echo "<td>$val</td>";
+                $output .= "<td>$val</td>";
             }
-            echo "</tr>";
+            $output .= "</tr>";
         }
 
-        echo "</tbody></table>";
+        $output .= "</tbody></table>";
+        return $output;
     }
 
     /**
@@ -204,7 +205,7 @@ abstract class socialwiki_table {
         }
         echo '<h2>'.get_string($tabletype, 'socialwiki').'</h2>';
         if ($t != null) {
-            $t->print_html();
+            echo $t->print_html();
         } else {
             echo get_string($tabletype . '_empty', 'socialwiki');
         }

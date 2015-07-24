@@ -17,7 +17,7 @@
 /**
  * This file contains all necessary code to define and process an edit form
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -25,11 +25,12 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    // It must be included from a Moodle page.
 }
 
-require_once($CFG->dirroot . '/mod/socialwiki/editors/wikieditor.php');
+require($CFG->dirroot . '/mod/socialwiki/editors/wikieditor.php');
 
 class mod_socialwiki_edit_form extends moodleform {
 

@@ -25,9 +25,9 @@
 /**
  * SocialWiki Node Class.
  *
- * @package    mod_socialwiki
- * @copyright  2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_socialwiki
+ * @copyright 2015 NMAI-lab
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class socialwiki_node {
     /**
@@ -233,7 +233,6 @@ class socialwiki_tree {
                     $parent = $this->nodes[$node->parent];
                     $parent->add_child($node);
                 } else {
-                    print_error('nonode', 'socialwiki'); // TODO: what to do if the parent node is absent.
                     // TODO: include a fictitious node? problem: lineage is broken.
                     // for now: just create another root.
                     $this->roots[] = $node;

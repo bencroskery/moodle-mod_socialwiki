@@ -70,17 +70,17 @@
 .socialwiki_wikicontent #fitem_id_newcontent_editor .feditor,
 .socialwiki_wikicontent #fitem_id_newcontent .ftextarea {
     margin-left: 0;
- }
- 
- .socialwiki_wikicontent #fitem_id_newcontent_editor .fitemtitle,
- .socialwiki_wikicontent #fitem_id_newcontent .fitemtitle {
+}
+
+.socialwiki_wikicontent #fitem_id_newcontent_editor .fitemtitle,
+.socialwiki_wikicontent #fitem_id_newcontent .fitemtitle {
     float: none;
     text-align: initial;
- }
- 
- .socialwiki_wikicontent #fgroup_id_buttonar .fgroup {
+}
+
+.socialwiki_wikicontent #fgroup_id_buttonar .fgroup {
     margin-left: 0;
- }
+}
 
 .socialwiki_wikicontent .socialwiki-toc {
     border: 1px solid #BBB;

@@ -120,14 +120,14 @@ function xmldb_socialwiki_upgrade($oldversion) {
 
     // Remove the versions table.
     if ($oldversion < 2015071600) {
-        $table_pages = new xmldb_table('socialwiki_pages');
-        $table_versions = new xmldb_table('socialwiki_versions');
-        $field_format = new xmldb_field('format', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'creole', 'cachedcontent');
-        $field_content = new xmldb_field('cachedcontent', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'title');
+        $tablepages = new xmldb_table('socialwiki_pages');
+        $tableversions = new xmldb_table('socialwiki_versions');
+        $fieldformat = new xmldb_field('format', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'creole', 'cachedcontent');
+        $fieldcontent = new xmldb_field('cachedcontent', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null, 'title');
 
         // Add format field and transfer from versions table.
-        if (!$dbman->field_exists($table_pages, $field_format)) {
-            $dbman->add_field($table_pages, $field_format);
+        if (!$dbman->field_exists($tablepages, $fieldformat)) {
+            $dbman->add_field($tablepages, $fieldformat);
 
             // Transfer format from versions table to pages.
             $sql = "SELECT pageid, contentformat FROM {socialwiki_versions} GROUP BY pageid";
@@ -141,12 +141,12 @@ function xmldb_socialwiki_upgrade($oldversion) {
         }
 
         // Rename field cachedcontent.
-        if ($dbman->field_exists($table_pages, $field_content)) {
-            $dbman->rename_field($table_pages, $field_content, 'content');
+        if ($dbman->field_exists($tablepages, $fieldcontent)) {
+            $dbman->rename_field($tablepages, $fieldcontent, 'content');
         }
 
         // Transfer content and then delete version table.
-        if ($dbman->table_exists($table_versions)) {
+        if ($dbman->table_exists($tableversions)) {
             $sql = "SELECT pageid, content FROM {socialwiki_versions} WHERE content != ''";
             $rec = $DB->get_records_sql($sql, array());
             foreach ($rec as $r) {
@@ -155,7 +155,7 @@ function xmldb_socialwiki_upgrade($oldversion) {
                 $page->content = $r->content;
                 $DB->update_record('socialwiki_pages', $page);
             }
-            $dbman->drop_table($table_versions);
+            $dbman->drop_table($tableversions);
         }
 
         upgrade_mod_savepoint(true, 2015071600, 'socialwiki'); // Socialwiki savepoint reached.

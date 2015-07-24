@@ -21,9 +21,9 @@
  * If user have wiki:managewiki ability then only this page will show delete
  * options
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2011 Rajesh Taneja
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
@@ -57,21 +57,17 @@ require_capability('mod/socialwiki:managewiki', $context);
 // Delete page if a page ID to delete was supplied.
 if (!empty($delete) && confirm_sesskey()) {
     socialwiki_delete_pages($context, $delete, $page->subwikiid);
-    // When current wiki page is deleted, then redirect user to create that page, as
-    // current pageid is invalid after deletion.
+    // When current wiki page is deleted, then redirect user to create that page, as current pageid is invalid after deletion.
     if ($pageid == $delete) {
-        $params = array('id' => $cm->id);
-        $url = new moodle_url('/mod/socialwiki/home.php', $params);
-        redirect($url);
+        redirect(new moodle_url('/mod/socialwiki/home.php', array('id' => $cm->id)));
     }
 }
 
 $wikipage = new page_socialwiki_admin($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
-$wikipage->print_header();
 
+$wikipage->print_header();
 $wikipage->set_view($option, empty($listall) ? false : true);
 $wikipage->print_content();
-
 $wikipage->print_footer();

@@ -17,7 +17,7 @@
 /**
  * This file contains several classes uses to render the different pages of the socialwiki module.
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -30,8 +30,6 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/mod/socialwiki/edit_form.php');
-require_once($CFG->dirroot . '/tag/lib.php');
 
 /**
  * The standard overriden socialwiki page class.
@@ -1066,7 +1064,6 @@ class page_socialwiki_create extends page_socialwiki {
         global $PAGE;
         $this->action = $action;
 
-        require_once(dirname(__FILE__) . '/create_form.php');
         $url = new moodle_url('/mod/socialwiki/create.php',
                 array('action' => 'create', 'wid' => $PAGE->activityrecord->id, 'group' => $this->gid, 'uid' => $this->uid));
         $formats = socialwiki_get_formats();
@@ -2301,20 +2298,20 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             }
             $followaction = $CFG->wwwroot . '/mod/socialwiki/follow.php';
 
-            $theliker = html_writer::start_tag('form', array('style' => "display: inline",
+            $followbtn = html_writer::start_tag('form', array('style' => "display: inline",
                                               'action' => $followaction, "method" => "get"));
-            $theliker .= '<input type ="hidden" name="user2" value="' . $user->id . '"/>';
-            $theliker .= '<input type ="hidden" name="from" value="' . $CFG->wwwroot .
+            $followbtn .= '<input type ="hidden" name="user2" value="' . $user->id . '"/>';
+            $followbtn .= '<input type ="hidden" name="from" value="' . $CFG->wwwroot .
                 '/mod/socialwiki/viewuserpages.php?userid=' . $user->id . '&subwikiid=' . $this->subwiki->id . '"/>';
-            $theliker .= '<input type ="hidden" name="swid" value="' . $this->subwiki->id . '"/>';
-            $theliker .= html_writer::start_tag('button', array('class' => 'socialwiki_followbutton',
+            $followbtn .= '<input type ="hidden" name="swid" value="' . $this->subwiki->id . '"/>';
+            $followbtn .= html_writer::start_tag('button', array('class' => 'socialwiki_followbutton',
                 'id' => 'followlink', 'title' => $tip));
-            $theliker .= html_writer::tag('img', '', array('src' => $icon));
-            $theliker .= $text;
-            $theliker .= html_writer::end_tag('button');
-            $theliker .= html_writer::end_tag('form');
+            $followbtn .= html_writer::tag('img', '', array('src' => $icon));
+            $followbtn .= $text;
+            $followbtn .= html_writer::end_tag('button');
+            $followbtn .= html_writer::end_tag('form');
 
-            $row1 = new html_table_row(array(get_string('networkdistance', 'socialwiki').':', $peer->depth, $theliker));
+            $row1 = new html_table_row(array(get_string('networkdistance', 'socialwiki').':', $peer->depth, $followbtn));
             $row1->cells[2]->rowspan = 3;
 
             $table->data[] = $row1;
@@ -2328,8 +2325,8 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         echo $html;
 
         // Favourites Table.
-        socialwiki_table::builder($USER->id, $this->subwiki->id, 'userfaves');
+        socialwiki_table::builder($this->uid, $this->subwiki->id, 'userfaves');
         // User Verions Table.
-        socialwiki_table::builder($USER->id, $this->subwiki->id, 'userpages');
+        socialwiki_table::builder($this->uid, $this->subwiki->id, 'userpages');
     }
 }

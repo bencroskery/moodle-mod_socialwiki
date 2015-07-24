@@ -38,7 +38,7 @@ if (!$cm = get_coursemodule_from_instance('socialwiki', $wiki->id)) {
 $context = context_module::instance($cm->id);
 if (!is_enrolled($context, $USER->id)) {
     // Must be an enrolled user to like a page.
-    print_error('connotlike', 'socialwiki');
+    print_error('cannotlike', 'socialwiki');
 }
 
 if (socialwiki_liked($USER->id, $pageid)) {

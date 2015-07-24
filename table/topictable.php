@@ -17,17 +17,17 @@
 /**
  * The topic table for page groups.
  *
- * @package    mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Topic Table Class.
  *
- * @package    mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class socialwiki_topictable extends socialwiki_table {
 

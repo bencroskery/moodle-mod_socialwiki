@@ -17,7 +17,7 @@
 /**
  * This file contains all necessary code to edit a wiki page
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -29,9 +29,11 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require('../../config.php');
 require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
+require($CFG->dirroot . '/mod/socialwiki/edit_form.php');
 
 $pageid = required_param('pageid', PARAM_INT);
 $contentformat = optional_param('contentformat', '', PARAM_ALPHA);

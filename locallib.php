@@ -17,7 +17,7 @@
 /**
  * This contains functions and classes that will be used by scripts in wiki module
  *
- * @package mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
@@ -30,10 +30,10 @@
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
-require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/tag/lib.php');
+
+require($CFG->dirroot . '/mod/socialwiki/lib.php');
+require($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
+require($CFG->dirroot . '/tag/lib.php');
 
 define('SOCIALFORMAT_CREOLE', '37');
 define('SOCIALFORMAT_NWIKI', '38');

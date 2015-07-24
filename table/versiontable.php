@@ -17,17 +17,17 @@
 /**
  * The version table for showing the page versions.
  *
- * @package    mod_socialwiki
+ * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Version Table Class.
  *
- * @package    mod_socialwiki
- * @copyright  2015 NMAI-lab
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_socialwiki
+ * @copyright 2015 NMAI-lab
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class socialwiki_versiontable extends socialwiki_table {
 
@@ -377,6 +377,6 @@ class socialwiki_versiontable extends socialwiki_table {
      */
     public static function html_versiontable($uid, $swid, $pages, $type) {
         $thetable = new socialwiki_versiontable($uid, $swid, $pages, $type);
-        return $thetable->get_as_html(); // Defined in parent class.
+        return $thetable->print_html(); // Defined in parent class.
     }
 }
