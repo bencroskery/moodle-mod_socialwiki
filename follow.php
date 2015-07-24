@@ -23,6 +23,10 @@ $pageid = optional_param('pageid', -1, PARAM_INT);
 $user2 = optional_param('user2', -1, PARAM_INT);
 $swid = optional_param('swid', -1, PARAM_INT);
 
+if (!confirm_sesskey()) {
+    print_error(get_string('invalidsesskey', 'socialwiki'));
+}
+
 if ($swid != -1) {
     $subwiki = socialwiki_get_subwiki($swid);
 }

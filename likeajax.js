@@ -2,7 +2,7 @@
 $(document).ready(function () {
     $(".socialwiki-likebutton").click(function () {
         // Get url [, no data], success.
-        $.get("like.php?pageid=" + pageid, function (data) {
+        $.get("likeajax.php" + options, function (data) {
             var btnimg = $(".socialwiki-likebutton").children("img");
             var url = btnimg.attr("other");
             btnimg.attr("other", btnimg.attr("src"));

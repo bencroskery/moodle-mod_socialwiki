@@ -91,14 +91,14 @@ class socialwiki_versiontable extends socialwiki_table {
 
             if (socialwiki_liked($this->uid, $page->id)) {
                 $unlikeimg = "<img style='width:22px;' class='socialwiki_unlikeimg unlikeimg_$page->id' "
-                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/likefilled.png'></img>";
+                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/unlike.png'></img>";
                 $likeimg = "<img style='width:22px; display:none;' class='socialwiki_likeimg likeimg_$page->id' "
-                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/hollowlike.png'></img>";
+                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/like.png'></img>";
             } else {
                 $unlikeimg = "<img style='width:22px; display:none;' class='socialwiki_unlikeimg unlikeimg_$page->id'  "
-                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/likefilled.png'></img>";
+                        . "alt='unlikeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/unlike.png'></img>";
                 $likeimg = "<img style='width:22px;' class='socialwiki_likeimg likeimg_$page->id'  "
-                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/hollowlike.png'></img>";
+                        . "alt='likeimg_$page->id' src='$CFG->wwwroot/mod/socialwiki/pix/icons/like.png'></img>";
             }
 
             // Favourites.

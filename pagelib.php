@@ -360,7 +360,6 @@ class page_socialwiki_view extends page_socialwiki {
      */
     protected function create_navbar() {
         global $PAGE;
-
         $PAGE->navbar->add(format_string($this->title));
         $PAGE->navbar->add(get_string('view', 'socialwiki'));
     }
@@ -372,31 +371,27 @@ class page_socialwiki_view extends page_socialwiki {
         global $OUTPUT;
         $html = '';
         $html .= $OUTPUT->container_start('', 'socialwiki-title');
-        $html .= '<script> var pageid=' . $this->page->id . '</script>'; // Passes the pageid to javascript likeajax.js.
+        $html .= '<script> var options="?pageid='.$this->page->id.'&sesskey='.sesskey().'"</script>'; // Passed to likeajax.js.
 
         $thetitle = html_writer::start_tag('h1');
         $thetitle .= format_string($this->page->title);
         $thetitle .= html_writer::end_tag('h1');
 
-        $unlikeicon = new moodle_url('/mod/socialwiki/pix/icons/likefilled.png');
-        $likeicon = new moodle_url('/mod/socialwiki/pix/icons/hollowlike.png');
-        $likeaction = new moodle_url('/mod/socialwiki/like.php');
+        $isliked = socialwiki_liked($this->uid, $this->page->id);
+        $likecurrent = ($isliked ? 'unlike' : 'like');
+        $likeother = (!$isliked ? 'unlike' : 'like');
+        $pixurl = new moodle_url('/mod/socialwiki/pix/icons/');
 
         $theliker = '<noscript>' . html_writer::start_tag('form',
-                array('style' => "display: inline", 'action' => $likeaction, "method" => "get"));
-        $theliker .= '<input type ="hidden" name="pageid" value="' . $this->page->id . '"/>';
-        $theliker .= '<input type ="hidden" name="refresh" value="' . 1 . '"/>' . '</noscript>';
+                array('style' => "display: inline", 'action' => 'like.php', "method" => "get"));
+        $theliker .= '<input type="hidden" name="pageid" value="' . $this->page->id . '"/>';
+        $theliker .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />' . '</noscript>';
         $theliker .= html_writer::start_tag('div', array('style' => 'float:right'));
 
         $theliker .= html_writer::start_tag('button',
                 array('class' => 'socialwiki-likebutton', 'title' => get_string('like_tip', 'socialwiki')));
-        if (socialwiki_liked($this->uid, $this->page->id)) {
-            $theliker .= html_writer::tag('img', '', array('src' => $unlikeicon, 'other' => $likeicon));
-            $theliker .= '<span other=' . get_string('like', 'socialwiki') . '>' . get_string('unlike', 'socialwiki') . '</span>';
-        } else {
-            $theliker .= html_writer::tag('img', '', array('src' => $likeicon, 'other' => $unlikeicon));
-            $theliker .= '<span other=' . get_string('unlike', 'socialwiki') . '>' . get_string('like', 'socialwiki') . '</span>';
-        }
+        $theliker .= html_writer::tag('img', '', array('src' => $pixurl.$likecurrent.'.png', 'other' => $pixurl.$likeother.'.png'));
+        $theliker .= '<span other='.get_string($likeother, 'socialwiki').'>'.get_string($likecurrent, 'socialwiki').'</span>';
         $theliker .= html_writer::end_tag('button');
 
         $theliker .= '<noscript>' . html_writer::end_tag('form') . '</noscript>';
@@ -2287,12 +2282,12 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
             // Make button to follow/unfollow.
             if (!socialwiki_is_following($USER->id, $user->id, $this->subwiki->id) && $USER->id != $this->uid) {
-                $icon = new moodle_url('/mod/socialwiki/pix/icons/man-plus.png');
+                $icon = new moodle_url('/mod/socialwiki/pix/icons/follow.png');
                 $text = get_string('follow', 'socialwiki');
                 $tip = get_string('follow_tip', 'socialwiki');
             } else if ($USER->id != $this->uid) {
                 // Show like link.
-                $icon = new moodle_url('/mod/socialwiki/pix/icons/man-minus.png');
+                $icon = new moodle_url('/mod/socialwiki/pix/icons/unfollow.png');
                 $text = get_string('unfollow', 'socialwiki');
                 $tip = get_string('unfollow_tip', 'socialwiki');
             }
@@ -2304,6 +2299,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             $followbtn .= '<input type ="hidden" name="from" value="' . $CFG->wwwroot .
                 '/mod/socialwiki/viewuserpages.php?userid=' . $user->id . '&subwikiid=' . $this->subwiki->id . '"/>';
             $followbtn .= '<input type ="hidden" name="swid" value="' . $this->subwiki->id . '"/>';
+            $followbtn .= '<input type ="hidden" name="sesskey" value="' . sesskey() . '"/>';
             $followbtn .= html_writer::start_tag('button', array('class' => 'socialwiki_followbutton',
                 'id' => 'followlink', 'title' => $tip));
             $followbtn .= html_writer::tag('img', '', array('src' => $icon));

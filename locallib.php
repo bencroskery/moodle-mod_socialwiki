@@ -117,11 +117,8 @@ function socialwiki_add_subwiki($wid, $gid, $uid = 0) {
 function socialwiki_get_wiki_from_pageid($pid) {
     global $DB;
 
-    $sql = "SELECT w.*
-            FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
-            WHERE p.id = ? AND
-            p.subwikiid = s.id AND
-            s.wikiid = w.id";
+    $sql = "SELECT w.* FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
+            WHERE p.id = ? AND p.subwikiid = s.id AND s.wikiid = w.id";
 
     return $DB->get_record_sql($sql, array($pid));
 }
@@ -197,13 +194,9 @@ function socialwiki_get_first_page($swid, $module = null) {
     $teachers = socialwiki_get_teachers($context->id);
     $toreturn = array();
     foreach ($teachers as $teacher) {
-        $sql = "SELECT p.*
-            FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
-            WHERE s.id = ? AND
-            s.wikiid = w.id AND
-            w.firstpagetitle = p.title AND
-            p.subwikiid = s.id AND p.userid=?
-            ORDER BY id ASC";
+        $sql = "SELECT p.* FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
+                WHERE s.id = ? AND s.wikiid = w.id AND w.firstpagetitle = p.title AND p.subwikiid = s.id AND p.userid=?
+                ORDER BY id ASC";
         $records = $DB->get_records_sql($sql, array($swid, $teacher->id));
 
         if ($records) {
@@ -325,9 +318,9 @@ function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
 function socialwiki_get_page_list($swid, $filter0likes = true) {
     global $DB;
     if ($filter0likes) {
-        $sql = "SELECT DISTINCT p.* FROM {socialwiki_pages} "
-                . "AS p INNER JOIN {socialwiki_likes} "
-                . "AS l ON p.id=l.pageid WHERE p.subwikiid=?";
+        $sql = "SELECT DISTINCT p.* FROM {socialwiki_pages}
+                AS p INNER JOIN {socialwiki_likes}
+                AS l ON p.id=l.pageid WHERE p.subwikiid=?";
         $records = $DB->get_records_sql($sql, array("subwikiid" => $swid));
         return $records;
     } else {
@@ -422,11 +415,10 @@ function socialwiki_get_related_pages($swid, $title) {
 function socialwiki_search_title($swid, $search, $exact = false) {
     global $DB;
     $sql = "SELECT {socialwiki_pages}.*, COUNT(pageid) AS total
-        FROM  {socialwiki_pages} LEFT JOIN  {socialwiki_likes}
-        ON {socialwiki_pages}.id = {socialwiki_likes}.pageid ";
-    $sql .= "WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title LIKE ?)";
-    $sql .= "GROUP BY {socialwiki_pages}.id
-            ORDER BY total DESC";
+            FROM  {socialwiki_pages} LEFT JOIN  {socialwiki_likes}
+            ON {socialwiki_pages}.id = {socialwiki_likes}.pageid
+            WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.title LIKE ?)
+            GROUP BY {socialwiki_pages}.id ORDER BY total DESC";
     if ($exact) { // Exact title match.
         return $DB->get_records_sql($sql, array($swid, $search));
     } else {
@@ -456,11 +448,11 @@ function socialwiki_search_content($swid, $search) {
 function socialwiki_search_all($swid, $search) {
     global $DB;
     $sql = "SELECT {socialwiki_pages}.*, COUNT(pageid) AS total
-    FROM  {socialwiki_pages}
-    LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid
-    WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.content LIKE ? OR {socialwiki_pages}.title LIKE ?)
-    GROUP BY {socialwiki_pages}.id
-    ORDER BY total DESC";
+            FROM  {socialwiki_pages}
+            LEFT JOIN  {socialwiki_likes}  ON {socialwiki_pages}.id = {socialwiki_likes}.pageid
+            WHERE {socialwiki_pages}.subwikiid=? AND ({socialwiki_pages}.content LIKE ? OR {socialwiki_pages}.title LIKE ?)
+            GROUP BY {socialwiki_pages}.id
+            ORDER BY total DESC";
     return $DB->get_records_sql($sql, array($swid, '%' . $search . '%', '%' . $search . '%'));
 }
 
@@ -1574,8 +1566,8 @@ function socialwiki_get_teachers($contextid) {
     $sql = 'SELECT ra.userid AS id
             FROM {role_assignments} ra
             JOIN {role} r ON r.id=ra.roleid
-            WHERE contextid=? AND (shortname="teacher" OR shortname="editingteacher")';
-    return $DB->get_records_sql($sql, array($contextid));
+            WHERE contextid=? AND (shortname=? OR shortname=?)';
+    return $DB->get_records_sql($sql, array($contextid, 'teacher', 'editingteacher'));
 }
 
 /**
