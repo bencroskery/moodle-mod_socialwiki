@@ -394,19 +394,16 @@ class page_socialwiki_view extends page_socialwiki {
         $theliker .= '<span other='.get_string($likeother, 'socialwiki').'>'.get_string($likecurrent, 'socialwiki').'</span>';
         $theliker .= html_writer::end_tag('button');
 
+        // Show number of likes.
+        $numlikes = socialwiki_numlikes($this->page->id);
+        $theliker .= html_writer::start_tag('div', array('id' => 'numlikes'));
+        $theliker .= $numlikes . ($numlikes == 1 ? ' like' : ' likes');
+        $theliker .= html_writer::end_tag('div');
+
+        $theliker .= html_writer::end_tag('div');
         $theliker .= '<noscript>' . html_writer::end_tag('form') . '</noscript>';
 
-        $likess = socialwiki_numlikes($this->page->id);
-        // Show number of likes.
-        $theliker .= html_writer::start_tag('div', array('id' => 'numlikes'));
-        $theliker .= $likess . ($likess == 1 ? ' like' : ' likes');
-        $theliker .= html_writer::end_tag('div');
-
-        $theliker .= html_writer::end_tag('div');
-
-        $html .= $theliker . $thetitle;
-
-        $html .= $OUTPUT->container_end();
+        $html .= $theliker . $thetitle . $OUTPUT->container_end();
         echo $html;
     }
 
@@ -415,17 +412,11 @@ class page_socialwiki_view extends page_socialwiki {
      */
     public function print_content() {
         if (socialwiki_user_can_view($this->subwiki)) {
-
             if (!empty($this->page)) {
                 socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id);
                 echo $this->wikioutput->prettyview_link($this->page);
             } else {
-                print_string('nocontent', 'socialwiki');
-                // TODO: fix this part.
-                $swid = 0;
-                if (!empty($this->subwiki)) {
-                    $swid = $this->subwiki->id;
-                }
+                echo get_string('nocontent', 'socialwiki');
             }
         } else {
             echo get_string('cannotviewpage', 'socialwiki');

@@ -1270,6 +1270,17 @@ function socialwiki_numlikes($pid) {
     return count($DB->get_records_sql($sql, array($pid)));
 }
 
+function socialwiki_page_like($uid, $pid, $swid) {
+    if (socialwiki_liked($uid, $pid)) {
+        socialwiki_delete_like($uid, $pid);
+    } else {
+        socialwiki_add_like($uid, $pid, $swid);
+        // TODO: could optimize which peers we recompute: only those who have likes in common.
+    }
+    socialwiki_peer::socialwiki_update_peers(true, false, $swid, $uid); // Update like similarity to other peers.
+    return socialwiki_numlikes($pid);
+}
+
 /**
  * Get all the pages from the users followed users.
  *
