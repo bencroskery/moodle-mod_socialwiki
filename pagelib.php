@@ -314,20 +314,13 @@ abstract class page_socialwiki {
 class page_socialwiki_view extends page_socialwiki {
 
     /**
-     * The course module id.
-     *
-     * @var int
-     */
-    private $coursemodule;
-
-    /**
      * Prints out the header at the top of the page.
      */
     public function print_header() {
         global $PAGE;
         parent::print_header();
         // JS code for the ajax-powered like button.
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/likeajax.js"));
+        $PAGE->requires->js(new moodle_url("/mod/socialwiki/like.ajax.js"));
         $this->wikioutput->socialwiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
     }
 
@@ -338,9 +331,7 @@ class page_socialwiki_view extends page_socialwiki {
         global $PAGE, $CFG;
         $params = array();
 
-        if (isset($this->coursemodule)) {
-            $params['id'] = $this->coursemodule;
-        } else if (!empty($this->page) and $this->page != null) {
+        if (!empty($this->page) and $this->page != null) {
             $params['pageid'] = $this->page->id;
         } else if (!empty($this->gid)) {
             $params['wid'] = $PAGE->cm->instance;
@@ -371,11 +362,9 @@ class page_socialwiki_view extends page_socialwiki {
         global $OUTPUT;
         $html = '';
         $html .= $OUTPUT->container_start('', 'socialwiki-title');
-        $html .= '<script> var options="?pageid='.$this->page->id.'&sesskey='.sesskey().'"</script>'; // Passed to likeajax.js.
+        $html .= '<script> var options="?pageid='.$this->page->id.'&sesskey='.sesskey().'"</script>'; // Passed to like.ajax.js.
 
-        $thetitle = html_writer::start_tag('h1');
-        $thetitle .= format_string($this->page->title);
-        $thetitle .= html_writer::end_tag('h1');
+        $thetitle = html_writer::tag('h1', format_string($this->page->title));
 
         $isliked = socialwiki_liked($this->uid, $this->page->id);
         $likecurrent = ($isliked ? 'unlike' : 'like');
@@ -421,15 +410,6 @@ class page_socialwiki_view extends page_socialwiki {
         } else {
             echo get_string('cannotviewpage', 'socialwiki');
         }
-    }
-
-    /**
-     * Sets the current course module.
-     *
-     * @param int $id
-     */
-    public function set_coursemodule($id) {
-        $this->coursemodule = $id;
     }
 }
 
@@ -2056,8 +2036,7 @@ class page_socialwiki_handlecomments extends page_socialwiki {
  */
 class page_socialwiki_admin extends page_socialwiki {
 
-    public $view, $action;
-    public $listall = false;
+    public $listall = 0;
 
     /**
      * Sets the URL of the page.
@@ -2094,8 +2073,6 @@ class page_socialwiki_admin extends page_socialwiki {
         $urldelete = new moodle_url('/mod/socialwiki/admin.php', array(
                 'pageid'  => $this->page->id,
                 'delete'  => $this->page->id,
-                'option'  => $this->view,
-                'listall' => !$this->listall ? '1' : '',
                 'sesskey' => sesskey()));
 
         $editlinks = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit')));
@@ -2110,8 +2087,7 @@ class page_socialwiki_admin extends page_socialwiki {
      * @param int $view Page view ID.
      * @param bool $listall Is only valid for view 1.
      */
-    public function set_view($view, $listall = true) {
-        $this->view = $view;
+    public function set_view($listall = 0) {
         $this->listall = $listall;
     }
 
@@ -2120,7 +2096,17 @@ class page_socialwiki_admin extends page_socialwiki {
      *
      * @param bool $showall
      */
-    protected function print_delete_content($showall = false) {
+    protected function print_delete_content($showall = 0) {
+        // Print the form.
+        echo html_writer::start_tag('form', array(
+            'action' => new moodle_url('/mod/socialwiki/admin.php'),
+            'method' => 'post'));
+        echo html_writer::tag('div', html_writer::empty_tag('input', array(
+                'type'  => 'hidden',
+                'name'  => 'pageid',
+                'value' => $this->page->id)));
+
+        // Build the pages table.
         $table = new html_table();
         $table->head = array(get_string('pagename', 'socialwiki'), '');
         $table->attributes['style'] = 'width:auto';
@@ -2138,26 +2124,19 @@ class page_socialwiki_admin extends page_socialwiki {
                 $table->data[] = array('', get_string('nopages', 'socialwiki'));
             }
         }
-
-        // Print the form.
-        echo html_writer::start_tag('form', array(
-            'action' => new moodle_url('/mod/socialwiki/admin.php'),
-            'method' => 'post'));
-        echo html_writer::tag('div', html_writer::empty_tag('input', array(
-                'type'  => 'hidden',
-                'name'  => 'pageid',
-                'value' => $this->page->id)));
-
-        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'option', 'value' => $this->view));
         echo html_writer::table($table);
+
         if ($showall) {
+            // Print a button to show related pages.
             echo html_writer::empty_tag('input', array(
                 'type'    => 'submit',
                 'class'   => 'socialwiki-form-button',
                 'value'   => get_string('listrelated', 'socialwiki'),
                 'sesskey' => sesskey()));
         } else {
+            // Tag to list all pages.
             echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'listall', 'value' => '1'));
+            // Print a button to show all pages.
             echo html_writer::empty_tag('input', array(
                 'type'    => 'submit',
                 'class'   => 'socialwiki-form-button',
@@ -2179,13 +2158,12 @@ class page_socialwiki_admin extends page_socialwiki {
             $link = socialwiki_parser_link($page);
             $class = ($link['new']) ? 'class="socialwiki-newentry"' : '';
             $pagelink = '<a href="' . $link['url'] . '"' . $class . '>' .
-                format_string($link['content']) . ' (ID:' . $page->id . ')' . '</a>';
+                    format_string($link['content']) . ' (ID:' . $page->id . ')' . '</a>';
             $urledit = new moodle_url('/mod/socialwiki/edit.php', array('pageid' => $page->id, 'sesskey' => sesskey()));
             $urldelete = new moodle_url('/mod/socialwiki/admin.php', array(
                 'pageid'  => $this->page->id,
                 'delete'  => $page->id,
-                'option'  => $this->view,
-                'listall' => !$this->listall ? '1' : '',
+                'listall' => $this->listall,
                 'sesskey' => sesskey()));
 
             $editlinks = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit')));

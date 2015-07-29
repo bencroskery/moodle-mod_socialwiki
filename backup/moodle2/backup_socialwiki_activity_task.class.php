@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/socialwiki/backup/moodle2/backup_socialwiki_stepslib.php');
-require_once($CFG->dirroot . '/mod/socialwiki/backup/moodle2/backup_socialwiki_settingslib.php');
 
 /**
  * Provides all the settings and steps to perform one complete backup of the activity

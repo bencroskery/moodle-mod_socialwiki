@@ -444,17 +444,9 @@ function socialwiki_get_extra_capabilities() {
  *
  * @package  mod_socialwiki
  * @category comment
- *
- * @param stdClass $commentparam {
- *              context  => context the context object
- *              courseid => int course id
- *              cm       => stdClass course module object
- *              commentarea => string comment area
- *              itemid      => int itemid
- * }
  * @return array
  */
-function socialwiki_comment_permissions($commentparam) {
+function socialwiki_comment_permissions() {
     return array('post' => true, 'view' => true);
 }
 
@@ -462,11 +454,11 @@ function socialwiki_comment_permissions($commentparam) {
  * Validate comment parameter before perform other comments actions.
  *
  * @param stdClass $commentparam {
- *              context  => context the context object
- *              courseid => int course id
- *              cm       => stdClass course module object
+ *              context     => context the context object
+ *              courseid    => int course ID
+ *              cm          => stdClass course module object
  *              commentarea => string comment area
- *              itemid      => int itemid
+ *              itemid      => int item ID
  * }
  *
  * @package  mod_socialwiki
@@ -507,7 +499,7 @@ function socialwiki_comment_validate($commentparam) {
             }
         }
     }
-    // Validate context id.
+    // Validate context ID.
     if ($context->id != $commentparam->context->id) {
         throw new comment_exception('invalidcontext');
     }
@@ -532,7 +524,7 @@ function socialwiki_comment_validate($commentparam) {
 
 /**
  * Return a list of page types.
- * 
+ *
  * @param string $pagetype current page type
  * @param stdClass $parentcontext Block's parent context
  * @param stdClass $currentcontext Current context of block

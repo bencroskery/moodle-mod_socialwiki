@@ -25,12 +25,12 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
 
     protected $prettyprint = false;
     protected $printable = false;
-    // Page id.
+    // Page ID.
     protected $pageid;
     // Sections.
     protected $repeatedsections;
     protected $sectionediting = true;
-    // Header & ToC.
+    // Header & Table of Contents.
     protected $toc = array();
     protected $maxheaderdepth = 3;
 

@@ -31,16 +31,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require($CFG->dirroot . '/mod/socialwiki/lib.php');
-require($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
-require($CFG->dirroot . '/tag/lib.php');
+require_once($CFG->dirroot . '/mod/socialwiki/lib.php');
+require_once($CFG->dirroot . '/mod/socialwiki/parser/parser.php');
+require_once($CFG->dirroot . '/tag/lib.php');
 
 define('SOCIALFORMAT_CREOLE', '37');
 define('SOCIALFORMAT_NWIKI', '38');
-define('SOCIAL_NO_VALID_RATE', '-999');
-define('SOCIALIMPROVEMENT', '+');
-define('SOCIALEQUAL', '=');
-define('SOCIALWORST', '-');
 
 /**
  * Get a wiki instance.
@@ -54,7 +50,7 @@ function socialwiki_get_wiki($wid) {
 }
 
 /**
- * Get sub wiki instances with same wiki id.
+ * Get subwiki instances with same wiki ID.
  *
  * @param int $wid The wiki ID.
  * @return stdClass
@@ -65,7 +61,7 @@ function socialwiki_get_subwikis($wid) {
 }
 
 /**
- * Get a sub wiki instance by wiki id and group id.
+ * Get a subwiki instance by wiki ID and group ID.
  *
  * @param int $wid The wiki ID.
  * @param int $gid The group ID.
@@ -78,7 +74,7 @@ function socialwiki_get_subwiki_by_group($wid, $gid, $uid = 0) {
 }
 
 /**
- * Get a sub wiki instace by instance id.
+ * Get a subwiki by ID.
  *
  * @param int $swid The subwiki ID.
  * @return stdClass
@@ -663,11 +659,11 @@ function socialwiki_parser_table($table) {
 /**
  * Returns an absolute path link, unless there is no such link.
  *
- * @param string $url Link's URL or filename
- * @param stdClass $context filearea params
- * @param string $component The component the file is associated with
- * @param string $filearea The filearea the file is stored in
- * @param int $swid Sub wiki id
+ * @param string $url Link's URL or filename.
+ * @param stdClass $context filearea params.
+ * @param string $component The component the file is associated with.
+ * @param string $filearea The filearea the file is stored in.
+ * @param int $swid The subwiki ID.
  *
  * @return string URL for files full path
  */
@@ -1270,6 +1266,14 @@ function socialwiki_numlikes($pid) {
     return count($DB->get_records_sql($sql, array($pid)));
 }
 
+/**
+ * Add or remove a user's like from a page.
+ *
+ * @param int $uid The user ID.
+ * @param int $pid The page ID.
+ * @param int $swid The subwiki ID.
+ * @return int
+ */
 function socialwiki_page_like($uid, $pid, $swid) {
     if (socialwiki_liked($uid, $pid)) {
         socialwiki_delete_like($uid, $pid);
@@ -1517,7 +1521,7 @@ function socialwiki_get_active_subwiki_users($swid) {
  */
 function socialwiki_get_relations($pid) {
     $relations = array();
-    $added = array(); // An array of page id's already added to $relations.
+    $added = array(); // An array of page ID's already added to $relations.
     // Add all parents up to root node.
     while ($pid != null && $pid != 0) {
         $relations[] = socialwiki_get_page($pid);
