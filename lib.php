@@ -184,11 +184,9 @@ function socialwiki_reset_course_form_definition(&$mform) {
  * $return->info = a short text description
  *
  * @return null
- * @todo Finish documenting this function
- * */
-function socialwiki_user_outline($course, $user, $mod, $wiki) {
-    $return = null;
-    return $return;
+ */
+function socialwiki_user_outline() {
+    return null;
 }
 
 /**
@@ -196,9 +194,8 @@ function socialwiki_user_outline($course, $user, $mod, $wiki) {
  * a given particular instance of this module, for user activity reports.
  *
  * @return bool
- * @todo Finish documenting this function
- * */
-function socialwiki_user_complete($course, $user, $mod, $wiki) {
+ */
+function socialwiki_user_complete() {
     return true;
 }
 
@@ -260,18 +257,16 @@ function socialwiki_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $sql = "SELECT p.*, w.id as wikiid, sw.groupid
             FROM {socialwiki_pages} p
-                JOIN {socialwiki_subwikis} sw ON sw.id = p.subwikiid
-                JOIN {socialwiki} w ON w.id = sw.wikiid
+            JOIN {socialwiki_subwikis} sw ON sw.id = p.subwikiid
+            JOIN {socialwiki} w ON w.id = sw.wikiid
             WHERE p.timecreated > ? AND w.course = ?
             ORDER BY p.timecreated ASC";
     if (!$pages = $DB->get_records_sql($sql, array($timestart, $course->id))) {
         return false;
     }
-    $modinfo = get_fast_modinfo($course);
 
+    $modinfo = get_fast_modinfo($course);
     $wikis = array();
-
-    $modinfo = get_fast_modinfo($course);
 
     foreach ($pages as $page) {
         if (!isset($modinfo->instances['socialwiki'][$page->wikiid])) {
@@ -291,7 +286,7 @@ function socialwiki_print_recent_activity($course, $viewfullnames, $timestart) {
         $groupmode = groups_get_activity_groupmode($cm, $course);
 
         if ($groupmode) {
-            if ($groupmode == SEPARATEGROUPS and ! has_capability('mod/socialwiki:managewiki', $context)) {
+            if ($groupmode == SEPARATEGROUPS && !has_capability('mod/socialwiki:managewiki', $context)) {
                 // Separate mode.
                 if (isguestuser()) {
                     // Shortcut.
@@ -329,9 +324,7 @@ function socialwiki_print_recent_activity($course, $viewfullnames, $timestart) {
  * This function searches for things that need to be done, such
  * as sending out mail, toggling flags etc ...
  *
- * @uses $CFG
  * @return bool
- * @todo Finish documenting this function
  */
 function socialwiki_cron() {
     return true;
@@ -404,7 +397,7 @@ function socialwiki_pluginfile($course, $cm, $context, $filearea, $args, $forced
     }
 }
 
-function socialwiki_search_form($cm, $search = '') {
+function socialwiki_search_form($cm, $search = "") {
     global $CFG;
 
     $output = '<div class="socialwikisearch">';
@@ -493,7 +486,7 @@ function socialwiki_comment_validate($commentparam) {
     // Group access.
     if ($subwiki->groupid) {
         $groupmode = groups_get_activity_groupmode($cm, $course);
-        if ($groupmode == SEPARATEGROUPS and ! has_capability('moodle/site:accessallgroups', $context)) {
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
             if (!groups_is_member($subwiki->groupid)) {
                 throw new comment_exception('notmemberofgroup');
             }
@@ -525,16 +518,16 @@ function socialwiki_comment_validate($commentparam) {
 /**
  * Return a list of page types.
  *
- * @param string $pagetype current page type
- * @param stdClass $parentcontext Block's parent context
- * @param stdClass $currentcontext Current context of block
+ * @param string $pagetype Current page type.
+ * @param stdClass $parentcontext Block's parent context.
+ * @param stdClass $currentcontext Current context of block.
  */
 function socialwiki_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $modulepagetype = array(
         'mod-socialwiki-*' => get_string('page-mod-socialwiki-x', 'socialwiki'),
         'mod-socialwiki-view' => get_string('page-mod-socialwiki-view', 'socialwiki'),
         'mod-socialwiki-comments' => get_string('page-mod-socialwiki-comments', 'socialwiki'),
-        'mod-socialwiki-history' => get_string('page-mod-socialwiki-history', 'socialwiki')
+        'mod-socialwiki-versions' => get_string('page-mod-socialwiki-versions', 'socialwiki')
     );
     return $modulepagetype;
 }

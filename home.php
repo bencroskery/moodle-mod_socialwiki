@@ -40,7 +40,7 @@ $tab = optional_param('tabid', 0, PARAM_INT); // Option ID.
 if ($id) {
     // Checking course module instance.
     if (!$cm = get_coursemodule_from_id('socialwiki', $id)) {
-        print_error('invalidcoursemodule');
+        print_error('invalidcoursemodule', 'socialwiki');
     }
 
     // Checking course instance.

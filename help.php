@@ -28,7 +28,7 @@ $id = required_param('id', PARAM_INT);
 
 // Checking course module instance.
 if (!$cm = get_coursemodule_from_id('socialwiki', $id)) {
-    print_error('invalidcoursemodule');
+    print_error('invalidcoursemodule', 'socialwiki');
 }
 
 // Checking course instance.

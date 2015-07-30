@@ -147,7 +147,7 @@ function xmldb_socialwiki_upgrade($oldversion) {
         // Transfer content and then delete version table.
         if ($dbman->table_exists($tableversions)) {
             $sql = "SELECT pageid, content FROM {socialwiki_versions} WHERE content != ?";
-            $rec = $DB->get_records_sql($sql, array(''));
+            $rec = $DB->get_records_sql($sql, array(""));
             foreach ($rec as $r) {
                 $page = new stdClass();
                 $page->id = $r->pageid;

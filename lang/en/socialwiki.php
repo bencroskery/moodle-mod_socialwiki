@@ -18,9 +18,7 @@
  * This file contains all en_utf8 translations in alphabetical order.
  *
  * @package mod_socialwiki
- * @author Jordi Piguillem
- * @author Kenneth Riba
- *
+ * @copyright NMAI-lab
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -32,7 +30,7 @@ $string['attachmentimage'] = 'Add as image';
 $string['attachmentlink'] = 'Add as link';
 $string['attachments'] = 'Attachments';
 $string['backcomments'] = 'Back to comments';
-$string['backhistory'] = 'Back to history';
+$string['backversions'] = 'Back to versions';
 $string['backoldversion'] = 'Back to old version';
 $string['backpage'] = 'Back to page';
 $string['backtomapmenu'] = 'Back to map menu';
@@ -117,16 +115,19 @@ To create a new page, type the new page name enclosed in double square brackets,
 To link to a page copy the page url double square brackets with an existing page title inside links to a search for that page.';
 $string['formatnwiki_link'] = 'mod/socialwiki/nwiki';
 $string['help'] = 'Help';
-$string['history'] = 'Versions';
-$string['history_help'] = 'The history lists links to previous versions of the page.';
+$string['versions'] = 'Versions';
+$string['versions_help'] = 'The versions lists links to previous versions of the page.';
 $string['html'] = 'HTML';
 $string['incorrectdeleteversions'] = 'Page versions provided for deletion are incorrect.';
 $string['insertcomment'] = 'Insert comment';
 $string['insertimage'] = 'Insert an image...';
 $string['insertimage_help'] = 'This drop-down list will insert an image to the wiki editor. If you need to add more images to the wiki, please use "Files" tab.';
-$string['invalidparameters'] = 'Invalid parameters have been given.';
-$string['invalidsection'] = 'Invalid section.';
+$string['invalidcoursemoduleid'] = 'Invalid parameters have been given.';
+$string['invalidparameters'] = 'Invalid Course Module ID has been given.';
+$string['invalidsection'] = 'Invalid section trying to be accessed.';
 $string['invalidsesskey'] = 'The given sesskey is not valid. Please resend data again';
+$string['invalidsubwikiid'] = 'Invalid Subwiki ID has been given.';
+$string['invalidwikiid'] = 'Invalid Wiki ID has been given.';
 $string['individualpagedoesnotexist'] = 'Individual wiki page doesn\'t exist';
 $string['links_help'] = 'There are 3 diffrent ways to add links: <br/>
 * [[page name]] links to a search pageName <br/>
@@ -147,7 +148,7 @@ $string['modulename'] = 'Social Wiki';
 $string['modulename_help'] = 'The Social Wiki activity module enables participants to add and edit a collection of web pages. A new wiki page is created for every edit someone makes to a page. Pages only exist while someone likes it, if a page has 0 likes it is deleted.
 
 Participants can follow each other and like pages so that search results are specialy tailored for each participant.
-A history of previous versions of each page in the wiki is kept, listing the edits made by each participant.
+A versions of previous versions of each page in the wiki is kept, listing the edits made by each participant.
 
 Social Wikis have many uses, such as
 
@@ -174,7 +175,7 @@ $string['nocreatepermission'] = 'Create page permission needed';
 $string['noeditcommentpermission'] = 'Edit comment permission needed';
 $string['noeditpermission'] = 'Edit page permission needed';
 $string['nofrompages'] = 'There are no links to this page';
-$string['nohistory'] = 'There is no history for this page';
+$string['noversions'] = 'There is no versions for this page';
 $string['nomanagecommentpermission'] = 'Manage comments permission needed';
 $string['nomanagewikipermission'] = 'Manage wiki permission needed';
 $string['noorphanedpages'] = 'There are no orphaned pages';
@@ -198,7 +199,7 @@ $string['orphaned_help'] = 'List of pages that are not linked from other page.';
 $string['page-mod-socialwiki-x'] = 'Any social wiki module page';
 $string['page-mod-socialwiki-view'] = 'Social Wiki module main page';
 $string['page-mod-socialwiki-comments'] = 'Social Wiki module comments page';
-$string['page-mod-socialwiki-history'] = 'Social Wiki history page';
+$string['page-mod-socialwiki-versions'] = 'Social Wiki versions page';
 $string['pageexists'] = 'This page already exists. Redirecting to it.';
 $string['pageindex'] = 'Page Index';
 $string['pageindex_help'] = 'This wiki\'s page tree';
@@ -231,7 +232,7 @@ $string['saving'] = 'Saving wiki page';
 $string['savingerror'] = 'Saving error';
 $string['searchcontent'] = 'Search in page content';
 $string['search_help'] = 'There are 3 different search views:<br/>
-        Tree View: displays the search results in a tree view to so the history of the page can easily be seen.<br/>
+        Tree View: displays the search results in a tree view to so the versions of the page can easily be seen.<br/>
         List View: shows a list of pages ordered using your likes and the people you are following to order the pages<br/>
         Popular: orders the pages with the pages with more likes appearing at the top';
 $string['searchmenu'] = 'Search views';
@@ -261,7 +262,7 @@ $string['versionerror'] = 'Version ID does not exist';
 $string['versionnum'] = 'Version #{$a}';
 $string['version'] = 'Version';
 $string['view'] = 'View';
-$string['viewallhistory'] = 'View all history';
+$string['viewallversions'] = 'View all versions';
 $string['viewperpage'] = 'Show {$a} versions per page';
 $string['viewversion'] = 'Viewing page version #{$a}';
 $string['viewcurrent'] = 'Current version';
@@ -297,7 +298,7 @@ $string['socialwiki:managefiles'] = 'Manage wiki files';
 $string['socialwiki:viewcomment'] = 'View page comments';
 $string['socialwiki:viewpage'] = 'View wiki pages';
 $string['socialwikipages'] = 'Social Wiki pages';
-$string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page history.';
+$string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page versions.';
 $string['socialwiki:managewiki'] = 'Manage Social Wiki';
 
 /*

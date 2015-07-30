@@ -40,7 +40,7 @@ if (!$wiki = socialwiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'socialwiki');
 }
 if (!$cm = get_coursemodule_from_instance('socialwiki', $wiki->id)) {
-    print_error('invalidcoursemodule');
+    print_error('invalidcoursemodule', 'socialwiki');
 }
 if (!is_enrolled(context_module::instance($cm->id), $USER->id)) {
     // Must be an enrolled user to like a page.

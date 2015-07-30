@@ -164,7 +164,6 @@ function socialwiki_get_page_by_title($swid, $title) {
     global $DB, $USER;
     $records = $DB->get_records('socialwiki_pages', array('subwikiid' => $swid, 'title' => $title));
     if (count($records) > 0) {
-
         foreach ($records as $r) {
             if (socialwiki_is_user_favourite($USER->id, $r->id, $swid)) {
                 return $r;
@@ -293,7 +292,7 @@ function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
     $page = new stdClass();
     $page->subwikiid = $swid;
     $page->title = $title;
-    $page->content = '';
+    $page->content = "";
     $page->timecreated = time();
     $page->format = $format;
     $page->userid = $uid;
@@ -570,7 +569,6 @@ function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
  * @return array Array('content' => string, 'url' => string, 'new' => bool, 'link_info' => array)
  */
 function socialwiki_parser_link($link, $options = null) {
-    // TODO: Doc return and options.
     global $CFG, $COURSE, $PAGE;
 
     $matches = array();
@@ -585,7 +583,7 @@ function socialwiki_parser_link($link, $options = null) {
         $specific = false;
 
         if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) { // Retrieve a version?
-            $link = preg_replace('/@(([0-9]+)|(\.))/', '', $link);
+            $link = preg_replace('/@(([0-9]+)|(\.))/', "", $link);
             $specific = true;
         }
 
@@ -834,7 +832,7 @@ function socialwiki_user_can_edit($subwiki) {
  *
  * @param mixed $context Context in which page needs to be deleted.
  * @param mixed $pages Pages to be deleted.
- * @param int $swid ID of the subwiki for which all pages should be deleted
+ * @param int $swid ID of the subwiki for which all pages should be deleted.
  */
 function socialwiki_delete_pages($context, $pages = null, $swid = null) {
     global $DB;
@@ -997,7 +995,6 @@ function socialwiki_print_page_content($page, $context, $swid) {
  * Prints default edit form fields and buttons.
  *
  * @param string $format Edit form format (ex. creole).
- * @param int $pid The page ID.
  * @param bool $upload
  * @param array $deleteuploads
  */
@@ -1087,7 +1084,7 @@ function socialwiki_print_upload_table($context, $filearea, $fileitemid, $delete
  * @param bool $filterunseen Don't show the pages that have no views.
  * @return stdClass
  */
-function socialwiki_get_updated_pages_by_subwiki($swid, $uid = '', $filterunseen = true) {
+function socialwiki_get_updated_pages_by_subwiki($swid, $uid = "", $filterunseen = true) {
     global $DB, $USER;
 
     $sql = "SELECT *
@@ -1562,7 +1559,8 @@ function socialwiki_get_currentstyle($swid) {
  * @return int
  */
 function socialwiki_indexof_page($pid, $pages) {
-    for ($i = 0; $i < count($pages); $i++) {
+    $pagescount = count($pages);
+    for ($i = 0; $i < $pagescount; $i++) {
         if ($pages[$i]->id == $pid) {
             return $i;
         }
@@ -1613,7 +1611,7 @@ function socialwiki_get_recommended_pages($uid, $swid) {
     Global $CFG;
     require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
     $scale = array('follow' => 1, 'like' => 1, 'trust' => 1, 'popular' => 1); // Scale with weight for each peer category.
-    $peers = socialwiki_get_peers($swid, $scale); // TODO: not sure if this does anything...
+    $peers = socialwiki_get_peers($swid, $scale);
     $pages = socialwiki_get_page_list($swid);
 
     foreach ($pages as $page) {
@@ -1798,7 +1796,7 @@ function socialwiki_format_time($time, $timeago = true) {
     // Loops through to return the first type available.
     foreach ($types as $t => &$i) {
         if ($diff->$t) {
-            return $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : '') . ' ago';
+            return $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : "") . ' ago';
         }
     }
 }

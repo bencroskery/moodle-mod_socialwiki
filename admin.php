@@ -15,11 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Delete wiki pages
+ * Delete or edit pages.
  *
- * This will show options for deleting wiki pages
- * If user have wiki:managewiki ability then only this page will show delete
- * options
+ * This will show options for deleting or editing any pages in the current subwiki.
+ * The user must have wiki:managewiki ability to show options.
  *
  * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
@@ -41,7 +40,7 @@ if (!$subwiki = socialwiki_get_subwiki($page->subwikiid)) {
     print_error('incorrectsubwikiid', 'socialwiki');
 }
 if (!$cm = get_coursemodule_from_instance("socialwiki", $subwiki->wikiid)) {
-    print_error('invalidcoursemodule');
+    print_error('invalidcoursemodule', 'socialwiki');
 }
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 if (!$wiki = socialwiki_get_wiki($subwiki->wikiid)) {

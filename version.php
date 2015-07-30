@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of socialwiki
- * This fragment is called by moodle_needs_upgrading() and /admin/index.php
+ * Code fragment to define the version of socialwiki. Called by moodle_needs_upgrading() and /admin/index.php
  *
  * @package   mod_socialwiki
  * @copyright 2015 NMAI-lab
