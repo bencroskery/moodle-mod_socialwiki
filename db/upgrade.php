@@ -159,6 +159,80 @@ function xmldb_socialwiki_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2015071600, 'socialwiki'); // Socialwiki savepoint reached.
     }
+    
+    // Convert to nested page model.
+    if ($oldversion < 2015080500) {
+        $table = new xmldb_table('socialwiki_pages');
+        $parent = new xmldb_field('parent');
+
+        if ($dbman->field_exists($table, $parent)) {
+            $rec = $DB->get_records_sql("SELECT id, parent FROM {socialwiki_pages} ORDER BY parent, subwikiid", array(""));
+            $tree = array();
+            foreach ($rec as $r) {
+                if ($r->parent === null) {
+                    $page = new stdClass();
+                    $page->id = $r->id;
+                    $page->children = array();
+                    $tree[] = $page;
+                } else {
+                    $found = false;
+                    foreach ($tree as $t) {
+                        if ($t->id === $r->id) {
+                            $page = new stdClass();
+                            $page->id = $r->id;
+                            $page->children = array();
+                            $t->children[] = $page;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if ($found) {
+                        continue;
+                    }
+                    foreach ($tree as $t) {
+                        foreach ($t->children as $t1) {
+                            if ($t1->id === $r->id) {
+                                $page = new stdClass();
+                                $page->id = $r->id;
+                                $page->children = array();
+                                $t1->children[] = $page;
+                                $found = true;
+                                break 2;
+                            }
+                        }
+                    }
+                    if ($found) {
+                        continue;
+                    }
+                    foreach ($tree as $t) {
+                        foreach ($t->children as $t1) {
+                            foreach ($t1->children as $t2) {
+                                if ($t2->id === $r->id) {
+                                    $page = new stdClass();
+                                    $page->id = $r->id;
+                                    $page->children = array();
+                                    $t2->children[] = $page;
+                                    $found = true;
+                                    break 3;
+                                }
+                            }
+                        }
+                    }
+                    if ($found) {
+                        continue;
+                    }
+                }
+            }
+            
+            $dbman->drop_field($table, $parent);
+        }
+
+        upgrade_mod_savepoint(true, 2015080500, 'socialwiki'); // Socialwiki savepoint reached.
+    }
 
     return true;
+}
+
+function xmldb_socialwiki_addtotree($tree) {
+    return $tree;
 }

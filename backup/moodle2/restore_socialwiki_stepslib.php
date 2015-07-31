@@ -89,7 +89,8 @@ class restore_socialwiki_activity_structure_step extends restore_activity_struct
         $data->subwikiid = $this->get_new_parentid('socialwiki_subwiki');
         $data->userid = $USER->id;
         $data->timecreated = $this->apply_date_offset($data->timecreated);
-        $data->parent = $this->get_mappingid('socialwiki_page', $data->parent);
+        $data->lftid = $this->get_mappingid('socialwiki_page', $data->lftid);
+        $data->rgtid = $this->get_mappingid('socialwiki_page', $data->rgtid);
 
         $newitemid = $DB->insert_record('socialwiki_pages', $data);
         $this->set_mapping('socialwiki_page', $oldid, $newitemid, true); // There are files related to this.

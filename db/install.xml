@@ -51,7 +51,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Wiki page creation timestamp"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Edition author"/>
         <FIELD NAME="pageviews" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of page views"/>
-        <FIELD NAME="parent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="This page's parent's id"/>
+        <FIELD NAME="lftid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The left ID"/>
+        <FIELD NAME="rgtid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The right ID"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
