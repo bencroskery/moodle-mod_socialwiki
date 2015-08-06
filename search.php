@@ -67,7 +67,7 @@ if ($exact != 0) { // Exact match on page title.
     $wikipage->set_search_string($search, $content, false);
 }
 
-$wikipage->set_title(get_string('searchresultsfor', 'socialwiki') . ": $search");
+$wikipage->set_title(get_string('searchresult', 'socialwiki') . $search);
 $wikipage->print_header();
 $wikipage->print_content();
 $wikipage->print_footer();

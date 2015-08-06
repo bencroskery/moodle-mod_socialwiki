@@ -428,7 +428,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         $select = new single_select(new moodle_url('/mod/socialwiki/search.php', array('searchstring' => $searchstring,
             'courseid' => $COURSE->id, 'cmid' => $cmid, 'exact' => $exact)), 'view', $selectoptions, $currentview);
-        $select->label = get_string('searchmenu', 'socialwiki') . ': ';
+        $select->label = get_string('searchviews', 'socialwiki');
 
         return $this->output->container($this->output->render($select), 'midpad colourtext');
     }

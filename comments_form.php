@@ -38,13 +38,13 @@ require_once($CFG->dirroot . '/lib/formslib.php');
 
 /**
  * Form used for editing and creating comments.
- * 
+ *
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_socialwiki_comments_form extends moodleform {
-    
+
     /**
      * Build the full form.
      */
@@ -74,7 +74,7 @@ class mod_socialwiki_comments_form extends moodleform {
 
     /**
      * Edit the data in the form.
-     * 
+     *
      * @param string $current
      * @param array $commentoptions
      */

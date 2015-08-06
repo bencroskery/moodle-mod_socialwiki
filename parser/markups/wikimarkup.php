@@ -193,7 +193,7 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
         if (empty($this->toc)) {
             return;
         }
-        
+
         $toc = "";
         $currentsection = array(0, 0, 0);
         $i = 1;

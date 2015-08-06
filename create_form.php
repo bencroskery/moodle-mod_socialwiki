@@ -25,8 +25,8 @@
 require($CFG->libdir . '/formslib.php');
 
 /**
- * Form used for creating a new page (first version). 
- * 
+ * Form used for creating a new page (first version).
+ *
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

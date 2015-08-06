@@ -139,6 +139,7 @@ $string['listrelated'] = 'List related';
 $string['home'] = 'Home';
 $string['homemenu'] = 'Home menu';
 $string['hometitle'] = 'Social Wiki Home';
+$string['makepage'] = 'Make a new Page';
 $string['migrationfinished'] = 'Migration finished successfully';
 $string['migrationfinishednowikis'] = 'Migration finished, no wikis were migrated';
 $string['missingpages'] = 'Pages without content';
@@ -182,7 +183,6 @@ $string['noorphanedpages'] = 'There are no orphaned pages';
 $string['norecentactivity'] = 'No recent activity';
 $string['norated'] = 'This page has not been rated yet, be the first!';
 $string['norating'] = 'No rating';
-$string['nosearchresults'] = 'No results';
 $string['noteditblocks'] = 'Turn edit blocks off';
 $string['notingroup'] = 'Not in group';
 $string['notopages'] = 'This page does not link to other pages';
@@ -236,10 +236,11 @@ $string['search_help'] = 'There are 3 different search views:<br/>
         Tree View: displays the search results in a tree view to so the versions of the page can easily be seen.<br/>
         List View: shows a list of pages ordered using your likes and the people you are following to order the pages<br/>
         Popular: orders the pages with the pages with more likes appearing at the top';
-$string['searchmenu'] = 'Search views';
-$string['searchresult'] = 'Search results:';
+$string['search'] = 'Search Wiki';
+$string['searchresult'] = 'Search results for: ';
+$string['searchresults_empty'] = 'No results';
 $string['searchterms'] = 'Search terms';
-$string['search_socialwikis'] = 'Search Wiki';
+$string['searchviews'] = 'Search views';
 $string['special'] = 'Special';
 $string['style'] = 'Select style for Social wiki activity';
 $string['tableofcontents'] = 'Table of contents';
@@ -255,6 +256,7 @@ $string['updatedpages'] = 'Updated pages';
 $string['updatedpages_help'] = 'Recently updated wiki pages';
 $string['updatedwikipages'] = 'Updated wiki pages';
 $string['upload'] = 'Upload & Delete';
+$string['makepage'] = 'Make a new Page';
 $string['uploadname'] = 'Filename';
 $string['uploadactions'] = 'Actions';
 $string['uploadtitle'] = 'Attach files';
@@ -317,13 +319,10 @@ $string['likes'] = 'Likes';
 $string['likes_help'] = 'How many likes the page has.';
 $string['views'] = 'Views';
 $string['views_help'] = 'How many views the page has.';
-// Specific for topics.
-$string['versions'] = 'Versions';
+/* Title versions is already declared above. */
 $string['versions_help'] = 'How many different versions this topic has.';
-// Specific of users.
 $string['name'] = 'Name';
 $string['name_help'] = 'The name of the user.';
-
 $string['favourite'] = 'Favourites';
 $string['favourite_help'] = 'A favourite is the most recent like in a topic.';
 $string['popularity'] = 'Followers';
@@ -360,10 +359,3 @@ $string['userfaves'] = 'Favourite Pages';
 $string['userfaves_empty'] = 'This user has no favourite pages.';
 $string['userpages'] = 'Created Pages';
 $string['userpages_empty'] = 'This user has not created any pages.';
-
-/*
- * Extras.
- */
-$string['nopagesfound'] = 'No Pages Found';
-$string['searchresultsfor'] = 'Search results for';
-$string['makepage'] = 'Make a new Page';

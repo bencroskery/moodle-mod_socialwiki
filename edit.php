@@ -39,8 +39,6 @@ $pageid = required_param('pageid', PARAM_INT); // Page ID.
 $contentformat = optional_param('contentformat', "", PARAM_ALPHA); // Content Format (eg. creole, HTML).
 $option = optional_param('editoption', "", PARAM_TEXT);
 $section = optional_param('section', "", PARAM_TEXT);
-$attachments = optional_param('attachments', 0, PARAM_INT);
-$deleteuploads = optional_param('deleteuploads', 0, PARAM_RAW);
 $makenew = optional_param('makenew', 0, PARAM_INT); // 0 is new versions and 1 is whole new page (first version).
 
 $newcontent = "";
@@ -111,12 +109,6 @@ if ($option == get_string('save', 'socialwiki')) {
 
 if (!empty($section)) {
     $wikipage->set_section($sectioncontent, $section);
-}
-if (!empty($attachments)) {
-    $wikipage->set_attachments($attachments);
-}
-if (!empty($deleteuploads)) {
-    $wikipage->set_deleteuploads($deleteuploads);
 }
 if (!empty($contentformat)) {
     $wikipage->set_format($contentformat);

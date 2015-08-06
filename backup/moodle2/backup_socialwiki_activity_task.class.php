@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/socialwiki/backup/moodle2/backup_socialwiki_s
 
 /**
  * Provides all the settings and steps to perform one complete backup of the activity.
- * 
+ *
  * @copyright 2010 Jordi Piguillem <pigui0@hotmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

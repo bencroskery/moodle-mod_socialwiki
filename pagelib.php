@@ -442,8 +442,6 @@ class page_socialwiki_edit extends page_socialwiki {
     protected $sectioncontent;
 
     protected $upload = false;
-    protected $attachments = 0;
-    protected $deleteuploads = array();
     protected $format;
     protected $makenew;
 
@@ -543,14 +541,6 @@ class page_socialwiki_edit extends page_socialwiki {
 
     public function set_upload($upload) {
         $this->upload = $upload;
-    }
-
-    public function set_attachments($attachments) {
-        $this->attachments = $attachments;
-    }
-
-    public function set_deleteuploads($deleteuploads) {
-        $this->deleteuploads = $deleteuploads;
     }
 
     /**
@@ -769,7 +759,7 @@ class page_socialwiki_editcomment extends page_socialwiki {
 
     /**
      * Setup page tabs.
-     * 
+     *
      * @param array $options Not used in this case.
      */
     protected function setup_tabs($options = array()) {
@@ -1131,7 +1121,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
 
     /**
      * Setup page tabs.
-     * 
+     *
      * @param array $options Not used in this case.
      */
     protected function setup_tabs($options = array()) {
@@ -1320,7 +1310,7 @@ class page_socialwiki_versions extends page_socialwiki {
 
     /**
      * Setup page tabs.
-     * 
+     *
      * @param array $options Not used in this case.
      */
     protected function setup_tabs($options = array()) {
@@ -1345,7 +1335,7 @@ class page_socialwiki_versions extends page_socialwiki {
                 $node->content .= $this->choose_from_radio(array(substr($node->id, 1) => null), 'compare')
                         . $this->choose_from_radio(array(substr($node->id, 1) => null), 'comparewith');
                 if ($node->id == 'l' . $this->page->id) { // Current page.
-                    $node->content .= "<br/>[current page]";
+                    $node->content .= "<br/>" . get_string('viewcurrent', 'socialwiki');
                 }
                 $node->content .= "</span>";
             }
@@ -1624,7 +1614,7 @@ class page_socialwiki_deletecomment extends page_socialwiki {
 
     /**
      * Setup page tabs.
-     * 
+     *
      * @param array $options Not used in this case.
      */
     protected function setup_tabs($options = array()) {
@@ -1941,7 +1931,7 @@ class page_socialwiki_admin extends page_socialwiki {
 
         $editlinks = $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit')));
         $editlinks .= $OUTPUT->action_icon($urldelete, new pix_icon('t/delete', get_string('delete')));
-        echo "Current Page: $pagelink $editlinks";
+        echo get_string('viewcurrent', 'socialwiki') . ": $pagelink $editlinks";
         $this->print_delete_content($this->listall);
     }
 

@@ -403,14 +403,14 @@ function socialwiki_search_form($cm, $search = "") {
     $output = '<div class="socialwikisearch">';
     $output .= '<form method="post" action="' . $CFG->wwwroot . '/mod/socialwiki/search.php" style="display:inline">';
     $output .= '<fieldset class="invisiblefieldset">';
-    $output .= '<legend class="accesshide">' . get_string('search_socialwikis', 'socialwiki') . '</legend>';
+    $output .= '<legend class="accesshide">' . get_string('search', 'socialwiki') . '</legend>';
     $output .= '<label class="accesshide" for="search_socialwiki">' . get_string("searchterms", "socialwiki") . '</label>';
     $output .= '<input id="search_socialwiki" name="searchstring" type="text" size="18" value="';
     $output .= s($search, true) . '" alt="search" />';
     $output .= '<input name="courseid" type="hidden" value="' . $cm->course . '" />';
     $output .= '<input name="cmid" type="hidden" value="' . $cm->id . '" />';
     $output .= '<input name="search_social_content" type="hidden" value="1" />';
-    $output .= '<input value="' . get_string('search_socialwikis', 'socialwiki') . '" type="submit" />';
+    $output .= '<input value="' . get_string('search', 'socialwiki') . '" type="submit" />';
     $output .= '</fieldset>';
     $output .= '</form>';
     $output .= '</div>';

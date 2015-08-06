@@ -16,7 +16,7 @@
 
 /**
  * Defines restore_socialwiki_activity_task class.
- * 
+ *
  * @package   mod_socialwiki
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/socialwiki/backup/moodle2/restore_socialwiki_
 
 /**
  * Wiki restore task that provides all the settings and steps to perform one complete restore of the activity.
- * 
+ *
  * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
