@@ -998,7 +998,7 @@ class page_socialwiki_create extends page_socialwiki {
         } else {
             $params['action'] = 'create';
         }
-        $PAGE->set_url(new moodle_url('/mod/socialwiki/edit.php', $params));
+        $PAGE->set_url(new moodle_url('/mod/socialwiki/create.php', $params));
     }
 
     /**

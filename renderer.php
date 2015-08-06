@@ -519,7 +519,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
 
         $html .= html_writer::start_div('socialwiki-contributors');
-        $html .= 'Contributors to this page:';
+        $html .= get_string('pagecontributors', 'socialwiki');
         $contributors = socialwiki_get_contributors($page->id);
 
         $contriblinks = "";

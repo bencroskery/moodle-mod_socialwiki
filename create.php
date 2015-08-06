@@ -114,12 +114,12 @@ if ($action === 'create') {
     if ((int) $wiki->forceformat == 1 && $title != get_string('newpage', 'socialwiki')) {
         $newpageid = $wikipage->create_page($title);
         // Have the user like the page they are creating.
-        socialwiki_add_like($USER->id, $newpageid, $subwiki->id);
+        $subwikiid = socialwiki_get_page($newpageid)->subwikiid;
+        socialwiki_add_like($USER->id, $newpageid, $subwikiid);
         redirect($CFG->wwwroot . '/mod/socialwiki/edit.php?pageid=' . $newpageid . "&makenew=1");
     } else {
         $wikipage->print_header();
-        // Create a new page.
         $wikipage->print_content($title);
+        $wikipage->print_footer();
     }
-    $wikipage->print_footer();
 }
