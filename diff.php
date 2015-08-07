@@ -34,9 +34,13 @@ require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require($CFG->dirroot . '/mod/socialwiki/difflib.php');
 
-$pageid = required_param('pageid', PARAM_TEXT);
-$compare = required_param('compare', PARAM_INT);
-$comparewith = required_param('comparewith', PARAM_INT);
+$pageid      = required_param('pageid', PARAM_TEXT);     // Page ID.
+$compare     = required_param('compare', PARAM_INT);     // Page to compare.
+$comparewith = required_param('comparewith', PARAM_INT); // Page to compare against.
+
+if ($pageid == -1) {
+    $pageid = $compare;
+}
 
 if (!$page = socialwiki_get_page($pageid)) {
     print_error('incorrectpageid', 'socialwiki');

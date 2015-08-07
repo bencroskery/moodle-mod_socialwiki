@@ -34,7 +34,7 @@ require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require($CFG->dirroot . '/mod/socialwiki/table/table.php');
 
-$id = optional_param('id', 0, PARAM_INT); // Course module ID.
+$id  = optional_param('id', 0, PARAM_INT);    // Course module ID.
 $tab = optional_param('tabid', 0, PARAM_INT); // Option ID.
 // Case 1 User that comes from a course.
 if ($id) {

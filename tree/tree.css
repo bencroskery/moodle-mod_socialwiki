@@ -45,7 +45,8 @@
 
 .socialwiki_wikicontent .tree {
     white-space: nowrap;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
+    text-align: center;
     overflow: auto;
 }
 

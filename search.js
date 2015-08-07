@@ -26,7 +26,7 @@
  * If popular is selected from the menu dropown then resize to show them better.
  */
 $(document).ready(function () {
-    if (/view=3/.test(document.URL)) { // Only in view 'popular'.
+    if (/view=2/.test(document.URL)) { // Only in view 'popular'.
         $('.tagcloud').tagcloud();
     }
 });

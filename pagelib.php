@@ -834,7 +834,7 @@ class page_socialwiki_editcomment extends page_socialwiki {
  * @copyright 2015 NMAI-lab
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class page_socialwiki_search extends page_socialwiki {
+class page_socialwiki_search extends page_socialwiki_versions {
 
     /**
      * Array of search result pages.
@@ -851,35 +851,11 @@ class page_socialwiki_search extends page_socialwiki {
     private $searchstring;
 
     /**
-     * The view mode for viewing results.
-     *
-     * @var int
-     */
-    private $view;
-
-    /**
      * 1 for an exact search type.
      *
      * @var int
      */
     private $exact;
-
-    public function __construct($wiki, $subwiki, $cm, $view) {
-        global $PAGE;
-        parent::__construct($wiki, $subwiki, $cm);
-        $this->view = $view;
-        if ($this->view == 2) {
-            // For table view.
-            $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
-            $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
-            $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
-        } else {
-            // For tree view.
-            $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
-            $PAGE->requires->js(new moodle_url("/mod/socialwiki/tree/tree.js"));
-            $PAGE->requires->css(new moodle_url("/mod/socialwiki/tree/tree.css"));
-        }
-    }
 
     /**
      * Sets the URL of the page.
@@ -923,36 +899,10 @@ class page_socialwiki_search extends page_socialwiki {
      * Prints the page content.
      */
     public function print_content() {
-        global $PAGE;
+        global $PAGE, $COURSE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-        echo $this->wikioutput->menu_search($PAGE->cm->id, $this->view, $this->searchstring, $this->exact);
-        if ($this->view == 2) {
-            $this->print_table();
-        } else {
-            $this->print_tree();
-        }
-    }
-
-    /**
-     * Print the table view.
-     */
-    private function print_table() {
-        global $USER, $CFG;
-        require($CFG->dirroot . '/mod/socialwiki/table/table.php');
-        $pages = $this->searchresult;
-        echo socialwiki_versiontable::html_versiontable($USER->id, $this->subwiki->id, $pages, 'version');
-    }
-
-    /**
-     * Print the tree view.
-     */
-    private function print_tree() {
-        global $CFG;
-        require($CFG->dirroot . '/mod/socialwiki/tree/tree.php');
-        $pages = $this->searchresult;
-        $tree = new socialwiki_tree;
-        $tree->build_tree($pages);
-        $tree->display();
+        $params = array('searchstring' => $this->searchstring, 'courseid' => $COURSE->id, 'cmid' => $PAGE->cm->id, 'exact' => $this->exact);
+        $this->wikioutput->versions('search', $params, $this->view, $this->searchresult);
     }
 }
 
@@ -1125,7 +1075,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
      * @param array $options Not used in this case.
      */
     protected function setup_tabs($options = array()) {
-        parent::setup_tabs(array('linkedwhenactive' => 'view', 'activetab' => 'view'));
+        parent::setup_tabs(array('linkedwhenactive' => 'edit', 'activetab' => 'edit'));
     }
 
     /**
@@ -1270,12 +1220,12 @@ class page_socialwiki_diff extends page_socialwiki {
 class page_socialwiki_versions extends page_socialwiki {
 
     /**
-     * If != 0, all versions will be printed in a signle table.
+     * The view mode for viewing results.
      *
      * @var int
      */
-    private $allversion;
-
+    public $view;
+    
     /**
      * Creates a new versions page.
      *
@@ -1283,11 +1233,21 @@ class page_socialwiki_versions extends page_socialwiki {
      * @param stdClass $subwiki The current subwiki.
      * @param stdClass $cm The current course module.
      */
-    public function __construct($wiki, $subwiki, $cm) {
+    public function __construct($wiki, $subwiki, $cm, $view) {
         global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        $PAGE->requires->js(new moodle_url("/mod/socialwiki/tree/tree.js"));
-        $PAGE->requires->css(new moodle_url("/mod/socialwiki/tree/tree.css"));
+        $this->view = $view;
+        if ($this->view == 1) {
+            // For table view.
+            $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
+            $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
+        } else {
+            // For tree view.
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
+            $PAGE->requires->js(new moodle_url("/mod/socialwiki/tree/tree.js"));
+            $PAGE->requires->css(new moodle_url("/mod/socialwiki/tree/tree.css"));
+        }
     }
 
     /**
@@ -1321,89 +1281,10 @@ class page_socialwiki_versions extends page_socialwiki {
      * Prints the page content.
      */
     public function print_content() {
-        global $OUTPUT;
-
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-
-        // Build the tree with all of the relate pages.
-        $tree = new socialwiki_tree();
-        $tree->build_tree(socialwiki_get_relations($this->page->id));
-        // Add radio buttons to compare versions if there is more than one version.
-        if (count($tree->nodes) > 1) {
-            foreach ($tree->nodes as $node) {
-                $node->content .= '<span id="comp' . $node->id . '" style="display:block">';
-                $node->content .= $this->choose_from_radio(array(substr($node->id, 1) => null), 'compare')
-                        . $this->choose_from_radio(array(substr($node->id, 1) => null), 'comparewith');
-                if ($node->id == 'l' . $this->page->id) { // Current page.
-                    $node->content .= "<br/>" . get_string('viewcurrent', 'socialwiki');
-                }
-                $node->content .= "</span>";
-            }
-        }
-
-        echo html_writer::start_tag('form',
-                array('action' => new moodle_url('/mod/socialwiki/diff.php'), 'method' => 'get', 'id' => 'diff'));
-        echo html_writer::tag('div',
-                html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $this->page->id)));
-
-        $tree->display();
-        // Add compare button only if there are multiple versions of a page.
-        if (count($tree->nodes) > 1) {
-            echo $OUTPUT->container_start('socialwiki-diffbutton');
-            echo html_writer::empty_tag('input', array(
-                'type' => 'submit', 'class' => 'socialwiki-form-button', 'value' => get_string('comparesel', 'socialwiki')));
-            echo $OUTPUT->container_end();
-        }
-        echo html_writer::end_tag('form');
+        $params = array('pageid' => $this->page->id);
+        $this->wikioutput->versions('versions', $params, $this->view, socialwiki_get_relations($this->page->id));
     }
-
-    public function set_allversion($allversion) {
-        $this->allversion = $allversion;
-    }
-
-    /**
-     * Given an array of values, creates a group of radio buttons to be part of a form
-     *
-     * @param array  $options  An array of value-label pairs for the radio group (values as keys).
-     * @param string $name     Name of the radiogroup (unique in the form).
-     * @param string $onclick  Function to be executed when the radios are clicked.
-     * @param string $checked  The value that is already checked.
-     * @param bool   $return   If true, return the HTML as a string, otherwise print it.
-     * @return string
-     */
-    private function choose_from_radio($options, $name = 'unnamed', $onclick = "", $checked = "", $return = true) {
-        static $idcounter = 0;
-
-        $output = "<span class='radiogroup $name'>";
-        if (!empty($options)) {
-            $currentradio = 0;
-            foreach ($options as $value => $label) {
-                $htmlid = 'auto-rb' . sprintf('%04d', ++$idcounter);
-                $output .= " <span class='radioelement $name rb$currentradio'>";
-                $output .= "<input form = 'diff' name='$name' id='$htmlid' type='radio' value='$value'";
-                if ($value == $checked) {
-                    $output .= ' checked="checked"';
-                }
-                if ($onclick) {
-                    $output .= " onclick='$onclick'";
-                }
-                if ($label === "") {
-                    $output .= " /> <label for='$htmlid'>$value</label></span>";
-                } else {
-                    $output .= " /> <label for='$htmlid'>$label</label></span>";
-                }
-                $currentradio = ($currentradio + 1) % 2;
-            }
-        }
-        $output .= '</span>';
-
-        if ($return) {
-            return $output;
-        } else {
-            echo $output;
-        }
-    }
-
 }
 
 /**
@@ -1983,7 +1864,6 @@ class page_socialwiki_admin extends page_socialwiki {
             // Print a button to show related pages.
             echo html_writer::empty_tag('input', array(
                 'type'    => 'submit',
-                'class'   => 'socialwiki-form-button',
                 'value'   => get_string('listrelated', 'socialwiki'),
                 'sesskey' => sesskey()));
         } else {
@@ -1992,7 +1872,6 @@ class page_socialwiki_admin extends page_socialwiki {
             // Print a button to show all pages.
             echo html_writer::empty_tag('input', array(
                 'type'    => 'submit',
-                'class'   => 'socialwiki-form-button',
                 'value'   => get_string('listall', 'socialwiki'),
                 'sesskey' => sesskey()));
         }

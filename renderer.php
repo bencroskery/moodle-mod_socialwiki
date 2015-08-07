@@ -410,27 +410,34 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Builds the menu for the search page.
-     *
-     * @param int $cmid The course module ID.
-     * @param int $currentselect The currently selected item.
-     * @param string $searchstring The string being searched.
-     * @param int $exact If exact then only an exact title will return.
-     * @return string HTML
+     * Builds the version view for search or pages.
+     * 
+     * @param string $type Either versions or search.
+     * @param array $options Parameters for the view menu links.
+     * @param int $currentview The current view.
+     * @param stdClass[] $pages An array of the pages to show.
      */
-    public function menu_search($cmid, $currentview, $searchstring, $exact = 0) {
-        Global $COURSE;
-
+    public function versions($type, $options, $currentview, $pages) {
+        global $USER, $CFG;
         $selectoptions = array();
         foreach (array('tree', 'list', 'popular') as $key => $v) {
-            $selectoptions[$key + 1] = get_string($v, 'socialwiki');
+            $selectoptions[$key] = get_string($v, 'socialwiki');
         }
 
-        $select = new single_select(new moodle_url('/mod/socialwiki/search.php', array('searchstring' => $searchstring,
-            'courseid' => $COURSE->id, 'cmid' => $cmid, 'exact' => $exact)), 'view', $selectoptions, $currentview);
+        $select = new single_select(new moodle_url("/mod/socialwiki/$type.php", $options), 'view', $selectoptions, $currentview);
         $select->label = get_string('searchviews', 'socialwiki');
-
-        return $this->output->container($this->output->render($select), 'midpad colourtext');
+        
+        echo $this->output->container($this->output->render($select), 'midpad');
+        
+        if ($currentview == 1) {
+            require($CFG->dirroot . '/mod/socialwiki/table/table.php');
+            echo socialwiki_versiontable::html_versiontable($USER->id, $this->subwiki->id, $pages, 'version');
+        } else {
+            require($CFG->dirroot . '/mod/socialwiki/tree/tree.php');
+            $tree = new socialwiki_tree();
+            $tree->build_tree($pages);
+            $tree->display();
+        }
     }
 
     /**

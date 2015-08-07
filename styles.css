@@ -49,9 +49,9 @@
 }
 
 .socialwiki_wikicontent .socialwiki-previewbox {
-    width: 50%;
     margin: auto;
     border: thin solid blue;
+    padding: 10px;
 }
 
 .socialwiki_wikicontent .socialwiki-info {
@@ -110,13 +110,12 @@
 }
 
 .socialwiki_wikicontent .socialwiki-form-button {
-    margin-left: 0%;
+    margin-left: 0;
 }
 
 .socialwiki_wikicontent .socialwiki-form-center {
     text-align: center;
     margin: auto;
-    width: 320px;
 }
 
 .socialwiki_wikicontent .socialwiki-upload-table {
@@ -218,10 +217,6 @@
 .socialwiki_wikicontent .socialwiki-diffpaging {
     float: left;
     width: 50%;
-}
-
-.socialwiki_wikicontent .socialwiki-diffbutton {
-    text-align: center;
 }
 
 .socialwiki_wikicontent .socialwiki-diff-deleted {
