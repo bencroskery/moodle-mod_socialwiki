@@ -249,18 +249,31 @@ class socialwiki_tree {
     public function display($pageid = -1) {
         Global $USER;
         // Add radio buttons to compare versions if there is more than one version.
+        $compare = "";
         if (count($this->nodes) > 1) {
             foreach ($this->nodes as $node) {
                 $node->content .= '<span id="comp' . $node->id . '" style="display:block">';
-                $node->content .= $this->choose_from_radio(array(substr($node->id, 1) => null), 'compare')
-                        . $this->choose_from_radio(array(substr($node->id, 1) => null), 'comparewith');
+                $node->content .= $this->choose_from_radio(substr($node->id, 1), 'compare')
+                        . $this->choose_from_radio(substr($node->id, 1), 'comparewith');
                 if ($node->id == 'l' . $pageid) { // Current page.
                     $node->content .= "<br/>" . get_string('viewcurrent', 'socialwiki');
                 }
                 $node->content .= "</span>";
             }
+            
+            $compare .= html_writer::start_tag('form', array('action' => new moodle_url('/mod/socialwiki/diff.php'),
+                'method' => 'get', 'id' => 'diff', 'class' => 'socialwiki-form-center'));
+            if ($pageid != -1) {
+                $compare .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $pageid));
+            }
+            $compare .= html_writer::empty_tag('input', array(
+                'type'  => 'submit',
+                'id'    => 'comparebtn',
+                'class' => 'socialwiki-form-button',
+                'value' => get_string('comparesel', 'socialwiki')));
+            $compare .= html_writer::end_tag('form');
         }
-        
+
         $treeul = '<div class="tree" id="doublescroll"><ul>'; // Doublescroll puts scrollbar on top and bottom.
         $allpeerset = array();
         foreach ($this->roots as $node) {
@@ -274,73 +287,35 @@ class socialwiki_tree {
         if (!empty($this->roots)) { // If it's empty there's no tree and no peers so we're ok.
             $swid = $this->roots[0]->swid;
         }
-        $peerinfo = '<div id="peer-info" style="display:none"><ul>';
+
+        echo $treeul . $compare;
+
+        // Peer info from each author.
+        echo '<div id="peer-info" style="display:none"><ul>';
         foreach ($allpeerset as $p) {
             $peerarray = socialwiki_peer::socialwiki_get_peer($p, $swid, $USER->id)->to_array();
-            $peerinfo .= '<li>';
+            echo '<li>';
             foreach ($peerarray as $k => $v) {
-                $peerinfo .= "<$k>$v</$k>";
+                echo "<$k>$v</$k>";
             }
-            $peerinfo .= '</li>';
+           echo '</li>';
         }
-        $peerinfo .= '</ul></div>';
-
-        echo $treeul . $peerinfo;
+        echo '</ul></div>';
         
-        // Add compare button only if there are multiple versions of a page.
-        if (count($this->nodes) > 1) {
-            echo html_writer::start_tag('form', array('action' => new moodle_url('/mod/socialwiki/diff.php'),
-                'method' => 'get', 'id' => 'diff', 'class' => 'socialwiki-form-center'));
-            echo html_writer::tag('div',
-                html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'pageid', 'value' => $pageid)));
-            echo html_writer::empty_tag('input', array(
-                'type' => 'submit',
-                'class' => 'socialwiki-form-button',
-                'value' => get_string('comparesel', 'socialwiki')));
-            echo html_writer::end_tag('form');
-        }
+        return count($this->nodes);
     }
     
     /**
-     * Given an array of values, creates a group of radio buttons to be part of a form
+     * Given an array of values, creates a group of radio buttons to be part of a form.
      *
-     * @param array  $options  An array of value-label pairs for the radio group (values as keys).
-     * @param string $name     Name of the radiogroup (unique in the form).
-     * @param string $onclick  Function to be executed when the radios are clicked.
-     * @param string $checked  The value that is already checked.
-     * @param bool   $return   If true, return the HTML as a string, otherwise print it.
-     * @return string
+     * @param int $value   The page ID value.
+     * @param string $name The radio button name.
+     * @return string HTML
      */
-    private function choose_from_radio($options, $name = 'unnamed', $onclick = "", $checked = "", $return = true) {
-        static $idcounter = 0;
-
+    private function choose_from_radio($value, $name = 'unnamed') {
         $output = "<span class='radiogroup $name'>";
-        if (!empty($options)) {
-            $currentradio = 0;
-            foreach ($options as $value => $label) {
-                $htmlid = 'auto-rb' . sprintf('%04d', ++$idcounter);
-                $output .= " <span class='radioelement $name rb$currentradio'>";
-                $output .= "<input form = 'diff' name='$name' id='$htmlid' type='radio' value='$value'";
-                if ($value == $checked) {
-                    $output .= ' checked="checked"';
-                }
-                if ($onclick) {
-                    $output .= " onclick='$onclick'";
-                }
-                if ($label === "") {
-                    $output .= " /> <label for='$htmlid'>$value</label></span>";
-                } else {
-                    $output .= " /> <label for='$htmlid'>$label</label></span>";
-                }
-                $currentradio = ($currentradio + 1) % 2;
-            }
-        }
+        $output .= "<input form = 'diff' name='$name' type='radio' value='$value'";
         $output .= '</span>';
-
-        if ($return) {
-            return $output;
-        } else {
-            echo $output;
-        }
+        return $output;
     }
 }

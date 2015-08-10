@@ -411,13 +411,13 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
     /**
      * Builds the version view for search or pages.
-     * 
+     *
      * @param string $type Either versions or search.
      * @param array $options Parameters for the view menu links.
      * @param int $currentview The current view.
      * @param stdClass[] $pages An array of the pages to show.
      */
-    public function versions($type, $options, $currentview, $pages) {
+    public function versions($type, $options, $currentview, $pages, $pageid = -1) {
         global $USER, $CFG;
         $selectoptions = array();
         foreach (array('tree', 'list', 'popular') as $key => $v) {
@@ -426,9 +426,9 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         $select = new single_select(new moodle_url("/mod/socialwiki/$type.php", $options), 'view', $selectoptions, $currentview);
         $select->label = get_string('searchviews', 'socialwiki');
-        
+
         echo $this->output->container($this->output->render($select), 'midpad');
-        
+
         if ($currentview == 1) {
             require($CFG->dirroot . '/mod/socialwiki/table/table.php');
             echo socialwiki_versiontable::html_versiontable($USER->id, $this->subwiki->id, $pages, 'version');
@@ -436,7 +436,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
             require($CFG->dirroot . '/mod/socialwiki/tree/tree.php');
             $tree = new socialwiki_tree();
             $tree->build_tree($pages);
-            $tree->display();
+            $tree->display($pageid);
         }
     }
 
@@ -463,29 +463,6 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
             $html .= '</div>';
         }
         return $html;
-    }
-
-    /**
-     * Builds the menu for the admin page.
-     *
-     * @param int $pageid The page ID.
-     * @param int $currentselect The current seleted option.
-     * @return string HTML
-     */
-    public function menu_admin($pageid, $currentselect) {
-        $options = array('removepages', 'deleteversions');
-        $items = array();
-        foreach ($options as $opt) {
-            $items[] = get_string($opt, 'socialwiki');
-        }
-        $selectoptions = array();
-        foreach ($items as $key => $item) {
-            $selectoptions[$key + 1] = $item;
-        }
-        $select = new single_select(new moodle_url('/mod/socialwiki/admin.php',
-                array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
-        $select->label = get_string('adminmenu', 'socialwiki') . ': ';
-        return $this->output->container($this->output->render($select), 'midpad');
     }
 
     /**

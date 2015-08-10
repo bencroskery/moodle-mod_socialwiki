@@ -901,7 +901,8 @@ class page_socialwiki_search extends page_socialwiki_versions {
     public function print_content() {
         global $PAGE, $COURSE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-        $params = array('searchstring' => $this->searchstring, 'courseid' => $COURSE->id, 'cmid' => $PAGE->cm->id, 'exact' => $this->exact);
+        $params = array('searchstring' => $this->searchstring,
+            'courseid' => $COURSE->id, 'cmid' => $PAGE->cm->id, 'exact' => $this->exact);
         $this->wikioutput->versions('search', $params, $this->view, $this->searchresult);
     }
 }
@@ -1225,7 +1226,7 @@ class page_socialwiki_versions extends page_socialwiki {
      * @var int
      */
     public $view;
-    
+
     /**
      * Creates a new versions page.
      *
@@ -1283,7 +1284,7 @@ class page_socialwiki_versions extends page_socialwiki {
     public function print_content() {
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
         $params = array('pageid' => $this->page->id);
-        $this->wikioutput->versions('versions', $params, $this->view, socialwiki_get_relations($this->page->id));
+        $this->wikioutput->versions('versions', $params, $this->view, socialwiki_get_relations($this->page->id), $this->page->id);
     }
 }
 
