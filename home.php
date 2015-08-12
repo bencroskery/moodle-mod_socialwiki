@@ -85,6 +85,7 @@ require_capability('mod/socialwiki:viewpage', $context);
 
 $wikipage = new page_socialwiki_home($wiki, $subwiki, $cm);
 
+$wikipage->set_title(get_string('hometitle', 'socialwiki'));
 $wikipage->set_tab($tab);
 $wikipage->print_header();
 $wikipage->print_content();

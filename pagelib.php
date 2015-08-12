@@ -119,19 +119,6 @@ abstract class page_socialwiki {
     protected $style;
 
     /**
-     * Makes a form to chose the combine method for peer data.
-     *
-     * @return string HTML
-     */
-    public static function get_combine_form() {
-        return '<form class="combineform" action="">'
-            . 'For each page version show: <select class="combiner">'
-            . '<option value="max" selected="selected">max</option>'
-            . '<option value="min">min</option><option value="avg">avg</option>'
-            . '<option value="sum">sum</option></select> of trust indicator values.</form>';
-    }
-
-    /**
      * Creates the standard socialwiki page.
      *
      * @param stdClass $wiki The current wiki.
@@ -169,6 +156,7 @@ abstract class page_socialwiki {
         echo $OUTPUT->header();
         echo $this->wikioutput->content_area_begin();
 
+        $this->print_help();
         $this->print_pagetitle();
         $this->setup_tabs();
         // Tabs are associated with pageid, so if page is empty, tabs should be disabled.
@@ -176,6 +164,15 @@ abstract class page_socialwiki {
             $tabthing = $this->wikioutput->tabs($this->page, $this->tabs, $this->taboptions); // Calls tabs function in renderer.
             echo $tabthing;
         }
+    }
+    
+    public function print_help() {
+        global $PAGE;
+        $html = html_writer::start_tag('form', array('style' => "float:right", 'action' => 'help.php#' . basename(filter_input(INPUT_SERVER, 'PHP_SELF'), '.php'), 'target' => '_blank'));
+        $html .= '<input type="hidden" name="id" value="' . $PAGE->cm->id . '"/>';
+        $html .= '<input value="' . get_string('help', 'socialwiki') . '" type="submit">';
+        $html .= html_writer::end_tag('form');
+        echo $html;
     }
 
     /**
@@ -207,11 +204,7 @@ abstract class page_socialwiki {
      */
     protected function print_pagetitle() {
         global $OUTPUT;
-        $html = "";
-        $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading(format_string($this->title), 1, 'socialwiki-title');
-        $html .= $OUTPUT->container_end();
-        echo $html;
+        echo $OUTPUT->heading(format_string($this->title), 1, 'socialwiki-title');
     }
 
     /**
@@ -321,6 +314,10 @@ class page_socialwiki_view extends page_socialwiki {
         // JS code for the ajax-powered like button.
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/like.ajax.js"));
         $this->wikioutput->socialwiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
+    }
+    
+    public function print_help() {
+        
     }
 
     /**
@@ -1245,7 +1242,6 @@ class page_socialwiki_versions extends page_socialwiki {
             $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
         } else {
             // For tree view.
-            $PAGE->requires->js(new moodle_url("/mod/socialwiki/search.js"));
             $PAGE->requires->js(new moodle_url("/mod/socialwiki/tree/tree.js"));
             $PAGE->requires->css(new moodle_url("/mod/socialwiki/tree/tree.css"));
         }
@@ -1301,7 +1297,7 @@ class page_socialwiki_home extends page_socialwiki {
      *
      * @var int
      */
-    private $tab;
+    private $tab = 0;
 
     const EXPLORE_TAB = 0;
     const TOPICS_TAB  = 1;
@@ -1314,14 +1310,11 @@ class page_socialwiki_home extends page_socialwiki {
      * @param stdClass $wiki The current wiki.
      * @param stdClass $subwiki The current subwiki.
      * @param stdClass $cm The current course module.
-     * @param int $t The tab to view.
      */
-    public function __construct($wiki, $subwiki, $cm, $t = 0) {
+    public function __construct($wiki, $subwiki, $cm) {
         Global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-
-        $this->tab = $t;
-        $PAGE->set_title(get_string('hometitle', 'socialwiki'));
+        
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
@@ -1364,9 +1357,6 @@ class page_socialwiki_home extends page_socialwiki {
         global $USER, $OUTPUT;
 
         require_capability('mod/wiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-
-        // Print the home page heading.
-        echo $OUTPUT->heading(get_string('hometitle', 'socialwiki'), 1, "socialwiki-title colourtext");
 
         $userheader = "<div class='home-picture'>";
         $userheader .= $OUTPUT->user_picture(socialwiki_get_user_info($USER->id), array('size' => 65));

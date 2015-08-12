@@ -22,6 +22,10 @@
  */
 
 $(document).ready(function() {
+    if (/view=2/.test(document.URL)) { // Only in view 'popular'.
+        $('.tagcloud').tagcloud();
+    }
+    
     /**
      * Double scroll bar above and below the area.
      */
@@ -32,13 +36,9 @@ $(document).ready(function() {
     scrollbar.style.overflowY = 'hidden';
     scrollbar.style.width = element.width;
     scrollbar.firstChild.style.width = element.scrollWidth + 'px';
-    scrollbar.firstChild.style.paddingTop = '1px';
-    scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+    scrollbar.firstChild.style.paddingTop = '10px';
     scrollbar.onscroll = function () {
         element.scrollLeft = scrollbar.scrollLeft;
-    };
-    element.onscroll = function () {
-        scrollbar.scrollLeft = element.scrollLeft;
     };
     element.parentNode.insertBefore(scrollbar, element);
 
@@ -125,3 +125,45 @@ $(document).ready(function() {
         scrollbar.firstChild.style.width = element.scrollWidth + 'px';
     });
 });
+
+/*!
+ * jquery.tagcloud.js
+ * A Simple Tag Cloud Plugin for JQuery
+ *
+ * https://github.com/addywaddy/jquery.tagcloud.js
+ * created by Adam Groves
+ */
+(function ($) {
+    "use strict";
+
+    var compareWeights = function (a, b) {
+        return a - b;
+    };
+
+    $.fn.tagcloud = function () {
+        var tagWeights = this.map(function () {
+            return $(this).attr("rel");
+        });
+        tagWeights = jQuery.makeArray(tagWeights).sort(compareWeights);
+        var lowest = tagWeights[0];
+        var highest = tagWeights.pop();
+        var range = highest - lowest;
+        // Adding stuff to handle range = 0.
+        var zerorange = false;
+        if (range === 0) {
+            range = 1;
+            zerorange = true; // Remember range was 0.
+        }
+        // Sizes.
+        var size = {start: 8, end: 18, unit: "pt"};
+        var fontIncr = (size.end - size.start) / range;
+        return this.each(function () {
+            var weighting = $(this).attr("rel") - lowest;
+            if (zerorange) { // If there's just one value, put it in the middle rather than at the bottom of the sizes range.
+                $(this).css({"font-size": (size.start + size.end) / 2 + size.unit});
+            } else {
+                $(this).css({"font-size": size.start + (weighting * fontIncr) + size.unit});
+            }
+        });
+    };
+})(jQuery);

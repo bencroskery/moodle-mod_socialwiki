@@ -215,8 +215,8 @@
 }
 
 .socialwiki_wikicontent .socialwiki-diffpaging {
-    float: left;
     width: 50%;
+    display: inline-block;
 }
 
 .socialwiki_wikicontent .socialwiki-diff-deleted {

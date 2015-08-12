@@ -539,42 +539,18 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Opens the help area.
-     *
-     * @return string HTML
-     */
-    public function help_area_start() {
-        $html = "";
-        $html .= $this->content_area_begin();
-        $html .= html_writer::start_div('wikipage');
-        return $html;
-    }
-
-    /**
      * The help area content.
      *
      * @param string $heading The section heading.
-     * @param string $content The section content.
+     * @param string $type The section content type to show.
      * @return string HTML
      */
-    public function help_content($heading, $content) {
+    public function help_content($type) {
         $html = "";
-        $html .= html_writer::tag('h2', $heading);
-        $html .= html_writer::start_div("", array('id' => 'socialwiki_wikicontent'));
-        $html .= $content;
+        $html .= html_writer::start_div("", array('id' => strtolower($type), 'style' => 'padding-top: 40px'));
+        $html .= html_writer::tag('h2', $type);
+        $html .= get_string('help_' . strtolower($type), 'socialwiki');
         $html .= html_writer::end_div();
-        return $html;
-    }
-
-    /**
-     * Closes the help area.
-     *
-     * @return string HTML
-     */
-    public function help_area_end() {
-        $html = "";
-        $html .= html_writer::end_div();
-        $html .= $this->content_area_end();
         return $html;
     }
 }
