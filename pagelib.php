@@ -165,7 +165,7 @@ abstract class page_socialwiki {
             echo $tabthing;
         }
     }
-    
+
     public function print_help() {
         global $PAGE;
         $html = html_writer::start_tag('form', array('style' => "float:right", 'action' => 'help.php#' . basename(filter_input(INPUT_SERVER, 'PHP_SELF'), '.php'), 'target' => '_blank'));
@@ -315,9 +315,8 @@ class page_socialwiki_view extends page_socialwiki {
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/like.ajax.js"));
         $this->wikioutput->socialwiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
     }
-    
+
     public function print_help() {
-        
     }
 
     /**
@@ -1314,7 +1313,7 @@ class page_socialwiki_home extends page_socialwiki {
     public function __construct($wiki, $subwiki, $cm) {
         Global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
-        
+
         $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
@@ -2016,5 +2015,39 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         socialwiki_table::builder($this->uid, $this->subwiki->id, 'userfaves');
         // User Verions Table.
         socialwiki_table::builder($this->uid, $this->subwiki->id, 'userpages');
+    }
+}
+
+class page_socialwiki_help extends page_socialwiki {
+    /**
+     * Sets the URL of the page.
+     */
+    public function set_url() {
+        global $PAGE, $CFG;
+        $PAGE->set_url($CFG->wwwroot . '/mod/socialwiki/help.php', array('id' => $PAGE->cm->id));
+    }
+
+    /**
+     * Add to the navigation bar at the top of the page.
+     */
+    public function create_navbar() {
+        global $PAGE, $CFG;
+        $PAGE->navbar->add(format_string($this->title), $CFG->wwwroot . '/mod/socialwiki/help.php?id=' . $PAGE->cm->id);
+    }
+
+    public function print_help() {
+    }
+
+    public function print_content() {
+        global $PAGE;
+        echo $this->wikioutput->help_content('home');
+        echo $this->wikioutput->help_content('search');
+        echo $this->wikioutput->help_content('edit');
+        echo $this->wikioutput->help_content('versions');
+        echo $this->wikioutput->help_content('diff');
+        if (has_capability('mod/socialwiki:managewiki', context_module::instance($PAGE->cm->id))) {
+            echo $this->wikioutput->help_content('admin');
+        }
+        echo $this->wikioutput->help_content('viewuserpages');
     }
 }

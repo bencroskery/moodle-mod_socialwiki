@@ -114,16 +114,35 @@ $string['formatnwiki_help'] = 'Nwiki is the Mediawiki-like markup language used 
 To create a new page, type the new page name enclosed in double square brackets, for example [[Page 2]].
 To link to a page copy the page url double square brackets with an existing page title inside links to a search for that page.';
 $string['formatnwiki_link'] = 'mod/socialwiki/nwiki';
+
 $string['help'] = 'Help';
-$string['help_home'] = 'Nothing here yet.';
+$string['help_admin'] = 'As a teacher or administrator you have access to the administration page to fix any unwanted content.</br>
+The gear icon next to a page name will edit the specified page.
+The X icon will delete the page and redirect back to home if the current page is the one being deleted.</br>
+The button below the table will switch the view between showing related pages (other versions) and listing all the pages in the wiki.</br>
+</br>
+To get to this view, go to the admin tab of any page.';
+$string['help_diff'] = 'The diff view compares two pages selected from a tree.</br>
+Differences are shown in colour, with additions shown in green and missing parts shown in yellow.</br>
+Navigate through different versions to compare using the page links below the compared pages.</br>
+</br>
+To get to this view, go to the <a href="#versions">versions tab</a> of a page or do a <a href="#search">search</a> to see a tree and select two versions to compare.';
 $string['help_edit'] = 'There are 3 diffrent ways to add links:
 <ul><li>[[page name]] Links to a search page name.</li>
 <li>[[page name@pageid]] Links to a specific version of a page.</li>
 <li>[[page name@.]] Links to the most recent version of that page.</li></ul>';
-$string['help_search'] = 'There are 3 different search views:
-        <ul><li>Tree View: displays the search results in a tree view to so the versions of the page can easily be seen.</li>
-        <li>List View: shows a list of pages ordered using your likes and the people you are following to order the pages.</li>
-        <li>Popular: orders the pages with the pages with more likes appearing at the top.</li></ul>';
+$string['help_home'] = 'Nothing here yet.';
+$string['help_search'] = 'The search view will search for your query in both the title and content of pages and show the results.</br>
+Leaving the search box empty or typing * will show all the available pages.</br>
+For more information look at <a href="#versions">Versions help</a> as these views act the exact same.</br>
+</br>
+To get to this view, use the search box at the top right of any page to search the current wiki.';
+$string['help_viewuserpages'] = 'Nothing here yet.';
+$string['help_versions'] = '
+There are 3 different search views:
+    <ul><li>Tree View: displays the search results in a tree view to so the versions of the page can easily be seen.</li>
+    <li>List View: shows a list of pages ordered using your likes and the people you are following to order the pages.</li>
+    <li>Popular View: orders the pages with the pages with more likes appearing at the top.</li></ul>';
 $string['versions'] = 'Versions';
 $string['versions_help'] = 'The versions lists links to previous versions of the page.';
 $string['html'] = 'HTML';
