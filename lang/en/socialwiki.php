@@ -122,16 +122,22 @@ The X icon will delete the page and redirect back to home if the current page is
 The button below the table will switch the view between showing related pages (other versions) and listing all the pages in the wiki.</br>
 </br>
 To get to this view, go to the admin tab of any page.';
+$string['help_create'] = 'Nothing here yet.';
 $string['help_diff'] = 'The diff view compares two pages selected from a tree.</br>
 Differences are shown in colour, with additions shown in green and missing parts shown in yellow.</br>
 Navigate through different versions to compare using the page links below the compared pages.</br>
 </br>
 To get to this view, go to the <a href="#versions">versions tab</a> of a page or do a <a href="#search">search</a> to see a tree and select two versions to compare.';
-$string['help_edit'] = 'There are 3 diffrent ways to add links:
+$string['help_edit'] = 'There are 3 different ways to add links:
 <ul><li>[[page name]] Links to a search page name.</li>
-<li>[[page name@pageid]] Links to a specific version of a page.</li>
-<li>[[page name@.]] Links to the most recent version of that page.</li></ul>';
-$string['help_home'] = 'Nothing here yet.';
+    <li>[[page name@pageid]] Links to a specific version of a page.</li>
+    <li>[[page name@.]] Links to the most recent version of that page.</li></ul>';
+$string['help_home'] = 'The home view gives you an overview of the wiki allowing easy access to see all pages and contributors.</br>
+There are 4 tabs to look through:
+<ul><li>Explore: See all new page versions, page versions from your followers or browse through all the page versions available</li>
+    <li>Pages: Take a look at all the pages in the wiki, clicking on one will redirect to a <a href="#search">search view</a> of all the versions created.</li>
+    <li>Manage: View all of your Favourites (your most recent like of a page\'s version), your Likes and the page versions you have created.</li>
+    <li>People: See a list of your followers and the users that follow you. You can also browse through all the users that have contributed.</li></ul>';
 $string['help_search'] = 'The search view will search for your query in both the title and content of pages and show the results.</br>
 Leaving the search box empty or typing * will show all the available pages.</br>
 For more information look at <a href="#versions">Versions help</a> as these views act the exact same.</br>
@@ -140,11 +146,9 @@ To get to this view, use the search box at the top right of any page to search t
 $string['help_viewuserpages'] = 'Nothing here yet.';
 $string['help_versions'] = '
 There are 3 different search views:
-    <ul><li>Tree View: displays the search results in a tree view to so the versions of the page can easily be seen.</li>
-    <li>List View: shows a list of pages ordered using your likes and the people you are following to order the pages.</li>
-    <li>Popular View: orders the pages with the pages with more likes appearing at the top.</li></ul>';
-$string['versions'] = 'Versions';
-$string['versions_help'] = 'The versions lists links to previous versions of the page.';
+<ul><li>Tree View: Displays the search results in a tree view to so the versions of the page can easily be seen.</li>
+    <li>List View: Shows a list of pages ordered using your likes and the people you are following to order the pages.</li>
+    <li>Popular View: Orders the pages with the pages with more likes appearing at the top.</li></ul>';
 $string['html'] = 'HTML';
 $string['incorrectdeleteversions'] = 'Page versions provided for deletion are incorrect.';
 $string['insertcomment'] = 'Insert comment';
@@ -181,7 +185,7 @@ Social Wikis have many uses, such as
 * For members of a faculty to plan a scheme of work or meeting agenda together
 * For students to collaboratively author an online book, creating content on a topic set by their tutor
 * For collaborative storytelling or poetry creation, where each participant writes a line or verse';
-$string['create'] = 'New';
+$string['create'] = 'Create';
 $string['modulename_link'] = 'mod/socialwiki/view';
 $string['modulenameplural'] = 'Social Wikis';
 $string['navigation'] = 'Navigation';
@@ -282,12 +286,10 @@ $string['uploadactions'] = 'Actions';
 $string['uploadtitle'] = 'Attach files';
 $string['uploadfiletitle'] = 'Attachments';
 $string['versionerror'] = 'Version ID does not exist';
-$string['versionnum'] = 'Version #{$a}';
-$string['version'] = 'Version';
+$string['versions'] = 'Versions';
+$string['versions_help'] = 'The versions lists links to previous versions of the page.';
 $string['view'] = 'View';
 $string['viewallversions'] = 'View all versions';
-$string['viewperpage'] = 'Show {$a} versions per page';
-$string['viewversion'] = 'Viewing page version #{$a}';
 $string['viewcurrent'] = 'Current Version';
 $string['viewuserpages'] = 'View User\'s Pages';
 $string['socialwiki'] = 'Social Wiki';

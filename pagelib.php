@@ -166,11 +166,15 @@ abstract class page_socialwiki {
         }
     }
 
+    /**
+     * Prints the help button.
+     */
     public function print_help() {
         global $PAGE;
-        $html = html_writer::start_tag('form', array('style' => "float:right", 'action' => 'help.php#' . basename(filter_input(INPUT_SERVER, 'PHP_SELF'), '.php'), 'target' => '_blank'));
+        $html = html_writer::start_tag('form', array('action' => 'help.php#'
+            . basename(filter_input(INPUT_SERVER, 'PHP_SELF'), '.php'), 'target' => '_blank'));
         $html .= '<input type="hidden" name="id" value="' . $PAGE->cm->id . '"/>';
-        $html .= '<input value="' . get_string('help', 'socialwiki') . '" type="submit">';
+        $html .= '<input value="' . get_string('help', 'socialwiki') . '" type="submit" class="helpbtn">';
         $html .= html_writer::end_tag('form');
         echo $html;
     }
@@ -316,6 +320,9 @@ class page_socialwiki_view extends page_socialwiki {
         $this->wikioutput->socialwiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
     }
 
+    /**
+     * Do not print the help button.
+     */
     public function print_help() {
     }
 
@@ -899,7 +906,7 @@ class page_socialwiki_search extends page_socialwiki_versions {
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
         $params = array('searchstring' => $this->searchstring,
             'courseid' => $COURSE->id, 'cmid' => $PAGE->cm->id, 'exact' => $this->exact);
-        $this->wikioutput->versions('search', $params, $this->view, $this->searchresult);
+        $this->wikioutput->versions('search', $params, $this->searchresult, $this->view, $this->subwiki->id);
     }
 }
 
@@ -1279,7 +1286,8 @@ class page_socialwiki_versions extends page_socialwiki {
     public function print_content() {
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
         $params = array('pageid' => $this->page->id);
-        $this->wikioutput->versions('versions', $params, $this->view, socialwiki_get_relations($this->page->id), $this->page->id);
+        $this->wikioutput->versions('versions', $params,
+            socialwiki_get_relations($this->page->id), $this->view, $this->subwiki->id, $this->page->id);
     }
 }
 
@@ -2035,13 +2043,20 @@ class page_socialwiki_help extends page_socialwiki {
         $PAGE->navbar->add(format_string($this->title), $CFG->wwwroot . '/mod/socialwiki/help.php?id=' . $PAGE->cm->id);
     }
 
+    /**
+     * Do not print the help button.
+     */
     public function print_help() {
     }
 
+    /**
+     * Prints the page content.
+     */
     public function print_content() {
         global $PAGE;
         echo $this->wikioutput->help_content('home');
         echo $this->wikioutput->help_content('search');
+        echo $this->wikioutput->help_content('create');
         echo $this->wikioutput->help_content('edit');
         echo $this->wikioutput->help_content('versions');
         echo $this->wikioutput->help_content('diff');
