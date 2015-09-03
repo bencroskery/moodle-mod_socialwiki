@@ -122,16 +122,31 @@ The X icon will delete the page and redirect back to home if the current page is
 The button below the table will switch the view between showing related pages (other versions) and listing all the pages in the wiki.</br>
 </br>
 To get to this view, go to the admin tab of any page.';
-$string['help_create'] = 'Nothing here yet.';
+$string['help_create'] = 'The create view will allow you to create a new page for the wiki.</br>
+All that is required is the page title although there might also be the option to choose a format.</br>
+If the format field is available, there will be 3 options:
+<ul><li>HTML format: The default format and the best option for most users, includes the ability to change the HTML content directly.</li>
+    <li>Creole format: A lightweight wiki markup language for advanced users.</li>
+    <li>Nwiki format: Similar interface to the Creole format with a different set of markups.</li></ul>
+The format is chosen for all the versions of this page. All future versions will have to use the selected format.</br>
+</br>
+Click the create page button to get working on the first version of this page. At this point the page is created and you cannot undo this action, you must save the first version or a blank page will be made with the specified title.';
 $string['help_diff'] = 'The diff view compares two pages selected from a tree.</br>
 Differences are shown in colour, with additions shown in green and missing parts shown in yellow.</br>
 Navigate through different versions to compare using the page links below the compared pages.</br>
 </br>
 To get to this view, go to the <a href="#versions">versions tab</a> of a page or do a <a href="#search">search</a> to see a tree and select two versions to compare.';
-$string['help_edit'] = 'There are 3 different ways to add links:
+$string['help_edit'] = 'The edit view allows you to modify a page and create a new version.</br>
+The editor that was chosen on the create page will show up with the previous content allowing you to change anything to your liking.</br>
+</br>
+The HTML format will show the normal editor found elsewhere with formatting options at the top.</br>
+The Creole and Nwiki format editors are similar although they do not have as many options and the formatting will show in the content.</br>
+There are 3 different ways to add links:
 <ul><li>[[page name]] Links to a search page name.</li>
     <li>[[page name@pageid]] Links to a specific version of a page.</li>
-    <li>[[page name@.]] Links to the most recent version of that page.</li></ul>';
+    <li>[[page name@.]] Links to the most recent version of that page.</li></ul>
+Once you have are done editing you can preview the page using the preview button at the bottom of the page and when you are ready you can use the save button to publish your new page version.</br>
+Now that the page version is created you cannot remove it, only a teacher has the option to remove content from the wiki.';
 $string['help_home'] = 'The home view gives you an overview of the wiki allowing easy access to see all pages and contributors.</br>
 There are 4 tabs to look through:
 <ul><li>Explore: See all new page versions, page versions from your followers or browse through all the page versions available</li>
@@ -143,12 +158,15 @@ Leaving the search box empty or typing * will show all the available pages.</br>
 For more information look at <a href="#versions">Versions help</a> as these views act the exact same.</br>
 </br>
 To get to this view, use the search box at the top right of any page to search the current wiki.';
-$string['help_viewuserpages'] = 'Nothing here yet.';
-$string['help_versions'] = '
-There are 3 different search views:
+$string['help_viewuserpages'] = 'The user view will show you the content from another user.</br>
+From here you can see the similarity between you and the specified user in the peer scores.</br>
+There is also the option to follow the user if you are interested in their content and would like to get updates on what they publish.';
+$string['help_versions'] = 'There are 3 different search views:
 <ul><li>Tree View: Displays the search results in a tree view to so the versions of the page can easily be seen.</li>
     <li>List View: Shows a list of pages ordered using your likes and the people you are following to order the pages.</li>
-    <li>Popular View: Orders the pages with the pages with more likes appearing at the top.</li></ul>';
+    <li>Popular View: Orders the pages with the pages with more likes appearing at the top.</li></ul>
+Use the button in the top right of each node to minimize it or hide an entire branch.</br>
+To compare two versions, select pages using the radio buttons at the bottom of a node and then press Compare selected at the bottom.';
 $string['html'] = 'HTML';
 $string['incorrectdeleteversions'] = 'Page versions provided for deletion are incorrect.';
 $string['insertcomment'] = 'Insert comment';
