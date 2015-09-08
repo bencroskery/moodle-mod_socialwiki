@@ -554,8 +554,6 @@ class page_socialwiki_edit extends page_socialwiki {
     protected function print_edit($content = null) {
         global $CFG;
 
-        $format = $this->page->format;
-
         if ($content == null) {
             if (empty($this->section)) {
                 $content = $this->page->content;
@@ -578,25 +576,21 @@ class page_socialwiki_edit extends page_socialwiki {
 
         $data = new stdClass();
         $data->newcontent = $content;
-        $data->format = $format;
+        $data->format = $this->page->format;
 
-        switch ($format) {
-            case 'html':
-                $data->newcontentformat = FORMAT_HTML;
-                // Append editor context to editor options, giving preference to existing context.
-                self::$attachmentoptions = array_merge(
-                        array('context' => $this->modcontext), self::$attachmentoptions);
-                $data = file_prepare_standard_editor($data, 'newcontent', self::$attachmentoptions,
-                        $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
-                break;
-            default:
-                break;
-        }
-
-        if ($this->page->format != 'html') {
+        if ($this->page->format == 'html') {
+            $data->newcontentformat = FORMAT_HTML;
+            // Append editor context to editor options, giving preference to existing context.
+            self::$attachmentoptions = array_merge(
+                    array('context' => $this->modcontext), self::$attachmentoptions);
+            $data = file_prepare_standard_editor($data, 'newcontent', self::$attachmentoptions,
+                    $this->modcontext, 'mod_socialwiki', 'attachments', $this->subwiki->id);
+        } else {
             $params['fileitemid'] = $this->subwiki->id;
             $params['component'] = 'mod_socialwiki';
             $params['filearea'] = 'attachments';
+            echo '<a href="' . $CFG->wwwroot . '/mod/socialwiki/files.php?swid='
+                    . $this->subwiki->id . '">' . get_string('uploadtitle', 'socialwiki') . '</a>';
         }
         $form = new mod_socialwiki_edit_form($url, $params);
         $form->set_data($data);

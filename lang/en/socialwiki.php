@@ -140,8 +140,10 @@ $string['help_edit'] = 'The edit view allows you to modify a page and create a n
 The editor that was chosen on the create page will show up with the previous content allowing you to change anything to your liking.</br>
 </br>
 The HTML format will show the normal editor found elsewhere with formatting options at the top.</br>
-The Creole and Nwiki format editors are similar although they do not have as many options and the formatting will show in the content.</br>
-There are 3 different ways to add links:
+The Creole and Nwiki format editors are similar although they do not have as many options and the formatting tags will show in the content.</br>
+With these two formats it is also important to attach all the files you are going to use before adding any content or you will have to start over.</br>
+</br>
+There are special links to pages in the socialwiki and here are 3 different ways to add them:
 <ul><li>[[page name]] Links to a search page name.</li>
     <li>[[page name@pageid]] Links to a specific version of a page.</li>
     <li>[[page name@.]] Links to the most recent version of that page.</li></ul>
