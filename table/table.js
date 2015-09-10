@@ -27,16 +27,13 @@
 $(document).ready(function () {
     // Build the Datatable from HTML table.
     var table = $('.datatable').DataTable({
-        "scrollY": true,
         "scrollX": true,
+        "scrollY": "200px",
+        "scrollCollapse": true,
         "info": false,
         "paging": false,
         "columnDefs": [{"type": "time-ago","targets": 2}]
     });
-    // Only show the search if there is at least 12 results.
-    if (table.page.len() < 12) {
-        $(this).find(".dataTables_filter").hide();
-    }
 });
 
 /**
