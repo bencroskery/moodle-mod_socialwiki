@@ -31,7 +31,6 @@
  */
 .socialwiki_wikicontent .dataTables_wrapper {
     position: relative;
-    clear: both;
     margin-bottom: 2em;
     zoom: 1; /* Feeling sorry for IE */
 }
