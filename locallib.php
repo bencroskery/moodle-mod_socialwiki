@@ -177,20 +177,6 @@ function socialwiki_get_page_by_title($swid, $title) {
 }
 
 /**
- * Get first page of wiki instance.
- *
- * @param int $swid The subwiki ID.
- * @return stdClass Lastest version of first page
- */
-function socialwiki_get_first_page($swid) {
-    global $DB;
-    $sql = "SELECT p.* FROM {socialwiki} w, {socialwiki_subwikis} s, {socialwiki_pages} p
-            WHERE s.id = ? AND s.wikiid = w.id AND w.firstpagetitle = p.title AND p.subwikiid = s.id
-            ORDER BY id DESC LIMIT 1";
-    return $DB->get_record_sql($sql, array($swid));
-}
-
-/**
  * Save a page section.
  *
  * @param stdClass $page The page that is modified.

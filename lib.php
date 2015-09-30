@@ -50,7 +50,17 @@ function socialwiki_add_instance($wiki) {
     if (empty($wiki->forceformat)) {
         $wiki->forceformat = 0;
     }
-    return $DB->insert_record('socialwiki', $wiki);
+    
+    
+    $wikiid = $DB->insert_record('socialwiki', $wiki);
+    
+    $record = new StdClass();
+    $record->wikiid = $wikiid;
+    $record->groupid = 0;
+    $record->userid = 0;
+    $DB->insert_record('socialwiki_subwikis', $record);
+    
+    return $wikiid;
 }
 
 /**
