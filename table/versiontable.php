@@ -62,7 +62,7 @@ class socialwiki_versiontable extends socialwiki_table {
      * @param string $combiner How to combine peer data.
      */
     public function __construct($uid, $swid, $pages, $type, $combiner = 'avg') {
-        parent::__construct($uid, $swid, $type);
+        parent::__construct($uid, $swid, $type, ' typev');
         $this->get_all_likers($pages); // Get all peers involved, store info in $this->allpages and this->allpeers.
         $this->combiner = $combiner;
     }
@@ -116,7 +116,7 @@ class socialwiki_versiontable extends socialwiki_table {
             $row = array(
                 'title' => "<div>$likeimg$unlikeimg$linkpage</div>",
                 'contributors' => $contribstring,
-                'updated' => $updated,
+                'updated' => "<t hidden>.{$page->timecreated}.</t>$updated",
                 'likes' => $likes,
                 'views' => $views,
                 'favourite' => $favdiv,
