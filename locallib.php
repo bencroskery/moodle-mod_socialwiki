@@ -700,7 +700,7 @@ function socialwiki_user_can_view($subwiki) {
                     //              or moodle/site:accessallgroups capability
                     //             and mod/wiki:viewpage capability.
                     $view = has_capability('mod/socialwiki:viewpage', $context);
-                    $manage = has_capability('mod/socialwiki:manage_socialwiki', $context);
+                    $manage = has_capability('mod/socialwiki:managewiki', $context);
                     $access = has_capability('moodle/site:accessallgroups', $context);
                     return ($manage || $access) && $view;
                 }

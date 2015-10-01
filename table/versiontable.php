@@ -376,7 +376,9 @@ class socialwiki_versiontable extends socialwiki_table {
      * @return \socialwiki_versiontable
      */
     public static function html_versiontable($uid, $swid, $pages, $type) {
-        $thetable = new socialwiki_versiontable($uid, $swid, $pages, $type);
-        return $thetable->print_html(); // Defined in parent class.
+        if (!empty($pages)) {
+            return new socialwiki_versiontable($uid, $swid, $pages, $type); // Defined in parent class.
+        }
+        return null;
     }
 }

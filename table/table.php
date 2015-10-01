@@ -70,7 +70,7 @@ abstract class socialwiki_table {
     public function __construct($u, $s, $h) {
         $this->uid = $u;
         $this->swid = $s;
-        $this->headers = self::getheaders($h);
+        $this->headers = self::get_headers($h);
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class socialwiki_table {
      * @param string $type The type of table.
      * @return string array
      */
-    public static function getheaders($type) {
+    public static function get_headers($type) {
         switch ($type) {
             case 'version':
                 return array(
@@ -151,7 +151,7 @@ abstract class socialwiki_table {
                     'networkdistance'
                 );
             default:
-                return array('error in getheaders: ' . $type);
+                return array('error in get_headers: ' . $type);
         }
     }
 

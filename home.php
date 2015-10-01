@@ -63,9 +63,8 @@ $userid = 0;
 $context = context_module::instance($cm->id);
 // Getting subwiki. If it does not exists, redirecting to create page.
 if (!$subwiki = socialwiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid)) {
-    require_capability('mod/socialwiki:managewiki', $context);
-    $params = array('wid' => $wiki->id, 'group' => $currentgroup, 'uid' => $userid);
-    redirect(new moodle_url('/mod/socialwiki/create.php', $params));
+    socialwiki_add_subwiki($wiki->id, $currentgroup, $userid);
+    $subwiki = socialwiki_get_subwiki_by_group($wiki->id, $currentgroup, $userid);
 }
 
 require_login($course, true, $cm);
