@@ -35,7 +35,7 @@ require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require($CFG->dirroot . '/mod/socialwiki/table/table.php');
 
 $id  = required_param('id', PARAM_INT);    // Course module ID.
-$tab = optional_param('tabid', 0, PARAM_INT); // Option ID.
+$tab = optional_param('tabid', 0, PARAM_INT); // Tab Option ID.
 
 // Checking course module instance.
 if (!$cm = get_coursemodule_from_id('socialwiki', $id)) {
