@@ -120,9 +120,9 @@ class socialwiki_versiontable extends socialwiki_table {
                 'likes' => $likes,
                 'views' => $views,
                 'favourite' => $favdiv,
-                'popularity' => substr($peerpop, 0, 4),
-                'likesim' => substr($likesim, 0, 4),
-                'followsim' => substr($followsim, 0, 4),
+                'popularity' => $peerpop,
+                'likesim' => round($likesim * 100 ) . '%',
+                'followsim' => round($followsim * 100 ) . '%',
                 'networkdistance' => substr($distance, 0, 4)
             );
             // Add trust values.
