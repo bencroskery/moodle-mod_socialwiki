@@ -312,7 +312,6 @@ $string['socialwiki'] = 'Social Wiki';
 $string['wikiattachments'] = 'Wiki attachments';
 $string['wikiboldtext'] = 'Bold text';
 $string['wikiexternalurl'] = 'External URL';
-$string['wikifiletable'] = 'Uploaded file list';
 $string['wikifiles'] = 'Wiki files';
 $string['wikiheader'] = 'Level {$a} Header';
 $string['wikihr'] = 'Horizontal rule';

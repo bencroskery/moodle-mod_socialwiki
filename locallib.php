@@ -1515,6 +1515,7 @@ function socialwiki_indexof_page($pid, $pages) {
 
 /**
  * Returns an array of pages chosen based on peers likes and follows.
+ * TODO: DOES NOT WORK also never used.
  *
  * @param int $uid The user ID.
  * @param int $swid The subwiki ID.
