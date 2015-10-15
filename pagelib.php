@@ -1273,10 +1273,9 @@ class page_socialwiki_search extends page_socialwiki_versions {
      * Prints the page content.
      */
     public function print_content() {
-        global $PAGE, $COURSE;
+        global $PAGE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-        $params = array('searchstring' => $this->searchstring,
-            'courseid' => $COURSE->id, 'cmid' => $PAGE->cm->id, 'exact' => $this->exact);
+        $params = array('searchstring' => $this->searchstring, 'id' => $PAGE->cm->id, 'exact' => $this->exact);
         $this->wikioutput->versions('search', $params, $this->searchresult, $this->view, $this->subwiki->id);
     }
 }
@@ -1634,10 +1633,10 @@ class page_socialwiki_prettyview extends page_socialwiki {
      */
     public function print_header() {
         global $PAGE, $OUTPUT;
+        $this->set_url();
         $PAGE->set_pagelayout('embedded');
         echo $OUTPUT->header();
-
-        echo '<h1 id="socialwiki-printable-title">' . format_string($this->title) . '</h1>';
+        echo $OUTPUT->heading(format_string($this->title), 1, 'socialwiki-printable-title');
     }
 
     /**
@@ -1645,7 +1644,6 @@ class page_socialwiki_prettyview extends page_socialwiki {
      */
     public function set_url() {
         global $PAGE, $CFG;
-
         $PAGE->set_url($CFG->wwwroot . '/mod/socialwiki/prettyview.php', array('pageid' => $this->page->id));
     }
 

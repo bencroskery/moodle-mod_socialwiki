@@ -531,7 +531,7 @@ function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
  * @return array Array('content' => string, 'url' => string, 'new' => bool, 'link_info' => array)
  */
 function socialwiki_parser_link($link, $options = null) {
-    global $CFG, $COURSE, $PAGE;
+    global $CFG, $PAGE;
 
     $matches = array();
 
@@ -562,7 +562,7 @@ function socialwiki_parser_link($link, $options = null) {
                         $currentpage = optional_param('pageid', 0, PARAM_INT);
                         $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot
                                 . '/mod/socialwiki/search.php?searchstring=' . $link . '&pageid=' . $currentpage
-                                . '&courseid=' . $COURSE->id . '&cmid=' . $PAGE->cm->id . '&exact=1', 'new' => false,
+                                . '&id=' . $PAGE->cm->id . '&exact=1', 'new' => false,
                             'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
                     }
                 }
@@ -570,7 +570,7 @@ function socialwiki_parser_link($link, $options = null) {
                 $currentpage = optional_param('pageid', 0, PARAM_INT);
                 $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot
                         . '/mod/socialwiki/search.php?searchstring=' . $link . '&pageid=' . $currentpage
-                        . '&courseid=' . $COURSE->id . '&cmid=' . $PAGE->cm->id . '&exact=1', 'new' => false,
+                        . '&id=' . $PAGE->cm->id . '&exact=1', 'new' => false,
                     'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
             }
 
