@@ -1692,9 +1692,10 @@ function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checke
  * @return string
  */
 function socialwiki_format_time($time, $timeago = true) {
-    // Standard month, day, year format.
+    // Standard day, month, year format.
+    $date = strftime('%d %b %Y', $time);
     if (!$timeago) {
-        return strftime('%d %b %Y', $time);
+        return $date;
     }
 
     // Return the time based upon how long ago from the current time.
@@ -1710,7 +1711,7 @@ function socialwiki_format_time($time, $timeago = true) {
     // Loops through to return the first type available.
     foreach ($types as $t => &$i) {
         if ($diff->$t) {
-            return $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : "") . ' ago';
+            return "<span title='$date'>" . $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : "") . ' ago</span>';
         }
     }
 }

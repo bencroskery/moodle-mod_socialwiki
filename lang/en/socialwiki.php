@@ -23,6 +23,8 @@
  */
 
 $string['addcomment'] = 'Add comment';
+$string['addedbegins'] = 'added begins';
+$string['addedends'] = 'added ends';
 $string['admin'] = 'Administration';
 $string['adminmenu'] = 'Admin menu';
 $string['attachmentattach'] = 'Add as attachment';
@@ -74,8 +76,10 @@ $string['deleteupload'] = 'Delete';
 $string['deletedbegins'] = 'Deleted begins';
 $string['deletedends'] = 'Deleted ends';
 $string['deleteversions'] = 'Delete page versions';
-$string['addedbegins'] = 'added begins';
-$string['addedends'] = 'added ends';
+$string['distance0'] = 'Not in your network';
+$string['distance1'] = 'Followed';
+$string['distance2'] = 'Second Connection';
+$string['distance3'] = 'Distant Connection';
 $string['diff'] = 'Diff';
 $string['diff_help'] = 'Selected versions of the page may be compared in order to find the differences.';
 $string['edit'] = 'Edit';
