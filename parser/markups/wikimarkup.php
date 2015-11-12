@@ -198,23 +198,29 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
         $currenttype = 1;
         $i = 1;
         foreach ($this->toc as &$header) {
-            if ($header[0] > $currenttype) {
-                for ($t = 0; $t < $header[0] - $currenttype; $t++) {
-                    $toc .= '<ol>';
-                }
-            } else if ($header[0] < $currenttype) {
-                for ($t = 0; $t < $currenttype - $header[0]; $t++) {
-                    $toc .= '</ol></li>';
-                }
-            } else if (i !== 1) {
-                $toc .= '</li>';
+            if ($i !== 1) {
+                $toc .= $this->process_toc_level($header[0], $currenttype);
             }
 
             $toc .= '<li class="socialwiki-toc-section">' . socialparser_utils::h('a', $header[1], array('href' => "#toc-$i"));
             $i++;
         }
-        $this->returnvalues['toc'] = "<nav class='socialwiki-toc' role='directory'><h4 class='socialwiki-toc-title'>"
+        $this->returnvalues['toc'] = "<nav role='directory' class='socialwiki-toc'><h4 class='socialwiki-toc-title'>"
                 . get_string('tableofcontents', 'socialwiki') . "</h4><ol>$toc</ol></nav>";
+    }
+
+    private function process_toc_level($next, $current) {
+        if ($next > $current) {
+            for ($t = 0; $t < $next - $current; $t++) {
+                return '<ol>';
+            }
+        } else if ($next < $current) {
+            for ($t = 0; $t < $current - $next; $t++) {
+                return '</ol></li>';
+            }
+        } else {
+            return '</li>';
+        }
     }
 
     /**
