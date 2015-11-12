@@ -195,45 +195,26 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
         }
 
         $toc = "";
-        $currentsection = array(0, 0, 0);
+        $currenttype = 1;
         $i = 1;
-        foreach ($this->toc as & $header) {
-            switch ($header[0]) {
-                case 1:
-                    $currentsection = array($currentsection[0] + 1, 0, 0);
-                    break;
-                case 2:
-                    $currentsection[1] ++;
-                    $currentsection[2] = 0;
-                    if ($currentsection[0] == 0) {
-                        $currentsection[0] ++;
-                    }
-                    break;
-                case 3:
-                    $currentsection[2] ++;
-                    if ($currentsection[1] == 0) {
-                        $currentsection[1] ++;
-                    }
-                    if ($currentsection[0] == 0) {
-                        $currentsection[0] ++;
-                    }
-                    break;
-                default:
-                    continue;
-            }
-            $number = "$currentsection[0]";
-            if (!empty($currentsection[1])) {
-                $number .= ".$currentsection[1]";
-                if (!empty($currentsection[2])) {
-                    $number .= ".$currentsection[2]";
+        foreach ($this->toc as &$header) {
+            if ($header[0] > $currenttype) {
+                for ($t = 0; $t < $header[0] - $currenttype; $t++) {
+                    $toc .= '<ol>';
                 }
+            } else if ($header[0] < $currenttype) {
+                for ($t = 0; $t < $currenttype - $header[0]; $t++) {
+                    $toc .= '</ol></li>';
+                }
+            } else if (i !== 1) {
+                $toc .= '</li>';
             }
-            $toc .= socialparser_utils::h('p', $number . ". " . socialparser_utils::h('a', $header[1], array('href' => "#toc-$i")),
-                    array('class' => 'socialwiki-toc-section-' . $header[0] . " socialwiki-toc-section"));
+
+            $toc .= '<li class="socialwiki-toc-section">' . socialparser_utils::h('a', $header[1], array('href' => "#toc-$i"));
             $i++;
         }
-        $this->returnvalues['toc'] = "<div class='socialwiki-toc'><p class='socialwiki-toc-title'>"
-                . get_string('tableofcontents', 'socialwiki') . "</p>$toc</div>";
+        $this->returnvalues['toc'] = "<nav class='socialwiki-toc' role='directory'><h4 class='socialwiki-toc-title'>"
+                . get_string('tableofcontents', 'socialwiki') . "</h4><ol>$toc</ol></nav>";
     }
 
     /**
