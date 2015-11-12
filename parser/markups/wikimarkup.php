@@ -203,6 +203,7 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
             }
 
             $toc .= '<li class="socialwiki-toc-section">' . socialparser_utils::h('a', $header[1], array('href' => "#toc-$i"));
+            $currenttype = $header[0];
             $i++;
         }
         $this->returnvalues['toc'] = "<nav role='directory' class='socialwiki-toc'><h4 class='socialwiki-toc-title'>"
