@@ -271,6 +271,11 @@
     margin-bottom: 0.4em;
 }
 
+.socialwiki_wikicontent .singleselect {
+    position: relative;
+    z-index: 1;
+}
+
 .socialwiki_wikicontent .socialwiki-attachment:before {
     content: url("/mod/socialwiki/pix/attachment.png");
     padding-right: 2px;
