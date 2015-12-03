@@ -314,9 +314,11 @@ class page_socialwiki_view extends page_socialwiki {
      */
     public function print_header() {
         global $PAGE;
-        parent::print_header();
+        // Print styling.
+        $PAGE->requires->css(new moodle_url("/mod/socialwiki/print.css"));
         // JS code for the ajax-powered like button.
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/like.ajax.js"));
+        parent::print_header();
         $this->wikioutput->socialwiki_print_subwiki_selector($PAGE->activityrecord, $this->subwiki, $this->page, 'view');
     }
 
@@ -405,7 +407,6 @@ class page_socialwiki_view extends page_socialwiki {
         if (socialwiki_user_can_view($this->subwiki)) {
             if (!empty($this->page)) {
                 socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id);
-                echo $this->wikioutput->prettyview_link($this->page);
             } else {
                 echo get_string('nocontent', 'socialwiki');
             }
