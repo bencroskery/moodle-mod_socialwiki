@@ -208,7 +208,7 @@ abstract class page_socialwiki {
      */
     protected function print_pagetitle() {
         global $OUTPUT;
-        echo $OUTPUT->heading(format_string($this->title), 1, 'socialwiki-title');
+        echo $OUTPUT->heading(format_string($this->title), 2, 'socialwiki-title');
     }
 
     /**
@@ -366,7 +366,7 @@ class page_socialwiki_view extends page_socialwiki {
         $html .= $OUTPUT->container_start("", 'socialwiki-title');
         $html .= '<script> var options="?pageid='.$this->page->id.'&sesskey='.sesskey().'"</script>'; // Passed to like.ajax.js.
 
-        $thetitle = html_writer::tag('h1', format_string($this->page->title));
+        $thetitle = html_writer::tag('h2', format_string($this->page->title));
 
         $isliked = socialwiki_liked($this->uid, $this->page->id);
         $likecurrent = ($isliked ? 'unlike' : 'like');
@@ -508,7 +508,7 @@ class page_socialwiki_edit extends page_socialwiki {
         if (isset($this->section)) {
             $title .= ' : ' . $this->section;
         }
-        echo $OUTPUT->heading(format_string($title), 1, 'socialwiki-title');
+        echo $OUTPUT->heading(format_string($title), 2, 'socialwiki-title');
     }
 
     /**
@@ -1158,7 +1158,7 @@ class page_socialwiki_versions extends page_socialwiki {
         $this->view = $view;
         if ($this->view == 1) {
             // For table view.
-            $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+            $PAGE->requires->js(new moodle_url("table/datatables.min.js"));
             $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
             $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
         } else {
@@ -1311,7 +1311,7 @@ class page_socialwiki_home extends page_socialwiki {
         Global $PAGE;
         parent::__construct($wiki, $subwiki, $cm);
 
-        $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+        $PAGE->requires->js(new moodle_url("table/datatables.min.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
     }
@@ -1914,7 +1914,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
         $this->uid = $targetuser;
         $PAGE->set_title(fullname(socialwiki_get_user_info($targetuser)));
-        $PAGE->requires->js(new moodle_url("table/jquery.dataTables.js"));
+        $PAGE->requires->js(new moodle_url("table/datatables.min.js"));
         $PAGE->requires->js(new moodle_url("/mod/socialwiki/table/table.js"));
         $PAGE->requires->css(new moodle_url("/mod/socialwiki/table/table.css"));
     }
