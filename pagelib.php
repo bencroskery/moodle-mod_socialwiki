@@ -430,29 +430,23 @@ class page_socialwiki_view extends page_socialwiki {
         echo '<hr>';
         $comments = socialwiki_get_comments($this->modcontext->id, $this->page->id);
 
+        // Add comment button.
         if (has_capability('mod/socialwiki:editcomment', $this->modcontext)) {
             echo "<div class='midpad'><a href='$CFG->wwwroot/mod/socialwiki/editcomments.php?action=add&amp;pageid="
                 . "{$this->page->id}'>" . get_string('addcomment', 'socialwiki') . "</a></div>";
         }
 
-        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id);
-        $format = $this->page->format;
-
-        if (empty($comments)) {
-            echo $OUTPUT->heading(get_string('nocomments', 'socialwiki'));
-        }
-
+        // List comments.
         foreach ($comments as $comment) {
             $user = socialwiki_get_user_info($comment->userid);
 
+            // Get the user name and date of posting.
             $info = '<b><a href="' . $CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid='
                 . $user->id . '&amp;subwikiid=' . $this->page->subwikiid . '">'
-                . fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id))) . '</a></b>';
-            $info .= ' ' . socialwiki_format_time($comment->timecreated);
+                . fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)))
+                . '</a></b> ' . socialwiki_format_time($comment->timecreated);
 
-            $parsedcontent = socialwiki_parse_content($format, $comment->content, $options);
-            $content = format_text($parsedcontent['parsed_text'], FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true));
-
+            // Check if edit and delete icons should be shown.
             if (has_capability('mod/socialwiki:managecomment', $this->modcontext) || (has_capability('mod/socialwiki:editcomment', $this->modcontext) && $USER->id == $user->id)) {
                 $urledit = new moodle_url('/mod/socialwiki/editcomments.php',
                     array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'edit'));
@@ -463,8 +457,9 @@ class page_socialwiki_view extends page_socialwiki {
                         new pix_icon('t/delete', get_string('delete'), "", array('class' => 'iconsmall')));
             }
 
-            echo html_writer::tag('div', "<div style='float:left; margin-right:12px'>" . $OUTPUT->user_picture($user, array('popup' => true))
-                . "</div><div><div>$info</div>$content</div>", array('class' => 'no-overflow'));
+            // Print out the full comment.
+            echo "<div><div style='float:left; margin-right:12px'>" . $OUTPUT->user_picture($user, array('popup' => true))
+                . "</div>$info<div>$comment->content</div></div>";
         }
     }
 }
@@ -632,7 +627,7 @@ class page_socialwiki_edit extends page_socialwiki {
         $data->newcontent = $content;
         $data->format = $this->page->format;
 
-        if ($this->page->format == 'html') {
+        if ($this->page->format === 'html') {
             $data->newcontentformat = FORMAT_HTML;
             // Append editor context to editor options, giving preference to existing context.
             self::$attachmentoptions = array_merge(
@@ -664,7 +659,6 @@ class page_socialwiki_editcomment extends page_socialwiki {
     private $comment;
     private $action;
     private $form;
-    private $format;
 
     /**
      * Sets the URL of the page.
@@ -705,11 +699,18 @@ class page_socialwiki_editcomment extends page_socialwiki {
     public function print_content() {
         require_capability('mod/socialwiki:editcomment', $this->modcontext, null, true, 'noeditcommentpermission', 'socialwiki');
 
-        if ($this->action == 'add') {
-            $this->add_comment_form();
-        } else if ($this->action == 'edit') {
-            $this->edit_comment_form($this->comment);
+        // Setup a new comment or put together a comment to edit.
+        $com = new stdClass();
+        if ($this->action === 'edit') {
+            $com = $this->comment;
+            $com->entrycomment_editor['text'] = $com->content;
         }
+        $com->action = $this->action;
+        $com->entrycomment_editor['text'] = $com->content;
+        $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
+
+        $this->form->set_data($com);
+        $this->form->display();
     }
 
     public function set_action($action, $comment) {
@@ -718,47 +719,10 @@ class page_socialwiki_editcomment extends page_socialwiki {
 
         $this->action = $action;
         $this->comment = $comment;
-        $this->format = $this->page->format;
 
-        if ($this->format == 'html') {
-            $destination = $CFG->wwwroot . '/mod/socialwiki/instancecomments.php?pageid=' . $this->page->id;
-            $this->form = new mod_socialwiki_comments_form($destination);
-        }
+        $destination = $CFG->wwwroot . '/mod/socialwiki/instancecomments.php?pageid=' . $this->page->id;
+        $this->form = new mod_socialwiki_comments_form($destination);
     }
-
-    private function add_comment_form() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/socialwiki/editors/socialwiki_editor.php');
-
-        if ($this->format == 'html') {
-            $com = new stdClass();
-            $com->action = 'add';
-            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
-            $this->form->set_data($com);
-            $this->form->display();
-        } else {
-            socialwiki_print_editor_wiki($this->page->id, null, $this->format, null, false, null, 'addcomments');
-        }
-    }
-
-    private function edit_comment_form($com) {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/socialwiki/comments_form.php');
-        require_once($CFG->dirroot . '/mod/socialwiki/editors/socialwiki_editor.php');
-
-        if ($this->format == 'html') {
-            $com->action = 'edit';
-            $com->entrycomment_editor['text'] = $com->content;
-            $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
-
-            $this->form->set_data($com);
-            $this->form->display();
-        } else {
-            socialwiki_print_editor_wiki($this->page->id,
-                    $com->content, $this->format, null, false, array(), 'editcomments', $com->id);
-        }
-    }
-
 }
 
 /**
@@ -1373,7 +1337,7 @@ class page_socialwiki_home extends page_socialwiki {
      * Prints the review tab.
      */
     public function print_review_tab() {
-        Global $USER;
+        global $USER;
         echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'myfaves'); // Favourites Table.
         echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'mylikes'); // Likes Table.
         echo socialwiki_table::builder($USER->id, $this->subwiki->id, 'mypages'); // My Versions Table.
@@ -1430,7 +1394,22 @@ class page_socialwiki_deletecomment extends page_socialwiki {
      * Prints the page content.
      */
     public function print_content() {
-        $this->printconfirmdelete();
+        global $OUTPUT;
+
+        $strdeletecheckfull = get_string('deletecommentcheckfull', 'socialwiki');
+
+        // Ask confirmation.
+        $optionsyes = array('confirm' => 1, 'pageid' => $this->page->id, 'action' => 'delete',
+            'commentid' => $this->commentid, 'sesskey' => sesskey());
+        $deleteurl = new moodle_url('/mod/socialwiki/instancecomments.php', $optionsyes);
+        $return = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $this->page->id));
+
+        // Print the comment deletion confirmation form.
+        echo $OUTPUT->heading($strdeletecheckfull, 3);
+        echo '<form class="socialwiki-deletecomment" action="' . $deleteurl . '" method="post" id="deletecomment">' .
+            '<input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></form>' .
+            '<form class="socialwiki-deletecomment" action="' . $return . '" method="post">' .
+            '<input type="submit" name="norestore" value="' . get_string('no') . '" /></form>';
     }
 
     public function set_action($action, $commentid, $content) {
@@ -1438,33 +1417,6 @@ class page_socialwiki_deletecomment extends page_socialwiki {
         $this->commentid = $commentid;
         $this->content = $content;
     }
-
-    /**
-     * Prints the comment deletion confirmation form.
-     */
-    private function printconfirmdelete() {
-        global $OUTPUT;
-
-        $strdeletecheck = get_string('deletecommentcheck', 'socialwiki');
-        $strdeletecheckfull = get_string('deletecommentcheckfull', 'socialwiki');
-
-        // Ask confirmation.
-        $optionsyes = array('confirm' => 1, 'pageid' => $this->page->id, 'action' => 'delete',
-                            'commentid' => $this->commentid, 'sesskey' => sesskey());
-        $deleteurl = new moodle_url('/mod/socialwiki/instancecomments.php', $optionsyes);
-        $return = new moodle_url('/mod/socialwiki/view.php', array('pageid' => $this->page->id));
-
-        echo $OUTPUT->heading($strdeletecheckfull);
-        print_container_start(false, 'socialwiki-deletecommentform');
-        echo '<form class="socialwiki-deletecomment-yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
-        echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
-        echo '</form>';
-        echo '<form class="socialwiki-deletecomment-no" action="' . $return . '" method="post">';
-        echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
-        echo '</form>';
-        print_container_end();
-    }
-
 }
 
 /**
@@ -1879,7 +1831,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
      */
     public function print_content() {
         Global $OUTPUT, $CFG, $USER;
-        
+
         // USER INFO OUTPUT.
         $user = socialwiki_get_user_info($this->uid);
         $html = $OUTPUT->heading(fullname($user), 1, 'colourtext');
@@ -1927,7 +1879,7 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
             // Get this user's peer score.
             $peer = socialwiki_peer::socialwiki_get_peer($user->id, $this->subwiki->id, $USER->id);
-            
+
             $row1 = new html_table_row(array(get_string('networkdistance', 'socialwiki').':', $peer->depth, $followbtn));
             $row1->cells[2]->rowspan = 3;
 
