@@ -24,7 +24,7 @@
 /**
  * Implements a DataTable on any HTML tables on the page.
  */
-$(document).ready(function () {
+$(function() {
     // Build the Datatables from HTML tables.
     $('.datatable.typev').DataTable({  // Version Table.
         "scrollY": 220,

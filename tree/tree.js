@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$(document).ready(function() {
+$(function() {
     if (/view=2/.test(document.URL)) { // Only in view 'popular'.
         $('.tagcloud').tagcloud();
     }
