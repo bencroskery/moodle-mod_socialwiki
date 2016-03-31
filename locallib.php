@@ -1693,25 +1693,10 @@ function socialwiki_follow_depth($userfrom, $userto, $swid, $depth = 1, &$checke
  */
 function socialwiki_format_time($time, $timeago = true) {
     // Standard day, month, year format.
-    $date = strftime('%d %b %Y', $time);
     if (!$timeago) {
-        return $date;
+        return strftime('%d %b %Y', $time);
     }
 
-    // Return the time based upon how long ago from the current time.
-    $diff = (new DateTime)->diff(new DateTime('@' . $time));
-    $types = array(
-        'y' => 'year',
-        'm' => 'month',
-        'd' => 'day',
-        'h' => 'hour',
-        'i' => 'minute',
-        's' => 'second',
-    );
-    // Loops through to return the first type available.
-    foreach ($types as $t => &$i) {
-        if ($diff->$t) {
-            return "<span title='$date'>" . $diff->$t . ' ' . $i . ($diff->$t > 1 ? 's' : "") . ' ago</span>';
-        }
-    }
+    // Standard Moodle time ago formatting.
+    return format_time(time() - $time) . " ago";
 }
