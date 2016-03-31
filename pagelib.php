@@ -427,6 +427,11 @@ class page_socialwiki_view extends page_socialwiki {
                 . "{$this->page->id}'>" . get_string('addcomment', 'socialwiki') . "</a></div>";
         }
 
+        if (count($comments) == 0) {
+            // No comments to display.
+            return;
+        }
+
         // Show reversible button.
         echo '<a id="socialwiki-comdirection" other="' . get_string('commentoldest', 'socialwiki') . '")>' . get_string('commentnewest', 'socialwiki') .'</a>';
 
@@ -437,16 +442,16 @@ class page_socialwiki_view extends page_socialwiki {
 
             // Get the user name and date of posting.
             $info = '<b><a href="' . $CFG->wwwroot . '/mod/socialwiki/viewuserpages.php?userid='
-                . $user->id . '&amp;subwikiid=' . $this->page->subwikiid . '">'
-                . fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)))
-                . '</a></b> ' . socialwiki_format_time($comment->timecreated) . ' ';
+                    . $user->id . '&amp;subwikiid=' . $this->page->subwikiid . '">'
+                    . fullname($user, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)))
+                    . '</a></b> ' . socialwiki_format_time($comment->timecreated) . ' ';
 
             // Check if edit and delete icons should be shown.
             if (has_capability('mod/socialwiki:managecomment', $this->modcontext) || (has_capability('mod/socialwiki:editcomment', $this->modcontext) && $USER->id == $user->id)) {
                 $urledit = new moodle_url('/mod/socialwiki/editcomments.php',
-                    array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'edit'));
+                        array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'edit'));
                 $urldelet = new moodle_url('/mod/socialwiki/instancecomments.php',
-                    array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'delete'));
+                        array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'delete'));
                 $info .= $OUTPUT->action_icon($urledit, new pix_icon('t/edit', get_string('edit'), "",
                         array('class' => 'iconsmall'))) . $OUTPUT->action_icon($urldelet,
                         new pix_icon('t/delete', get_string('delete'), "", array('class' => 'iconsmall')));
