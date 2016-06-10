@@ -68,7 +68,7 @@ $string['follow_tip'] = 'Click to follow this user';
 $string['unfollow'] = 'Unfollow';
 $string['unfollow_tip'] = 'Click to unfollow this user';
 $string['like'] = 'Like';
-$string['unlike'] = 'Unlike';
+$string['likes'] = 'Likes';
 $string['like_tip'] = 'Like/Unlike this page';
 
 $string['deletecomment'] = 'Deleting comment';

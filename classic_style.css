@@ -149,16 +149,15 @@ h1, h2, h3, h4, h5, h6 {
 
 .socialwiki_wikicontent #socialwiki-like {
     float: right;
-}
-
-.socialwiki_wikicontent #socialwiki-like button {
     color: gray;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: bold;
-    width: 7.5em;
-    margin: 0;
 }
 
-.socialwiki_wikicontent #numlikes {
-    margin-top: 5px;
+.socialwiki_wikicontent #socialwiki-like.liked {
+    color: #0775db;
+}
+
+.socialwiki_wikicontent #socialwiki-like img {
+    margin-top: -10px;
 }

@@ -163,6 +163,7 @@
 .socialwiki_wikicontent #socialwiki-comdirection {
     margin-left: 2.5em;
     cursor: pointer;
+    display: none;
 }
 
 .socialwiki_wikicontent .socialwiki-commentlist > li {

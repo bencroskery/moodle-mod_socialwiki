@@ -44,10 +44,10 @@ if (!$wiki = socialwiki_get_wiki($subwiki->wikiid)) {
 if (!$cm = get_coursemodule_from_instance('socialwiki', $wiki->id)) {
     print_error('invalidcoursemodule', 'socialwiki');
 }
-require_capability('mod/socialwiki:editpage', context_module::instance($cm->id));
 
-$out = "";
-if (confirm_sesskey()) {
+$out = 'error';
+if (has_capability('mod/socialwiki:editpage', context_module::instance($cm->id)) && confirm_sesskey()) {
     $out = socialwiki_page_like($USER->id, $pageid, $subwiki->id);
+    $out = "$out " . ($out === 1 ? get_string('like', 'socialwiki') : get_string('likes', 'socialwiki'));
 }
 echo json_encode($out);

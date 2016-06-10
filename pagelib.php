@@ -107,7 +107,7 @@ abstract class page_socialwiki {
     /**
      * Wiki renderer.
      *
-     * @var renderer_base
+     * @var mod_socialwiki_renderer
      */
     protected $wikioutput;
 
@@ -360,35 +360,27 @@ class page_socialwiki_view extends page_socialwiki {
     }
 
     /**
-     * Prints the page title.
+     * Prints the page title, including the like button.
      */
     protected function print_pagetitle() {
-        echo '<script> var options="?pageid='.$this->page->id.'&sesskey='.sesskey().'"</script>'; // Passed to ajax liker.
+        global $CFG;
+        $key = sesskey();
+        echo '<script> var options="?pageid='.$this->page->id.'&sesskey='.$key.'"</script>'; // Passed to ajax liker.
 
         $isliked = socialwiki_liked($this->uid, $this->page->id);
         $likecurrent = ($isliked ? 'unlike' : 'like');
         $likeother = (!$isliked ? 'unlike' : 'like');
         $pixurl = new moodle_url('/mod/socialwiki/pix/icons/');
 
-        $liker = html_writer::start_tag('form', array('id' => "socialwiki-like", 'action' => 'like.php', "method" => "get"));
-        $liker .= '<input type="hidden" name="pageid" value="' . $this->page->id . '"/>';
-        $liker .= '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
-
-        // Button to like/unlike.
+        $link = '';
         if (has_capability('mod/socialwiki:editpage', $this->modcontext)) {
-            $liker .= html_writer::start_tag('button', array('title' => get_string('like_tip', 'socialwiki')));
-            $liker .= html_writer::tag('img', "", array('src' => $pixurl . $likecurrent . '.png', 'other' => $pixurl . $likeother . '.png'));
-            $liker .= '<span other=' . get_string($likeother, 'socialwiki') . '>' . get_string($likecurrent, 'socialwiki') . '</span>';
-            $liker .= html_writer::end_tag('button');
+            $link = "$CFG->wwwroot/mod/socialwiki/like.php?pageid={$this->page->id}&sesskey=$key";
         }
-
-        // Show number of likes.
         $numlikes = socialwiki_numlikes($this->page->id);
-        $liker .= html_writer::start_tag('div', array('id' => 'numlikes'));
-        $liker .= $numlikes . ($numlikes === 1 ? ' like' : ' likes');
-        $liker .= html_writer::end_tag('div');
-
-        $liker .= html_writer::end_tag('form');
+        $liker = html_writer::start_tag('a', array('id' => 'socialwiki-like', 'class' => $isliked ? 'liked' : '', 'href' => $link, 'title' => get_string('like_tip', 'socialwiki')));
+        $liker .= html_writer::tag('img', "", array('src' => $pixurl . $likecurrent . '.png', 'other' => $pixurl . $likeother . '.png'));
+        $liker .= "<span>$numlikes " . ($numlikes === 1 ? get_string('like', 'socialwiki') : get_string('likes', 'socialwiki')) . '</span>';
+        $liker .= html_writer::end_tag('a');
 
         echo $liker;
         parent::print_pagetitle();
@@ -425,7 +417,7 @@ class page_socialwiki_view extends page_socialwiki {
 
         // Add comment button.
         if (has_capability('mod/socialwiki:editcomment', $this->modcontext)) {
-            echo "<div class='midpad'><a href='$CFG->wwwroot/mod/socialwiki/editcomments.php?action=add&amp;pageid="
+        echo "<div class='midpad'><a href='$CFG->wwwroot/mod/socialwiki/editcomments.php?action=add&amp;pageid="
                 . "{$this->page->id}'>" . get_string('addcomment', 'socialwiki') . "</a></div>";
         }
 
@@ -1867,7 +1859,6 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
                 $text = get_string('follow', 'socialwiki');
                 $tip = get_string('follow_tip', 'socialwiki');
             } else {
-                // Show like link.
                 $icon = new moodle_url('/mod/socialwiki/pix/icons/unfollow.png');
                 $text = get_string('unfollow', 'socialwiki');
                 $tip = get_string('unfollow_tip', 'socialwiki');
