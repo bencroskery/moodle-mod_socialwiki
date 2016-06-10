@@ -279,7 +279,7 @@ class socialwiki_tree {
             $compare .= html_writer::end_tag('form');
         }
 
-        $treeul = '<div class="tree" id="doublescroll"><ul>'; // Doublescroll puts scrollbar on top and bottom.
+        $treeul = '<div class="tree" id="dragscroll"><ul>'; // Dragscroll to drag around with the mouse.
         $allpeerset = array();
         foreach ($this->roots as $node) {
             $treeul .= $node->to_html_list(); // Recusively descends tree.
