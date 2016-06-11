@@ -151,6 +151,8 @@ h1, h2, h3, h4, h5, h6 {
     color: gray;
     font-size: 1.2em;
     font-weight: bold;
+    line-height: 40px;
+    margin-right: 8px;
 }
 
 .socialwiki_wikicontent #socialwiki-like.liked {
@@ -159,4 +161,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .socialwiki_wikicontent #socialwiki-like img {
     margin-top: -10px;
+}
+
+.socialwiki_wikicontent .navigator {
+    float: right;
 }

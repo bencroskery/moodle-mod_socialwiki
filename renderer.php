@@ -395,6 +395,20 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         }
     }
 
+    public function navigator($options, $current, $pid, $swid) {
+        $ids = array_merge(socialwiki_get_page_likes($pid, $swid), socialwiki_get_contributors($pid));
+        array_unshift($ids, $current);
+        $ids = array_unique($ids);
+        $users = array(-1 => 'Latest');
+        foreach ($ids as $u) {
+            $users[$u] = fullname(socialwiki_get_user_info($u)) . "'s favourite";
+        }
+
+        $select = new single_select(new moodle_url("/mod/socialwiki/view.php", $options), 'navi', $users, $current, ['Default']);
+        $select->set_label('Navigate by:');
+        echo $this->output->container($this->output->render($select), 'navigator');
+    }
+
     /**
      * Builds the version view for search or pages.
      *

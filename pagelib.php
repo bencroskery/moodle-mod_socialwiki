@@ -309,6 +309,13 @@ abstract class page_socialwiki {
  */
 class page_socialwiki_view extends page_socialwiki {
 
+    protected $navigation;
+
+    public function __construct($wiki, $subwiki, $cm, $navi) {
+        $this->navigation = $navi;
+        parent::__construct($wiki, $subwiki, $cm);
+    }
+
     /**
      * Prints out the header at the top of the page.
      */
@@ -323,7 +330,7 @@ class page_socialwiki_view extends page_socialwiki {
     }
 
     /**
-     * Do not print the help button.
+     * Do not show the help button here.
      */
     public function print_help() {
     }
@@ -361,6 +368,7 @@ class page_socialwiki_view extends page_socialwiki {
 
     /**
      * Prints the page title, including the like button.
+     * @param $navigation
      */
     protected function print_pagetitle() {
         global $CFG;
@@ -381,9 +389,12 @@ class page_socialwiki_view extends page_socialwiki {
         $liker .= html_writer::tag('img', "", array('src' => $pixurl . $likecurrent . '.png', 'other' => $pixurl . $likeother . '.png'));
         $liker .= "<span>$numlikes " . ($numlikes === 1 ? get_string('like', 'socialwiki') : get_string('likes', 'socialwiki')) . '</span>';
         $liker .= html_writer::end_tag('a');
-
         echo $liker;
+
         parent::print_pagetitle();
+
+        $params = array('pageid' => $this->page->id);
+        $this->wikioutput->navigator($params, $this->navigation, $this->page->id, $this->subwiki->id);
     }
 
     /**
@@ -392,7 +403,7 @@ class page_socialwiki_view extends page_socialwiki {
     public function print_content() {
         if (socialwiki_user_can_view($this->subwiki)) {
             if (!empty($this->page)) {
-                socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id);
+                socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id, $this->navigation);
             } else {
                 echo get_string('nocontent', 'socialwiki');
             }

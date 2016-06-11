@@ -498,7 +498,7 @@ function socialwiki_parse_content($markup, $pagecontent, $options = array()) {
 
     $parseroptions = array(
         'link_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_link',
-        'link_callback_args' => array('swid' => $options['swid']),
+        'link_callback_args' => array('swid' => $options['swid'], 'navi' => $options['navi']),
         'table_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_table',
         'real_path_callback' => '/mod/socialwiki/locallib.php:socialwiki_parser_real_path',
         'real_path_callback_args' => array(
@@ -534,35 +534,46 @@ function socialwiki_parser_link($link, $options = null) {
     global $CFG, $PAGE;
 
     $matches = array();
+    $swid = $options['swid'];
+    $star = '';
 
     if (is_object($link)) { // If the fn is passed a page_socialwiki object as 1st argument.
         $parsedlink = array('content' => $link->title, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='
             . $link->id, 'new' => false, 'link_info' => array('link' => $link->title, 'pageid' => $link->id, 'new' => false));
     } else { // Standard case, wikilink shortcut in text
-        $swid = $options['swid'];
         $specific = false;
-
         if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) { // Check if getting a specific version.
             $link = preg_replace('/@(([0-9]+)|(\.))/', "", $link);
             $specific = true;
+        } elseif ($options['navi'] != 0) {
+            if ($options['navi'] == -1) {
+                $matches[1] = '.';
+                $specific = true;
+            } else {
+                $fav = socialwiki_get_title_favourite($options['navi'], $link, $swid);
+                if ($fav !== false) {
+                    $matches[1] = $fav;
+                    $star = ' &#9733;';
+                    $specific = true;
+                }
+            }
         }
 
         if ($page = socialwiki_get_page_by_title($swid, $link)) { // Check if there is a page with that name.
             if ($specific) { // Going to a specific page (no search).
                 if ($matches[1] == '.') { // Get the most recent version with the title.
-                    $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot
-                            . '/mod/socialwiki/view.php?pageid=' . $page->id, 'new' => false,
+                    $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
+                        . "/mod/socialwiki/view.php?pageid={$page->id}&navi={$options['navi']}",
                         'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
                 } else { // Get the page at the ID.
                     if (socialwiki_get_page($matches[1])) { // Page found and linked.
-                        $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='
-                            . $matches[1], 'new' => false,
+                        $parsedlink = array('content' => $link . $star, 'new' => false, 'url' => $CFG->wwwroot
+                            . "/mod/socialwiki/view.php?pageid=$matches[1]&navi={$options['navi']}",
                             'link_info' => array('link' => $link, 'pageid' => $matches[1], 'new' => false));
                     } else { // The page wasn't found, do a search instead.
                         $currentpage = optional_param('pageid', 0, PARAM_INT);
-                        $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot
-                                . '/mod/socialwiki/search.php?searchstring=' . $link . '&pageid=' . $currentpage
-                                . '&id=' . $PAGE->cm->id . '&exact=1', 'new' => false,
+                        $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
+                            . "/mod/socialwiki/search.php?searchstring=$link&pageid=$currentpage&id={$PAGE->cm->id}&exact=1",
                             'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
                     }
                 }
@@ -932,9 +943,9 @@ function socialwiki_delete_comments_wiki() {
  * @param stdClass $context The current context.
  * @param int $swid The subwiki ID.
  */
-function socialwiki_print_page_content($page, $context, $swid) {
+function socialwiki_print_page_content($page, $context, $swid, $navigation) {
     global $PAGE, $USER;
-    $content = socialwiki_parse_content($page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id));
+    $content = socialwiki_parse_content($page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id, 'navi' => $navigation));
     $html = file_rewrite_pluginfile_urls($content['parsed_text'], 'pluginfile.php',
             $context->id, 'mod_socialwiki', 'attachments', $swid);
     $wikioutput = $PAGE->get_renderer('mod_socialwiki');
@@ -1337,6 +1348,29 @@ function socialwiki_get_page_favourites($pid, $swid) {
         }
     }
     return $favourites;
+}
+
+/**
+ * Get the user's favorite page version by title.
+ *
+ * @param int $uid The user ID.
+ * @param int $title The page title.
+ * @param int $swid The subwiki ID.
+ * @return int|boolean
+ */
+function socialwiki_get_title_favourite($uid, $title, $swid) {
+    global $DB;
+    $sql = 'SELECT pageid
+            FROM {socialwiki_likes} l
+            INNER JOIN {socialwiki_pages} p
+            ON l.pageid=p.id
+            WHERE l.userid=? and p.title=? and l.subwikiid=?
+            ORDER BY p.timecreated DESC LIMIT 1';
+    $out = $DB->get_record_sql($sql, array($uid, $title, $swid));
+    if (isset($out->pageid)) {
+        return $out->pageid;
+    }
+    return false;
 }
 
 /**
