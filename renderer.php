@@ -544,7 +544,7 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     public function help_content($type) {
         $html = "";
         $html .= html_writer::start_div("", array('id' => $type, 'style' => 'padding-top: 40px; margin-top: -20px'));
-        $html .= html_writer::tag('h2', get_string($type, 'socialwiki'));
+        $html .= html_writer::tag('h3', html_writer::tag('a', get_string($type, 'socialwiki'), array('href' => "#$type")));
         $html .= get_string('help_' . $type, 'socialwiki');
         $html .= html_writer::end_div();
         return $html;
