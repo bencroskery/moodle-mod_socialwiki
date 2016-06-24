@@ -47,16 +47,15 @@ $(function () {
         return false;
     };
 
-    /**
-     * Enable the compare button if 2 nodes have been selected.
-     */
+    // Enable the compare button if 2 nodes have been selected.
     var compare = false;
     var comparewith = false;
     var comparebtn = document.getElementById('comparebtn');
-    if (comparebtn !== null)
+    if (comparebtn !== null) {
         comparebtn.disabled = true;
+    }
     var radio = document.querySelectorAll('input[type=radio]');
-    for (var i = 0; i < radio.length; i++)
+    for (var i = 0; i < radio.length; i++) {
         radio[i].onchange = function () {
             var name = this.getAttribute("name");
             if (name === 'compare') {
@@ -68,10 +67,9 @@ $(function () {
                 comparebtn.disabled = false;
             }
         };
+    }
 
-    /**
-     * The Hide Button.
-     */
+    // The Hide Button.
     $(".hider").click(function () {
         var $i = $("#hid" + ($(this).attr("value")));
         var $b = $("#bgroup" + ($(this).attr("value")));
@@ -91,12 +89,9 @@ $(function () {
             $("#content" + ($(this).attr("value"))).css("display", "initial");
             $("#comp" + ($(this).attr("value"))).css("display", "block");
         }
-        scrollbar.firstChild.style.width = element.scrollWidth + 'px';
     });
 
-    /**
-     * The Collapse Button.
-     */
+    // The Collapse Button.
     $(".collapser").click(function () {
         var $i = $("#cop" + ($(this).attr("value")));
         var $b = $("#bgroup" + ($(this).attr("value")));
@@ -133,7 +128,6 @@ $(function () {
                 $("#" + ($(this).attr("value"))).css("display", "block");
             }
         }
-        scrollbar.firstChild.style.width = element.scrollWidth + 'px';
     });
 });
 

@@ -219,7 +219,7 @@ function socialwiki_save_page($page, $newcontent, $uid) {
         $page->userid = $uid;
         $page->content = $newcontent;
         $DB->update_record('socialwiki_pages', $page);
-        $options = array('swid' => $page->subwikiid, 'pageid' => $page->id);
+        $options = array('swid' => $page->subwikiid, 'pageid' => $page->id, 'navi' => 0);
         $parseroutput = socialwiki_parse_content($page->format, $newcontent, $options);
         return array('page' => $page, 'sections' => $parseroutput['repeated_sections']);
     } else {
@@ -370,35 +370,35 @@ function socialwiki_get_related_pages($swid, $title) {
 
 /**
  * Search wiki title and or content.
- * 
+ *
  * @param int $swid The subwiki ID.
  * @param string $search What to search for.
- * @param type $searchtitle Search page titles.
- * @param type $searchcontent Search page contents.
+ * @param bool $searchtitle Search page titles.
+ * @param bool $searchcontent Search page contents.
  * @param bool $exact Only an exact title match if true.
  * @return stdClass[]
  */
 function socialwiki_search($swid, $search, $searchtitle = true, $searchcontent = true, $exact = false) {
     global $DB;
-    
+
     // Return nothing if not searching the title or content.
     if (!$searchtitle && !$searchcontent) {
         return [];
     }
-    
+
     // If not exact then allow for characters on either side.
     if (!$exact) {
         $search = '%' . $search . '%';
     }
-    
+
     // Search SQL.
     $sql = "SELECT p.*, COUNT(pageid) AS total
             FROM {socialwiki_pages} p LEFT JOIN {socialwiki_likes} l
             ON p.id = l.pageid
             WHERE p.subwikiid=? AND (";
-    
+
     if ($searchtitle && $searchcontent) {
-        // If looking for title and content then search by both. 
+        // If looking for title and content then search by both.
         $sql .= "p.content LIKE ? OR p.title LIKE ?";
         $params = array($swid, $search, $search);
     } else {
@@ -406,10 +406,10 @@ function socialwiki_search($swid, $search, $searchtitle = true, $searchcontent =
         $sql .= $searchtitle ? "p.title LIKE ?" : "p.content LIKE ?";
         $params = array($swid, $search);
     }
-    
+
     // Group the pages with likes together.
     $sql .= ") GROUP BY p.id ORDER BY total DESC";
-    
+
     return $DB->get_records_sql($sql, $params);
 }
 
@@ -540,12 +540,12 @@ function socialwiki_parser_link($link, $options = null) {
     if (is_object($link)) { // If the fn is passed a page_socialwiki object as 1st argument.
         $parsedlink = array('content' => $link->title, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='
             . $link->id, 'new' => false, 'link_info' => array('link' => $link->title, 'pageid' => $link->id, 'new' => false));
-    } else { // Standard case, wikilink shortcut in text
+    } else { // Standard case, wikilink shortcut in text.
         $specific = false;
         if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) { // Check if getting a specific version.
             $link = preg_replace('/@(([0-9]+)|(\.))/', "", $link);
             $specific = true;
-        } elseif ($options['navi'] != 0) {
+        } else if ($options['navi'] != 0) {
             if ($options['navi'] == -1) {
                 $matches[1] = '.';
                 $specific = true;
@@ -700,10 +700,12 @@ function socialwiki_user_can_view($subwiki) {
                     // Only view capability needed.
                     return has_capability('mod/socialwiki:viewpage', $context);
                 } else {
-                    // User is not part of that group
-                    // User must have: mod/wiki:managewiki capability
-                    //              or moodle/site:accessallgroups capability
-                    //             and mod/wiki:viewpage capability.
+                    /*
+                     * User is not part of that group.
+                     * User must have: mod/wiki:managewiki capability
+                     *              or moodle/site:accessallgroups capability
+                     *             and mod/wiki:viewpage capability.
+                     */
                     $view = has_capability('mod/socialwiki:viewpage', $context);
                     $manage = has_capability('mod/socialwiki:managewiki', $context);
                     $access = has_capability('moodle/site:accessallgroups', $context);
@@ -718,7 +720,7 @@ function socialwiki_user_can_view($subwiki) {
             // Collaborative Mode: There is one wiki per group.
             // Individual Mode: Each person owns a wiki.
             if ($wiki->wikimode == 'collaborative' || $wiki->wikimode == 'individual') {
-                // Everybody can read all wikis
+                // Everybody can read all wikis.
                 // Only view capability needed.
                 return has_capability('mod/socialwiki:viewpage', $context);
             } else {
@@ -761,10 +763,12 @@ function socialwiki_user_can_edit($subwiki) {
                     // Only edit capability needed.
                     return has_capability('mod/socialwiki:editpage', $context);
                 } else {
-                    // User is not part of that group
-                    // User must have: mod/wiki:managewiki capability
-                    //             and moodle/site:accessallgroups capability
-                    //             and mod/wiki:editpage capability.
+                    /*
+                     * User is not part of that group.
+                     * User must have: mod/wiki:managewiki capability
+                     *              or moodle/site:accessallgroups capability
+                     *             and mod/wiki:editpage capability.
+                     */
                     $manage = has_capability('mod/socialwiki:managewiki', $context);
                     $access = has_capability('moodle/site:accessallgroups', $context);
                     $edit = has_capability('mod/socialwiki:editpage', $context);
@@ -781,9 +785,12 @@ function socialwiki_user_can_edit($subwiki) {
                 if (groups_is_member($subwiki->groupid)) {
                     // Only edit capability needed.
                     return has_capability('mod/socialwiki:editpage', $context);
-                } else { // User is not part of that group
-                    // User must have: mod/wiki:managewiki capability
-                    //             and mod/wiki:editpage capability.
+                } else {
+                    /*
+                     * User is not part of that group.
+                     * User must have: mod/wiki:managewiki capability
+                     *             and mod/wiki:editpage capability.
+                     */
                     $manage = has_capability('mod/socialwiki:managewiki', $context);
                     $edit = has_capability('mod/socialwiki:editpage', $context);
                     return $manage && $edit;
@@ -945,12 +952,14 @@ function socialwiki_delete_comments_wiki() {
  */
 function socialwiki_print_page_content($page, $context, $swid, $navigation) {
     global $PAGE, $USER;
-    $content = socialwiki_parse_content($page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id, 'navi' => $navigation));
+    $content = socialwiki_parse_content(
+        $page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id, 'navi' => $navigation));
     $html = file_rewrite_pluginfile_urls($content['parsed_text'], 'pluginfile.php',
             $context->id, 'mod_socialwiki', 'attachments', $swid);
     $wikioutput = $PAGE->get_renderer('mod_socialwiki');
     // This is where the page content, from the title down, is rendered!
-    echo $wikioutput->viewing_area($content['toc'] . format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true)), $page);
+    echo $wikioutput->viewing_area(
+        $content['toc'] . format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true)), $page);
 
     // Only increment page view when linked, not refreshed.
     $pagerefreshed = (null !== filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL'))

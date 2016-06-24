@@ -95,7 +95,7 @@ abstract class page_socialwiki {
      * @var array
      */
     protected $tabs = array('view', 'edit', 'versions', 'admin');
-    // All $tabs = array('home', 'view', 'edit', 'comments', 'versions', 'admin');.
+    // All tabs: home, view, edit, comments, versions, admin.
 
     /**
      * The tab options.
@@ -385,9 +385,11 @@ class page_socialwiki_view extends page_socialwiki {
             $link = "$CFG->wwwroot/mod/socialwiki/like.php?pageid={$this->page->id}&sesskey=$key";
         }
         $numlikes = socialwiki_numlikes($this->page->id);
-        $liker = html_writer::start_tag('a', array('id' => 'socialwiki-like', 'class' => $isliked ? 'liked' : '', 'href' => $link, 'title' => get_string('like_tip', 'socialwiki')));
-        $liker .= html_writer::tag('img', "", array('src' => $pixurl . $likecurrent . '.png', 'other' => $pixurl . $likeother . '.png'));
-        $liker .= "<span>$numlikes " . ($numlikes === 1 ? get_string('like', 'socialwiki') : get_string('likes', 'socialwiki')) . '</span>';
+        $liker = html_writer::start_tag('a', array('id' => 'socialwiki-like',
+            'class' => $isliked ? 'liked' : '', 'href' => $link, 'title' => get_string('like_tip', 'socialwiki')));
+        $liker .= html_writer::tag('img', "", array('src' => $pixurl . $likecurrent . '.png',
+            'other' => $pixurl . $likeother . '.png'));
+        $liker .= html_writer::tag('span', "$numlikes " . get_string($numlikes === 1 ? 'like' : 'likes', 'socialwiki'));
         $liker .= html_writer::end_tag('a');
         echo $liker;
 
@@ -428,13 +430,14 @@ class page_socialwiki_view extends page_socialwiki {
 
         // Add comment button.
         if (has_capability('mod/socialwiki:editcomment', $this->modcontext)) {
-        echo "<div class='midpad'><a href='$CFG->wwwroot/mod/socialwiki/editcomments.php?action=add&amp;pageid="
+            echo "<div class='midpad'><a href='$CFG->wwwroot/mod/socialwiki/editcomments.php?action=add&amp;pageid="
                 . "{$this->page->id}'>" . get_string('addcomment', 'socialwiki') . "</a></div>";
         }
 
         // Show reversible button.
         if (count($comments) > 1) {
-            echo '<a id="socialwiki-comdirection" other="' . get_string('commentoldest', 'socialwiki') . '")>' . get_string('commentnewest', 'socialwiki') . '</a>';
+            echo '<a id="socialwiki-comdirection" other="'
+                . get_string('commentoldest', 'socialwiki') . '")>' . get_string('commentnewest', 'socialwiki') . '</a>';
         }
 
         // List comments.
@@ -449,7 +452,8 @@ class page_socialwiki_view extends page_socialwiki {
                     . '</a></b> ' . socialwiki_format_time($comment->timecreated) . ' ';
 
             // Check if edit and delete icons should be shown.
-            if (has_capability('mod/socialwiki:managecomment', $this->modcontext) || (has_capability('mod/socialwiki:editcomment', $this->modcontext) && $USER->id == $user->id)) {
+            if (has_capability('mod/socialwiki:managecomment', $this->modcontext) ||
+                (has_capability('mod/socialwiki:editcomment', $this->modcontext) && $USER->id == $user->id)) {
                 $urledit = new moodle_url('/mod/socialwiki/editcomments.php',
                         array('commentid' => $comment->id, 'pageid' => $this->page->id, 'action' => 'edit'));
                 $urldelet = new moodle_url('/mod/socialwiki/instancecomments.php',
@@ -1325,15 +1329,15 @@ class page_socialwiki_home extends page_socialwiki {
     public function print_topics_tab() {
         global $USER;
         // Make a new Page button.
-        $newPageBTN = "";
+        $newpagebtn = "";
         if (has_capability('mod/socialwiki:editpage', $this->modcontext)) {
-            $newPageBTN .= html_writer::start_tag('form', array('style' => "float:right; margin: 0;", 'action' => 'create.php'));
-            $newPageBTN .= '<input type="hidden" name="swid" value="' . $this->subwiki->id . '"/>';
-            $newPageBTN .= '<input value="' . get_string('makepage', 'socialwiki')
+            $newpagebtn .= html_writer::start_tag('form', array('style' => "float:right; margin: 0;", 'action' => 'create.php'));
+            $newpagebtn .= '<input type="hidden" name="swid" value="' . $this->subwiki->id . '"/>';
+            $newpagebtn .= '<input value="' . get_string('makepage', 'socialwiki')
                 . '" type="submit" id="id_submitbutton" style="margin: 0; position: relative; z-index: 1;">';
-            $newPageBTN .= html_writer::end_tag('form');
+            $newpagebtn .= html_writer::end_tag('form');
         }
-        echo $newPageBTN , socialwiki_table::builder($USER->id, $this->subwiki->id, 'alltopics'); // All Pages Table.
+        echo $newpagebtn , socialwiki_table::builder($USER->id, $this->subwiki->id, 'alltopics'); // All Pages Table.
     }
 
     /**
@@ -1425,8 +1429,8 @@ class page_socialwiki_deletecomment extends page_socialwiki {
             . '</a></b> ' . socialwiki_format_time($comment->timecreated) . ' ';
 
         // Print out the full comment.
-        echo "<div style='margin:1em 2em'><div style='float:left; margin-right:12px'>" . $OUTPUT->user_picture($user, array('popup' => true))
-            . "</div>$info<div>$comment->content</div></div>";
+        echo "<div style='margin:1em 2em'><div style='float:left; margin-right:12px'>"
+            . $OUTPUT->user_picture($user, array('popup' => true)) . "</div>$info<div>$comment->content</div></div>";
     }
 
     public function set_action($action, $commentid) {
