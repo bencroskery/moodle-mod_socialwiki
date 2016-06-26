@@ -18,60 +18,58 @@ Feature: Using different format options
     And I follow "Course 1"
     And I turn editing mode on
 
-#  @javascript
-#  Scenario: Different formats
-#    And I add a "Social Wiki" to section "1" and I fill the form with:
-#      | Social Wiki name | Test Socialwiki                  |
-#      | Description      | A normal test of the socialwiki. |
-#    And I follow "Test Socialwiki"
-#    And I follow "Pages"
-#    And I press "Make a new Page"
-#    When I set the following fields to these values:
-#      | New page title | HTML Page |
-#      | HTML format    | 1         |
-#    And I press "Create page"
-#    Then "div.editor_atto" "css_element" should exist
-#    And I set the following fields to these values:
-#      | HTML format | This is the first page in the wiki, with the HTML format |
-#    And I press "Save"
-#    And I should see "This is the first page in the wiki, with the HTML format"
-#    And I follow "Test Socialwiki"
-#    And I follow "Pages"
-#    And I press "Make a new Page"
-#    When I set the following fields to these values:
-#      | New page title | Creole Page |
-#      | Creole format  | 1           |
-#    And I press "Create page"
-#    Then "div.socialwikieditor-toolbar" "css_element" should exist
-#    # Click on bold, italic, interal link and H1
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[1]" "xpath_element"
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[2]" "xpath_element"
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[4]" "xpath_element"
-#    And the field "newcontent" matches value "**Bold text**//Italic text//[[Internal link]]"
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[8]" "xpath_element"
-#    And I press "Save"
-#    And I should see "Bold textItalic textInternal link"
-#    And I should see "Level 1 Header"
-#    And I should see "Table of Contents"
-#    And I click on "Level 1 Header" "link" in the ".socialwiki-toc" "css_element"
-#    And I follow "Internal link"
-#    When I set the following fields to these values:
-#      | New page title | NWiki page |
-#      | NWiki format   | 1          |
-#    And I press "Create page"
-#    Then "div.socialwikieditor-toolbar" "css_element" should exist
-#    # Click on italic, interal link and H1
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[2]" "xpath_element"
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[4]" "xpath_element"
-#    And the field "newcontent" matches value "'''Italic text'''[[Internal link]]"
-#    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[8]" "xpath_element"
-#    And I press "Save"
-#    And I should see "Italic textInternal link"
-#    And I should see "Level 1 Header"
-#    And I should see "Table of Contents"
-#    And I click on "Level 1 Header" "link" in the ".socialwiki-toc" "css_element"
-#    And I follow "Internal link"
-#    And I should see "New page title"
+  @javascript
+  Scenario: Different formats
+    When I add a "Social Wiki" to section "1" and I fill the form with:
+      | Social Wiki name | Test Socialwiki                  |
+      | Description      | A normal test of the socialwiki. |
+    And I follow "Test Socialwiki"
+    And I follow "Pages"
+    And I press "Make a new Page"
+    And I set the field "New page title" to "HTML Page"
+    And I set the field "HTML format" to "1"
+    And I press "Create page"
+    Then "div.editor_atto" "css_element" should exist
+    And I set the field "HTML format" to "This is HTML!"
+    And I press "Save"
+    Then I should see "This is the first page in the wiki, with the HTML format"
+
+    When I follow "Test Socialwiki"
+    And I follow "Pages"
+    And I press "Make a new Page"
+    And I set the field "New page title" to "Creole Page"
+    And I set the field "Creole format" to "1"
+    And I press "Create page"
+    Then "div.socialwikieditor-toolbar" "css_element" should exist
+    # Click on bold, italic, interal link and H1
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[1]" "xpath_element"
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[2]" "xpath_element"
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[4]" "xpath_element"
+    And the field "newcontent" matches value "**Bold text**//Italic text//[[Internal link]]"
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[8]" "xpath_element"
+    And I press "Save"
+    Then I should see "Bold textItalic textInternal link"
+    And I should see "Level 1 Header"
+    And I should see "Table of Contents"
+
+    When I click on "Level 1 Header" "link" in the ".socialwiki-toc" "css_element"
+    And I follow "Internal link"
+    And I set the field "New page title" to "NWiki Page"
+    And I set the field "NWiki format" to "1"
+    And I press "Create page"
+    Then "div.socialwikieditor-toolbar" "css_element" should exist
+    # Click on italic, interal link and H1
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[2]" "xpath_element"
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[4]" "xpath_element"
+    And the field "newcontent" matches value "'''Italic text'''[[Internal link]]"
+    And I click on "//div[@class='socialwikieditor-toolbar']/descendant::a[8]" "xpath_element"
+    And I press "Save"
+    Then I should see "Italic textInternal link"
+    And I should see "Level 1 Header"
+    And I should see "Table of Contents"
+    When I click on "Level 1 Header" "link" in the ".socialwiki-toc" "css_element"
+    And I follow "Internal link"
+    Then I should see "New page title"
 
   @javascript
   Scenario: Forced format
@@ -83,7 +81,8 @@ Feature: Using different format options
     And I follow "Force Format Socialwiki"
     And I follow "Pages"
     And I press "Make a new Page"
-    And I should not see "Format"
-    And I set the following fields to these values:
-      | Creole format | This is the first page in the wiki, with the forced Creole format |
+    And I should not see "Format" in the "#socialwiki_content_area" "css_element"
+    And I set the field "New page title" to "Forced Creole page"
+    And I press "Create page"
+    And I set the field "Creole format" to "This is a page in the wiki with the forced Creole format."
     And I press "Save"
