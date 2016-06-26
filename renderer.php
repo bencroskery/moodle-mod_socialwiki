@@ -397,7 +397,9 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
     public function navigator($options, $current, $pid, $swid) {
         $ids = array_merge(socialwiki_get_page_likes($pid, $swid), socialwiki_get_contributors($pid));
-        array_unshift($ids, $current);
+        if ($current !== -1) {
+            array_unshift($ids, $current);
+        }
         $ids = array_unique($ids);
         $users = array(-1 => 'Latest');
         foreach ($ids as $u) {

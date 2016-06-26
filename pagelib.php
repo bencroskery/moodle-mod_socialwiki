@@ -593,9 +593,14 @@ class page_socialwiki_edit extends page_socialwiki {
      * Prints the editing content pane.
      *
      * @param string $content The current content from the previous version.
+     * @param bool $notify Whether to show a notification.
      */
-    protected function print_edit($content = null) {
-        global $CFG;
+    protected function print_edit($content = null, $notify = true) {
+        global $CFG, $OUTPUT;
+
+        if ($notify) {
+            echo $OUTPUT->notification(get_string('editwarning', 'socialwiki'), 'info');
+        }
 
         if ($content == null) {
             if (empty($this->section)) {
@@ -932,7 +937,7 @@ class page_socialwiki_preview extends page_socialwiki_edit {
         }
         $form = new mod_socialwiki_edit_form($url, $params);
 
-        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true);
+        $options = array('swid' => $this->page->subwikiid, 'pageid' => $this->page->id, 'pretty_print' => true, 'navi' => 0);
 
         if ($data = $form->get_data()) {
             if (isset($data->newcontent)) {
@@ -944,13 +949,13 @@ class page_socialwiki_preview extends page_socialwiki_edit {
             }
             $parserout = socialwiki_parse_content($data->contentformat, $text, $options);
             $this->set_newcontent($text);
-            echo $OUTPUT->notification(get_string('previewwarning', 'socialwiki'), 'notifyproblem socialwiki-info');
+            echo $OUTPUT->notification(get_string('previewwarning', 'socialwiki'), 'notifyproblem');
             $parsedcontent = format_text($parserout['parsed_text'], FORMAT_HTML, array('overflowdiv' => true, 'filter' => false));
-            echo $OUTPUT->box($parsedcontent, 'generalbox socialwiki-previewbox');
+            echo $OUTPUT->box($parsedcontent, 'socialwiki-previewbox');
             $content = $this->newcontent;
         }
 
-        $this->print_edit($content);
+        $this->print_edit($content, false);
     }
 }
 

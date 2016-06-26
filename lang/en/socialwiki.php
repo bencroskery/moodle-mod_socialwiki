@@ -92,6 +92,7 @@ $string['editing'] = 'Editing wiki page';
 $string['editingcomment'] = 'Editing comment';
 $string['editingpage'] = 'Editing this page \'{$a}\'';
 $string['editsection'] = 'edit';
+$string['editwarning'] = 'Editing will create a new page version, it will not modify this version.';
 $string['files'] = 'Files';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
 $string['filtername'] = 'Social Wiki auto-linking';

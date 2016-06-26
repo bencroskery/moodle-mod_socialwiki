@@ -545,8 +545,8 @@ function socialwiki_parser_link($link, $options = null) {
         if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) { // Check if getting a specific version.
             $link = preg_replace('/@(([0-9]+)|(\.))/', "", $link);
             $specific = true;
-        } else if ($options['navi'] != 0) {
-            if ($options['navi'] == -1) {
+        } else if ($options['navi'] !== 0) {
+            if ($options['navi'] === -1) {
                 $matches[1] = '.';
                 $specific = true;
             } else {
@@ -949,6 +949,7 @@ function socialwiki_delete_comments_wiki() {
  * @param stdClass $page The current page.
  * @param stdClass $context The current context.
  * @param int $swid The subwiki ID.
+ * @param int $navigation The link nav type.
  */
 function socialwiki_print_page_content($page, $context, $swid, $navigation) {
     global $PAGE, $USER;
