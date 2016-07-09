@@ -95,7 +95,7 @@ function socialwiki_get_subwiki($swid) {
 function socialwiki_add_subwiki($wid, $gid, $uid = 0) {
     global $DB;
 
-    $record = new StdClass();
+    $record = new stdClass();
     $record->wikiid = $wid;
     $record->groupid = $gid;
     $record->userid = $uid;
@@ -598,7 +598,7 @@ function socialwiki_parser_link($link, $options = null) {
  * Returns the table fully parsed (HTML).
  *
  * @param array $table Table Data.
- * @return HTML for the table $table
+ * @return string for the table $table
  * @author Josep Arús Pous
  *
  */
@@ -887,7 +887,7 @@ function socialwiki_add_comment($context, $pid, $content, $editor) {
     require_once($CFG->dirroot . '/comment/lib.php');
 
     list($contextid, $course, $cm) = get_context_info_array($context->id);
-    $cmt = new stdclass();
+    $cmt = new stdClass();
     $cmt->context = $contextid;
     $cmt->itemid = $pid;
     $cmt->area = 'socialwiki_page';
@@ -1060,11 +1060,11 @@ function socialwiki_print_upload_table($context, $filearea, $fileitemid, $delete
  * Get updated pages from wiki.
  *
  * @param int $swid The subwiki ID.
- * @param int $uid The user ID.
+ * @param int|string $uid The user ID.
  * @param bool $filterunseen Don't show the pages that have no views.
- * @return stdClass
+ * @return stdClass[]
  */
-function socialwiki_get_updated_pages_by_subwiki($swid, $uid = "", $filterunseen = true) {
+function socialwiki_get_updated_pages_by_subwiki($swid, $uid = "%", $filterunseen = true) {
     global $DB, $USER;
 
     $sql = "SELECT *
@@ -1092,7 +1092,7 @@ function socialwiki_get_updated_pages_by_subwiki($swid, $uid = "", $filterunseen
  *
  * @param int $uid The user ID.
  * @param int $swid The subwiki ID.
- * @return int[]
+ * @return stdClass[]
  */
 function socialwiki_get_follows($uid, $swid) {
     global $DB;
@@ -1465,10 +1465,9 @@ function socialwiki_get_children($pid) {
 /**
  * Get all the users of the subwiki.
  *
- * @param int $swid The subwiki ID.
  * @return int[]
  */
-function socialwiki_get_subwiki_users($swid) {
+function socialwiki_get_subwiki_users() {
     Global $PAGE;
     $context = context_module::instance($PAGE->cm->id);
     $users = get_enrolled_users($context);

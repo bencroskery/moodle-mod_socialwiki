@@ -368,7 +368,6 @@ class page_socialwiki_view extends page_socialwiki {
 
     /**
      * Prints the page title, including the like button.
-     * @param $navigation
      */
     protected function print_pagetitle() {
         global $CFG;
@@ -1780,7 +1779,7 @@ class page_socialwiki_admin extends page_socialwiki {
      * Helper function for print_delete_content. This will add data to the table.
      *
      * @param array $pages Set of pages to show.
-     * @param stdClass $table Reference to the table in which data needs to be added.
+     * @param html_table $table Reference to the table in which data needs to be added.
      */
     protected function add_page_delete_options($pages, &$table) {
         global $OUTPUT;
@@ -1862,17 +1861,18 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         $html .= $OUTPUT->user_picture($user, array('size' => 100));
         $html .= "</div>";
 
-        // Result placed in table below.
-        // Don't show peer scores if user is viewing themselves.
-        if ($USER->id != $user->id) {
-            // PEER SCORES OUTPUT.
-            $html .= $OUTPUT->container_start('peer-info colourtext');
-            $table = new html_table();
-            $table->head = array(get_string('peerscores', 'socialwiki'));
-            $table->attributes['class'] = 'peer-table colourtext';
-            $table->align = array('left');
-            $table->data = array();
+        // PEER SCORES OUTPUT.
+        $peer = socialwiki_peer::socialwiki_get_peer($user->id, $this->subwiki->id, $USER->id);
+        $html .= $OUTPUT->container_start('peer-info colourtext');
+        $table = new html_table();
+        $table->head = array(get_string('peerscores', 'socialwiki'));
+        $table->attributes['class'] = 'peer-table colourtext';
+        $table->align = array('left');
+        $table->data = array();
 
+        // Result placed in table below.
+        // Don't show related peer scores if user is viewing themselves.
+        if ($USER->id != $user->id) {
             // Make button to follow/unfollow.
             if (!socialwiki_is_following($USER->id, $user->id, $this->subwiki->id) && $USER->id != $this->uid) {
                 $icon = new moodle_url('/mod/socialwiki/pix/icons/follow.png');
@@ -1894,13 +1894,9 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             $followbtn .= '<input type ="hidden" name="sesskey" value="' . sesskey() . '"/>';
             $followbtn .= html_writer::start_tag('button', array('class' => 'socialwiki_followbutton',
                 'id' => 'followlink', 'title' => $tip));
-            $followbtn .= html_writer::tag('img', "", array('src' => $icon));
-            $followbtn .= $text;
+            $followbtn .= html_writer::tag('img', "", array('src' => $icon)) . $text;
             $followbtn .= html_writer::end_tag('button');
             $followbtn .= html_writer::end_tag('form');
-
-            // Get this user's peer score.
-            $peer = socialwiki_peer::socialwiki_get_peer($user->id, $this->subwiki->id, $USER->id);
 
             $row1 = new html_table_row(array(get_string('networkdistance', 'socialwiki').':', $peer->depth, $followbtn));
             $row1->cells[2]->rowspan = 3;
@@ -1909,15 +1905,18 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
             $table->data[] = array(get_string('followsim', 'socialwiki').':', $peer->followsim);
             $table->data[] = array(get_string('likesim', 'socialwiki').':', $peer->likesim);
             $table->data[] = array(get_string('popularity', 'socialwiki').':', $peer->popularity);
-
             $html .= html_writer::table($table);
-            $html .= $OUTPUT->container_end();
+        } else {
+            $table->data[] = array(get_string('popularity', 'socialwiki').':', $peer->popularity);
+            $html .= html_writer::table($table);
+            $html .= "<br/><br/><br/>";
         }
+        $html .= $OUTPUT->container_end();
         echo $html;
 
         // Favourites Table.
         socialwiki_table::builder($this->uid, $this->subwiki->id, 'userfaves');
-        // User Verions Table.
+        // User Versions Table.
         socialwiki_table::builder($this->uid, $this->subwiki->id, 'userpages');
     }
 }
