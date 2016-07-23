@@ -166,3 +166,7 @@ h1, h2, h3, h4, h5, h6 {
 .socialwiki_wikicontent .navigator {
     float: right;
 }
+
+.socialwiki_wikicontent .navigator input[type="submit"] {
+    margin: 0 0 0 5px;
+}

@@ -39,7 +39,7 @@ $swid  = optional_param('swid', 0, PARAM_INT);    // Subwiki ID.
 $pid   = optional_param('pageid', 0, PARAM_INT);  // Page ID.
 $title = optional_param('title', "", PARAM_TEXT); // Page Title.
 $group = optional_param('group', 0, PARAM_INT);   // Group ID.
-$navi = optional_param('navi', 0, PARAM_INT);     // Navigation type.
+$navi = optional_param('navi', -2, PARAM_INT);     // Navigation type.
 
 if ($id) {
     /*
@@ -146,7 +146,14 @@ require_once($CFG->libdir . '/completionlib.php');
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$wikipage = new page_socialwiki_view($wiki, $subwiki, $cm, $navi);
+// Set the navigator if needed.
+if ($navi !== -2) {
+    $SESSION->mod_socialwiki->navi = $navi;
+} elseif (!isset($SESSION->mod_socialwiki->navi)) {
+    $SESSION->mod_socialwiki->navi = 0;
+}
+
+$wikipage = new page_socialwiki_view($wiki, $subwiki, $cm);
 
 $wikipage->set_gid($group);
 $wikipage->set_page($page);

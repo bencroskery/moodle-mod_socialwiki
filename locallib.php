@@ -563,12 +563,12 @@ function socialwiki_parser_link($link, $options = null) {
             if ($specific) { // Going to a specific page (no search).
                 if ($matches[1] == '.') { // Get the most recent version with the title.
                     $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
-                        . "/mod/socialwiki/view.php?pageid={$page->id}&navi={$options['navi']}",
+                        . "/mod/socialwiki/view.php?pageid={$page->id}",
                         'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
                 } else { // Get the page at the ID.
                     if (socialwiki_get_page($matches[1])) { // Page found and linked.
                         $parsedlink = array('content' => $link . $star, 'new' => false, 'url' => $CFG->wwwroot
-                            . "/mod/socialwiki/view.php?pageid=$matches[1]&navi={$options['navi']}",
+                            . "/mod/socialwiki/view.php?pageid=$matches[1]",
                             'link_info' => array('link' => $link, 'pageid' => $matches[1], 'new' => false));
                     } else { // The page wasn't found, do a search instead.
                         $currentpage = optional_param('pageid', 0, PARAM_INT);
@@ -951,24 +951,25 @@ function socialwiki_delete_comments_wiki() {
  * @param int $swid The subwiki ID.
  * @param int $navigation The link nav type.
  */
-function socialwiki_print_page_content($page, $context, $swid, $navigation) {
-    global $PAGE, $USER;
-    $content = socialwiki_parse_content(
-        $page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id, 'navi' => $navigation));
-    $html = file_rewrite_pluginfile_urls($content['parsed_text'], 'pluginfile.php',
-            $context->id, 'mod_socialwiki', 'attachments', $swid);
-    $wikioutput = $PAGE->get_renderer('mod_socialwiki');
-    // This is where the page content, from the title down, is rendered!
-    echo $wikioutput->viewing_area(
-        $content['toc'] . format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true)), $page);
+function socialwiki_print_page_content($page, $context, $swid) {
+    global $PAGE, $USER, $SESSION;
 
     // Only increment page view when linked, not refreshed.
     $pagerefreshed = (null !== filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL'))
-            && filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL') === 'max-age=0';
+        && filter_input(INPUT_SERVER, 'HTTP_CACHE_CONTROL') === 'max-age=0';
     if (!$pagerefreshed) {
         socialwiki_increment_pageviews($page);
         socialwiki_increment_user_views($USER->id, $page->id);
     }
+
+    $content = socialwiki_parse_content(
+        $page->format, $page->content, array('swid' => $swid, 'pageid' => $page->id, 'navi' => $SESSION->mod_socialwiki->navi));
+    $html = file_rewrite_pluginfile_urls($content['parsed_text'], 'pluginfile.php',
+            $context->id, 'mod_socialwiki', 'attachments', $swid);
+    $wikioutput = $PAGE->get_renderer('mod_socialwiki');
+    // This is where the page content, from the title down, is rendered!
+    return $wikioutput->viewing_area(
+        $content['toc'] . format_text($html, FORMAT_MOODLE, array('overflowdiv' => true, 'allowid' => true)), $page);
 }
 
 /**
@@ -1565,8 +1566,6 @@ function socialwiki_indexof_page($pid, $pages) {
  * @return stdClass[]
  */
 function socialwiki_get_recommended_pages($uid, $swid) {
-    Global $CFG;
-    require_once($CFG->dirroot . '/mod/socialwiki/peer.php');
     $scale = array('follow' => 1, 'like' => 1, 'trust' => 1, 'popular' => 1); // Scale with weight for each peer category.
     $users = socialwiki_get_subwiki_users($swid);
     $peers = array_map(function($u) {

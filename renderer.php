@@ -395,20 +395,42 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
         }
     }
 
-    public function navigator($options, $current, $pid, $swid) {
+    public function navigator($options, $pid, $swid) {
+        global $USER, $SESSION;
+
+        $current = $SESSION->mod_socialwiki->navi;
         $ids = array_merge(socialwiki_get_page_likes($pid, $swid), socialwiki_get_contributors($pid));
-        if ($current !== -1) {
+        array_unshift($ids, $USER->id);
+        if ($current != -1 && $current != $USER->id) {
             array_unshift($ids, $current);
         }
         $ids = array_unique($ids);
         $users = array(-1 => 'Latest');
         foreach ($ids as $u) {
-            $users[$u] = fullname(socialwiki_get_user_info($u)) . "'s favourite";
+            if ($u == $USER->id) {
+                $users[$u] = "My favourite";
+            } else {
+                $users[$u] = fullname(socialwiki_get_user_info($u)) . "'s favourite";
+            }
         }
 
-        $select = new single_select(new moodle_url("/mod/socialwiki/view.php", $options), 'navi', $users, $current, ['Default']);
-        $select->set_label('Navigate by:');
-        echo $this->output->container($this->output->render($select), 'navigator');
+        // Create output.
+        $output = '';
+        foreach ($options as $name=>$value) {
+            $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
+        }
+        $output .= html_writer::label('Navigate by:', 'navigator', false);
+        $output .= html_writer::select($users, 'navi', $current, ['Default'], array('id' => 'navigator'));
+
+        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
+        $output .= html_writer::tag('noscript', $go, array('class' => 'inline'));
+
+        $formattributes = array(
+            'method' => 'get',
+            'action' => new moodle_url("/mod/socialwiki/view.php"),
+            'class'  => 'singleselect navigator');
+        $output = html_writer::tag('form', $output, $formattributes);
+        echo $output;
     }
 
     /**

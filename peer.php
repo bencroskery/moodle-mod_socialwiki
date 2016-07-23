@@ -185,25 +185,25 @@ class socialwiki_peer {
      * @param int $id A user ID.
      * @param int $swid The subwiki ID.
      * @param int $thisuser The current user ID.
-     * @return stdClass peer
+     * @return socialwiki_peer peer
      */
     public static function socialwiki_get_peer($id, $swid, $thisuser = null) {
-        Global $USER;
+        Global $USER, $SESSION;
         // Get peer lists from session.
         if ($thisuser == null) {
             $thisuser = $USER->id;
         }
 
-        if (!isset($_SESSION['socialwiki_session_peers'])) {
-            $_SESSION['socialwiki_session_peers'] = array();
+        if (!isset($SESSION->mod_socialwiki->peers)) {
+            $SESSION->mod_socialwiki->peers = array();
         }
 
-        $sessionpeers = $_SESSION['socialwiki_session_peers'];
+        $sessionpeers = $SESSION->mod_socialwiki->peers;
 
         if (!isset($sessionpeers[$id])) {
             $p = self::make_with_indicators($id, $swid, $thisuser);
             $sessionpeers[$id] = $p->to_array();
-            $_SESSION['socialwiki_session_peers'] = $sessionpeers;
+            $SESSION->mod_socialwiki->peers = $sessionpeers;
         }
 
         return new socialwiki_peer($sessionpeers[$id]);
@@ -224,11 +224,11 @@ class socialwiki_peer {
             $thisuser = $USER->id;
         }
 
-        if (!isset($_SESSION['socialwiki_session_peers'])) {
+        if (!isset($SESSION->mod_socialwiki->peers)) {
             return;
         }
 
-        $sessionpeers = $_SESSION['socialwiki_session_peers'];
+        $sessionpeers = $SESSION->mod_socialwiki->peers;
         foreach ($sessionpeers as $peerinfo) {
             $peer = new socialwiki_peer($peerinfo);  // Get peer from session var.
             if ($updatelikes) {
@@ -243,7 +243,7 @@ class socialwiki_peer {
             $sessionpeers[$peer->id] = $peer->to_array(); // Place back into session.
         }
 
-        $_SESSION['socialwiki_session_peers'] = $sessionpeers;
+        $SESSION->mod_socialwiki->peers = $sessionpeers;
     }
 
 }

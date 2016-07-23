@@ -21,9 +21,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-var $like = $("#socialwiki-like");
-$like.on('click', function (e) {
+$("#socialwiki-like").on('click', function (e) {
     e.preventDefault();
+    var $like = $(this);
     if ($like.attr('href') == '') {
         return;
     }
@@ -36,6 +36,16 @@ $like.on('click', function (e) {
             });
             $like.toggleClass('liked');
             $like.find("span").text(data);
+        }
+    });
+});
+
+$("#navigator").on('change', function() {
+    $(this).find('option[value=' + this.value + ']').insertAfter($(this).find('option:eq(1)'));
+    $.get("like.ajax.php" + options + "&navi=" + this.value, function (data) {
+        if (data !== 'error') {
+            $(".socialwiki-contributors").remove();
+            $(".wikipage").replaceWith(data);
         }
     });
 });

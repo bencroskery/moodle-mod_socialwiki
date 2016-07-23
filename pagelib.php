@@ -309,10 +309,7 @@ abstract class page_socialwiki {
  */
 class page_socialwiki_view extends page_socialwiki {
 
-    protected $navigation;
-
-    public function __construct($wiki, $subwiki, $cm, $navi) {
-        $this->navigation = $navi;
+    public function __construct($wiki, $subwiki, $cm) {
         parent::__construct($wiki, $subwiki, $cm);
     }
 
@@ -395,7 +392,7 @@ class page_socialwiki_view extends page_socialwiki {
         parent::print_pagetitle();
 
         $params = array('pageid' => $this->page->id);
-        $this->wikioutput->navigator($params, $this->navigation, $this->page->id, $this->subwiki->id);
+        $this->wikioutput->navigator($params, $this->page->id, $this->subwiki->id);
     }
 
     /**
@@ -404,7 +401,7 @@ class page_socialwiki_view extends page_socialwiki {
     public function print_content() {
         if (socialwiki_user_can_view($this->subwiki)) {
             if (!empty($this->page)) {
-                socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id, $this->navigation);
+                echo socialwiki_print_page_content($this->page, $this->modcontext, $this->subwiki->id);
             } else {
                 echo get_string('nocontent', 'socialwiki');
             }
