@@ -1850,7 +1850,8 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         // USER INFO OUTPUT.
         $user = socialwiki_get_user_info($this->uid);
         $html = $OUTPUT->heading(fullname($user), 1, 'colourtext');
-        $html .= "<div class='home-picture'>";
+        $class = 'home-picture' . ($user->id == -1 ? ' unknown-user' : '');
+        $html .= "<div class='$class'>";
         $html .= $OUTPUT->user_picture($user, array('size' => 100));
         $html .= "</div>";
 
@@ -1864,8 +1865,8 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
         $table->data = array();
 
         // Result placed in table below.
-        // Don't show related peer scores if user is viewing themselves.
-        if ($USER->id != $user->id) {
+        // Don't show related peer scores if user is viewing themselves or an unknown user.
+        if ($USER->id != $user->id && $user->id != -1) {
             // Make button to follow/unfollow.
             if (!socialwiki_is_following($USER->id, $user->id, $this->subwiki->id) && $USER->id != $this->uid) {
                 $icon = new moodle_url('/mod/socialwiki/pix/icons/follow.png');

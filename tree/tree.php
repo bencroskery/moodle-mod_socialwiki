@@ -133,7 +133,7 @@ class socialwiki_node {
         $this->content .= html_writer::end_tag('span');
         $userlink = mod_socialwiki_renderer::makeuserlink($user->id, $PAGE->cm->id, $page->subwikiid);
         $this->content .= html_writer::link($userlink->out(false), fullname($user))
-                . "&nbsp; " . socialwiki_format_time($page->timecreated);
+            . "&nbsp; " . socialwiki_format_time($page->timecreated);
         $this->content .= html_writer::end_tag('span');
     }
 

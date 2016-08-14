@@ -279,7 +279,7 @@ function socialwiki_create_page($swid, $title, $format, $uid, $parent = null) {
  * @param bool $filter0likes Whether to skip the pages without likes.
  * @return stdClass[]
  */
-function socialwiki_get_page_list($swid, $filter0likes = true) {
+function socialwiki_get_page_list($swid, $filter0likes = false) {
     global $DB;
     if ($filter0likes) {
         $sql = "SELECT DISTINCT p.* FROM {socialwiki_pages}
@@ -421,6 +421,16 @@ function socialwiki_search($swid, $search, $searchtitle = true, $searchcontent =
  */
 function socialwiki_get_user_info($uid) {
     global $DB;
+    if ($uid == -1) {
+        $user = new stdClass();
+        $user->id = $uid;
+        $user->firstname = get_string('unknownfirstname', 'socialwiki');
+        $user->lastname = get_string('unknownlastname', 'socialwiki');
+        $user->middlename = $user->alternatename = $user->firstnamephonetic = $user->lastnamephonetic = "";
+        $user->picture = 0;
+        $user->imagealt = $user->email = "";
+        return $user;
+    }
     return $DB->get_record('user', array('id' => $uid));
 }
 
