@@ -398,17 +398,24 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
     public function navigator($options, $pid, $swid) {
         global $USER, $SESSION;
 
+        $context = context_module::instance($this->page->cm->id);
         $current = $SESSION->mod_socialwiki->navi;
         $ids = array_merge(socialwiki_get_page_likes($pid, $swid), socialwiki_get_contributors($pid));
-        array_unshift($ids, $USER->id);
+
+        if (has_capability('mod/socialwiki:editpage', $context)) {
+            array_unshift($ids, $USER->id);
+        }
         if ($current != -1 && $current != $USER->id) {
             array_unshift($ids, $current);
         }
         $ids = array_unique($ids);
+
         $users = array(-1 => 'Latest');
         foreach ($ids as $u) {
             if ($u == $USER->id) {
-                $users[$u] = "My favourite";
+                if (has_capability('mod/socialwiki:editpage', $context)) {
+                    $users[$u] = "My favourite";
+                }
             } else {
                 $users[$u] = fullname(socialwiki_get_user_info($u)) . "'s favourite";
             }
