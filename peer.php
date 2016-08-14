@@ -93,7 +93,7 @@ class socialwiki_peer {
      * @param int $id A user ID.
      * @param int $swid The subwiki ID.
      * @param int $currentuser The current user ID.
-     * @return peer
+     * @return socialwiki_peer
      */
     public static function make_with_indicators($id, $swid, $currentuser) {
         $newpeer = new socialwiki_peer(array('id' => $id, 'likesim' => 0, 'followsim' => 0, 'popularity' => 0, 'depth' => 0));
@@ -144,10 +144,10 @@ class socialwiki_peer {
      * Sets the follow similarity.
      *
      * @param int $uid The user ID.
-     * @param the $swid The subwiki ID.
+     * @param int $swid The subwiki ID.
      */
     private function set_follow_sim($uid, $swid) {
-        Global $DB;
+        global $DB;
         $sql = 'SELECT COUNT(usertoid) AS total, COUNT(DISTINCT usertoid) AS different
             FROM {socialwiki_follows}
             WHERE (userfromid=? OR userfromid=?) AND subwikiid=?';
@@ -163,10 +163,10 @@ class socialwiki_peer {
      * Sets the like similarity.
      *
      * @param int $uid The user ID.
-     * @param the $swid The subwiki ID.
+     * @param int $swid The subwiki ID.
      */
     private function set_like_sim($uid, $swid) {
-        Global $DB;
+        global $DB;
         $sql = 'SELECT COUNT(pageid) AS total, COUNT(DISTINCT pageid) AS different
             FROM {socialwiki_likes}
             WHERE (userid=? OR userid=?) AND subwikiid=?';
@@ -185,16 +185,19 @@ class socialwiki_peer {
      * @param int $id A user ID.
      * @param int $swid The subwiki ID.
      * @param int $thisuser The current user ID.
-     * @return socialwiki_peer peer
+     * @return socialwiki_peer
      */
     public static function socialwiki_get_peer($id, $swid, $thisuser = null) {
-        Global $USER, $SESSION;
+        global $USER, $SESSION;
         // Get peer lists from session.
         if ($thisuser == null) {
             $thisuser = $USER->id;
         }
 
         if (!isset($SESSION->mod_socialwiki->peers)) {
+            if (!isset($SESSION->mod_socialwiki)) {
+                $SESSION->mod_socialwiki = new stdClass();
+            }
             $SESSION->mod_socialwiki->peers = array();
         }
 
@@ -218,9 +221,9 @@ class socialwiki_peer {
      * @param int $thisuser This user ID.
      */
     public static function socialwiki_update_peers($updatelikes, $updatenetwork, $swid, $thisuser = null) {
-        Global $USER;
+        global $USER, $SESSION;
         // Get peer lists from session.
-        if ($thisuser == null) {
+        if ($thisuser === null) {
             $thisuser = $USER->id;
         }
 

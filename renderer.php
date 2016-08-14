@@ -416,13 +416,13 @@ class mod_socialwiki_renderer extends plugin_renderer_base {
 
         // Create output.
         $output = '';
-        foreach ($options as $name=>$value) {
-            $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
+        foreach ($options as $name => $value) {
+            $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $name, 'value' => $value));
         }
         $output .= html_writer::label('Navigate by:', 'navigator', false);
         $output .= html_writer::select($users, 'navi', $current, ['Default'], array('id' => 'navigator'));
 
-        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
+        $go = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
         $output .= html_writer::tag('noscript', $go, array('class' => 'inline'));
 
         $formattributes = array(

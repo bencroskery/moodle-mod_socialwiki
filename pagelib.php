@@ -309,10 +309,6 @@ abstract class page_socialwiki {
  */
 class page_socialwiki_view extends page_socialwiki {
 
-    public function __construct($wiki, $subwiki, $cm) {
-        parent::__construct($wiki, $subwiki, $cm);
-    }
-
     /**
      * Prints out the header at the top of the page.
      */

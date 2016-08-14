@@ -147,9 +147,12 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 // Set the navigator if needed.
+if (!isset($SESSION->mod_socialwiki)) {
+    $SESSION->mod_socialwiki = new stdClass();
+}
 if ($navi !== -2) {
     $SESSION->mod_socialwiki->navi = $navi;
-} elseif (!isset($SESSION->mod_socialwiki->navi)) {
+} else if (!isset($SESSION->mod_socialwiki->navi)) {
     $SESSION->mod_socialwiki->navi = 0;
 }
 
