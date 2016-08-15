@@ -859,20 +859,6 @@ class page_socialwiki_preview extends page_socialwiki_edit {
     private $newcontent;
 
     /**
-     * Creates a new preview page.
-     *
-     * @param stdClass $wiki The current wiki.
-     * @param stdClass $subwiki The current subwiki.
-     * @param stdClass $cm The current course module.
-     */
-    public function __construct($wiki, $subwiki, $cm) {
-        global $PAGE, $OUTPUT;
-        parent::__construct($wiki, $subwiki, $cm, 0);
-        $buttons = $OUTPUT->update_module_button($cm->id, 'socialwiki');
-        $PAGE->set_button($buttons);
-    }
-
-    /**
      * Sets the URL of the page.
      */
     public function set_url() {
