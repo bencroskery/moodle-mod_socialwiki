@@ -42,7 +42,6 @@ class html_parser extends socialwiki_markup_parser {
 
     public function __construct() {
         parent::__construct();
-        $this->tagrules = array('link' => $this->tagrules['link'], 'url' => $this->tagrules['url']);
 
         // Headers are considered tags here.
         $headerdepth = $this->maxheaderdepth + 2;
