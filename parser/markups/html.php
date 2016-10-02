@@ -21,11 +21,23 @@
  * @author Josep Arús
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-require_once("nwiki.php");
+require_once("wikimarkup.php");
 
-class html_parser extends nwiki_parser {
+class html_parser extends socialwiki_markup_parser {
 
     protected $blockrules = array();
+    protected $tagrules = array(
+        'link' => array(
+            'expression' => "/\[\[(.+?)\]\]/is",
+            'tag' => 'a',
+            'token' => array("[[", "]]")
+        ),
+        'url' => array(
+            'expression' => "/(?<!=\")((?:https?|ftp):\/\/[^\s\n]+[^,\.\?!:;\"\'\n\ ])/i",
+            'tag' => 'a',
+            'token' => 'http://'
+        )
+    );
     protected $sectionediting = true;
 
     public function __construct() {
@@ -94,5 +106,18 @@ class html_parser extends nwiki_parser {
         }
 
         return $match[0];
+    }
+
+    /**
+     * Link tag functions
+     */
+    protected function link_tag_rule($match) {
+        return $this->format_link($match[1]);
+    }
+
+    protected function url_tag_rule($match) {
+        $url = $this->protect($match[1]);
+        $options = array('href' => $url);
+        return array($url, $options);
     }
 }
