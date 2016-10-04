@@ -80,7 +80,7 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
     private function getbuttons() {
         global $PAGE, $OUTPUT, $CFG;
 
-        $PAGE->requires->js(new moodle_url('/mod/socialwiki/editors/wiki/buttons.js'));
+        $PAGE->requires->js(new moodle_url('/mod/socialwiki/editors/wikieditor.js'));
         $editor = $this->wikiformat;
 
         $html = '<div class="editor_atto_toolbar socialwikieditor-toolbar">';
