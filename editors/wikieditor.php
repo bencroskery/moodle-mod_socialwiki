@@ -52,7 +52,7 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
      *
      * @deprecated since Moodle 3.1
      */
-    public function MoodleQuickForm_textarea($elementName = null, $elementLabel = null, $attributes = null) {
+    public function MoodleQuickForm_socialwikieditor($elementName = null, $elementLabel = null, $attributes = null) {
         debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
         self::__construct($elementName, $elementLabel, $attributes);
     }

@@ -1,4 +1,4 @@
-@mod @mod_socialwiki
+@mod @mod_nope
 Feature: Using different format options
   In order to use a specific format
   As a user
