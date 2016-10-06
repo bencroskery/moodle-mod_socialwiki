@@ -104,10 +104,10 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
         $html .= html_writer::end_tag('button');
 
         $tag = $this->gettockens($editor, 'bold');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/bold'), get_string('wikiboldtext', 'socialwiki'), $tag[0], $tag[1]);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/bold'), 'wikiboldtext', $tag[0], $tag[1]);
 
         $tag = $this->gettockens($editor, 'italic');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/italic'), get_string('wikiitalictext', 'socialwiki'), $tag[0], $tag[1]);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/italic'), 'wikiitalictext', $tag[0], $tag[1]);
 
         $html .= '</div>';
 
@@ -115,11 +115,11 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
         $html .= '<div class="atto_group list_group">';
 
         $tag = $this->gettockens($editor, 'list');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/bullet_list'), get_string('wikiunorderedlist', 'socialwiki'), "\n$tag[0] ", '', false);
-        $html .= $this->makebutton($OUTPUT->pix_url('e/numbered_list'), get_string('wikiorderedlist', 'socialwiki'), "\n$tag[1] ", '', false);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/bullet_list'), 'wikiunorderedlist', "\n$tag[0] ", '', false);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/numbered_list'), 'wikiorderedlist', "\n$tag[1] ", '', false);
 
         $tag = $this->gettockens($editor, 'line_break');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_horizontal_ruler'), get_string('wikihr', 'socialwiki'), "\n$tag\n", '', false);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_horizontal_ruler'), 'wikihr', "\n$tag\n", '', false);
 
         $html .= '</div>';
 
@@ -127,13 +127,13 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
         $html .= '<div class="atto_group links_group">';
 
         $tag = $this->gettockens($editor, 'link');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_edit_link'), get_string('wikiinternalurl', 'socialwiki'), $tag[0], $tag[1]);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_edit_link'), 'wikiinternalurl', $tag[0], $tag[1]);
 
         $tag = $this->gettockens($editor, 'url');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_external_link', 'socialwiki'), get_string('wikiexternalurl', 'socialwiki'), $tag, '');
+        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_external_link', 'socialwiki'), 'wikiexternalurl', $tag, '');
 
         $imagetag = $this->gettockens($editor, 'image');
-        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_edit_image'), get_string('wikiimage', 'socialwiki'), $imagetag[0], $imagetag[1]);
+        $html .= $this->makebutton($OUTPUT->pix_url('e/insert_edit_image'), 'wikiimage', $imagetag[0], $imagetag[1]);
 
         $html .= '</div>';
 
@@ -161,13 +161,12 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
     }
 
     private function makebutton($src, $title, $start_tag, $end_tag, $sample_text = true) {
-        return html_writer::tag('button', $this->imageicon($src),
-            array('start_tag' => $start_tag, 'end_tag' => $end_tag, 'title' => $title, 'sample' => $sample_text));
+        return html_writer::tag('button', $this->imageicon($src), array('title' => get_string($title, 'socialwiki'),
+            'sample' => $sample_text, 'start_tag' => $start_tag, 'end_tag' => $end_tag));
     }
 
     private function imageicon($src) {
-        return html_writer::empty_tag('img',
-            array('src' => $src, 'role' => 'presentation',  'aria-hidden' => 'true'));
+        return html_writer::empty_tag('img', array('src' => $src, 'role' => 'presentation',  'aria-hidden' => 'true'));
     }
 
     private function gettockens($format, $token) {
