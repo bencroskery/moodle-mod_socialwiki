@@ -68,7 +68,7 @@ class mod_socialwiki_create_form extends moodleform {
         $form->setType('pageformat', PARAM_ALPHANUMEXT);
 
         if (!empty($this->_customdata['groups']->availablegroups)) {
-            $groupinfo = [];
+            $groupinfo = array();
             foreach ($this->_customdata['groups']->availablegroups as $groupdata) {
                 $groupinfo[$groupdata->id] = $groupdata->name;
             }

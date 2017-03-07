@@ -459,11 +459,11 @@ function socialwiki_comment_validate($commentparam) {
  * @return array
  */
 function socialwiki_page_type_list($pagetype, $parentcontext, $currentcontext) {
-    $modulepagetype = [
+    $modulepagetype = array(
         'mod-socialwiki-*' => get_string('page-mod-socialwiki-x', 'socialwiki'),
         'mod-socialwiki-view' => get_string('page-mod-socialwiki-view', 'socialwiki'),
         'mod-socialwiki-comments' => get_string('page-mod-socialwiki-comments', 'socialwiki'),
         'mod-socialwiki-versions' => get_string('page-mod-socialwiki-versions', 'socialwiki')
-    ];
+    );
     return $modulepagetype;
 }
