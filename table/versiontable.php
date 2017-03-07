@@ -134,20 +134,21 @@ class socialwiki_versiontable extends socialwiki_table {
         Global $CFG;
         $idfirst = array_pop($contributors);
         $firstctr = fullname(socialwiki_get_user_info($idfirst));
-        $num = count($contributors);
-        if ($num === 1) {
-            $firstctr .= " and 1 other";
-        } else if ($num > 1) {
-            $firstctr .= " and $num others";
-        }
 
         $ctr = "";
-        if ($num != 0) {
+        $num = count($contributors);
+        if ($num !== 0) {
+            if ($num === 1) {
+                $firstctr .= get_string('contributor', 'socialwiki');
+            } else {
+                $firstctr .= get_string('contributor', 'socialwiki', $num);
+            }
+
             $ctr = "title='Others:\n";
             foreach (array_reverse($contributors) as $c) {
                 $ctr .= fullname(socialwiki_get_user_info($c)) . "\n";
             }
-            $ctr = "'";
+            $ctr .= "'";
         }
 
         $href = "href='$CFG->wwwroot/mod/socialwiki/viewuserpages.php?userid=$idfirst&subwikiid=$this->swid'";
