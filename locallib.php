@@ -373,36 +373,39 @@ function socialwiki_get_related_pages($swid, $title) {
  *
  * @param int $swid The subwiki ID.
  * @param string $search What to search for.
- * @param bool $searchtitle Search page titles.
- * @param bool $searchcontent Search page contents.
- * @param bool $exact Only an exact title match if true.
+ * @param int $searchtype Types are: 0 - exact title, 1 - title and content, 2 - title, 3 - content.
  * @return stdClass[]
  */
-function socialwiki_search($swid, $search, $searchtitle = true, $searchcontent = true, $exact = false) {
+function socialwiki_search($swid, $search, $searchtype = 1) {
     global $DB;
-
-    // Return nothing if not searching the title or content.
-    if (!$searchtitle && !$searchcontent) {
-        return [];
-    }
-
-    // If not exact then allow for characters on either side.
-    if (!$exact) {
-        $search = '%' . $search . '%';
-    }
 
     // Search SQL.
     $sql = "SELECT * FROM {socialwiki_pages}
             WHERE subwikiid=? AND (";
 
-    if ($searchtitle && $searchcontent) {
-        // If looking for title and content then search by both.
-        $sql .= "content LIKE ? OR title LIKE ?";
-        $params = array($swid, $search, $search);
-    } else {
-        // Only place the correct term if title or content are turned off.
-        $sql .= $searchtitle ? "title LIKE ?" : "content LIKE ?";
+    if ($searchtype === 0) {
+        // Search title exactly.
+        $sql .= "title LIKE ?";
         $params = array($swid, $search);
+    } else {
+        $search = 'LOWER(%' . $search . '%)';
+
+        if ($searchtype === 1) {
+            // Search both title and content.
+            $sql .= "LOWER(title) LIKE ? OR LOWER(content) LIKE ?";
+            $params = array($swid, $search, $search);
+        } else if ($searchtype === 2) {
+            // Search title.
+            $sql .= "LOWER(title) LIKE ?";
+            $params = array($swid, $search);
+        } else if ($searchtype === 3) {
+            // Search content.
+            $sql .= "LOWER(content) LIKE ?";
+            $params = array($swid, $search);
+        } else {
+            // Unknown search type.
+            return array();
+        }
     }
 
     // Group the pages with likes together.

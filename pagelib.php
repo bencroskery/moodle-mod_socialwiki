@@ -1154,7 +1154,8 @@ class page_socialwiki_search extends page_socialwiki_versions {
     public function set_search_string($search, $searchtitle, $searchcontent, $exactmatch = false) {
         $this->searchstring = $search;
         $this->exact = $exactmatch;
-        $this->searchresult = socialwiki_search($this->subwiki->id, $search, $searchtitle, $searchcontent, $exactmatch);
+        $type = $exactmatch ? 0 : ($searchtitle ? ($searchcontent ? 1 : 2) : ($searchcontent ? 3 : 4));
+        $this->searchresult = socialwiki_search($this->subwiki->id, $search, $type);
     }
 
     /**
