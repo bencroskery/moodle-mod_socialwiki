@@ -139,9 +139,9 @@ class socialwiki_versiontable extends socialwiki_table {
         $num = count($contributors);
         if ($num !== 0) {
             if ($num === 1) {
-                $firstctr .= get_string('contributor', 'socialwiki');
+                $firstctr .= get_string('andother', 'socialwiki');
             } else {
-                $firstctr .= get_string('contributor', 'socialwiki', $num);
+                $firstctr .= get_string('andothers', 'socialwiki', $num);
             }
 
             $ctr = "title='Others:\n";
