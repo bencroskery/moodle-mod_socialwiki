@@ -15,15 +15,15 @@ Feature: Edit page
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
 
   @javascript
   Scenario Outline: Wikieditor
-    When I add a "Social Wiki" to section "1" and I fill the form with:
-      | Social Wiki name | Test Socialwiki |
-    And I follow "Test Socialwiki"
+    Given the following "activities" exist:
+      | activity   | course | idnumber | name    |
+      | socialwiki | C1     | sw1      | Test SW |
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test SW"
     And I follow "Pages"
     And I press "Make a new Page"
 
@@ -35,8 +35,8 @@ Feature: Edit page
     # Use toolbar buttons
     Then ".socialwikieditor-toolbar" "css_element" should be visible
     When I click on "Bold text" "button"
-    And I click on "Italic text" "button"
     And I click on "Internal link" "button"
+    And I click on "Italic text" "button"
     And I click on "External URL" "button"
     And I click on "Image" "button"
     And the field "newcontent" matches value "<content>"
@@ -54,7 +54,7 @@ Feature: Edit page
     And I press "Save"
 
     # Check HTML
-    Then I should see "Bold textItalic textInternal linkhttp://External URL"
+    Then I should see "Bold textInternal linkItalic texthttp://External URL"
     And ".wikipage img" "css_element" should exist
     And I should see "Level 1 Header" in the ".wikipage .text_to_html h3" "css_element"
     And I should see "Level 2 Header" in the ".wikipage .text_to_html h4" "css_element"
@@ -66,15 +66,16 @@ Feature: Edit page
 
     Examples:
       | format | content                                                                                | bold | italic |
-      | NWiki  | ''Bold text'''''Italic text'''[[Internal link]]http://External URL[[image:Image\|alt]] | ''   | '''    |
-      | Creole | **Bold text**//Italic text//[[Internal link]]http://External URL{{Image\|Alt}}         | **   | //I    |
+      | NWiki  | ''Bold text''[[Internal link]]'''Italic text'''http://External URL[[image:Image\|alt]] | ''   | '''    |
+      | Creole | **Bold text**[[Internal link]]//Italic text//http://External URL{{Image\|Alt}}         | **   | //I    |
 
   Scenario Outline: Forced format + Nojs
-    When I add a "Social Wiki" to section "1" and I fill the form with:
-      | Social Wiki name | Force Format Socialwiki |
-      | Default format   | <format>                |
-      | Force format     | 1                       |
-    And I follow "Force Format Socialwiki"
+    Given the following "activities" exist:
+      | activity   | course | idnumber | name            | defaultformat | forceformat |
+      | socialwiki | C1     | sw1      | Force Format SW | <format>      | 1           |
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Force Format SW"
     And I follow "Pages"
     And I press "Make a new Page"
     And I should not see "Format" in the "#socialwiki_content_area" "css_element"

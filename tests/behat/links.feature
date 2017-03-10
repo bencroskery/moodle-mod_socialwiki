@@ -15,15 +15,14 @@ Feature: Internal links
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
 
   Scenario Outline: Edit page links
-    When I add a "Social Wiki" to section "1" and I fill the form with:
-      | Social Wiki name | Links Socialwiki |
-      | Default format   | <format>         |
-    And I follow "Links Socialwiki"
+    Given the following "activities" exist:
+      | activity   | course | idnumber | name     | defaultformat |
+      | socialwiki | C1     | sw1      | Links SW | <format>      |
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Links SW"
     And I follow "Pages"
     And I press "Make a new Page"
     And I set the field "New page title" to "Linked"
