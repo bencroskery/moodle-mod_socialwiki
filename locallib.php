@@ -388,19 +388,19 @@ function socialwiki_search($swid, $search, $searchtype = 1) {
         $sql .= "title LIKE ?";
         $params = array($swid, $search);
     } else {
-        $search = 'UPPER(%' . $search . '%)';
+        $search = '%' . $search . '%';
 
         if ($searchtype === 1) {
             // Search both title and content.
-            $sql .= "UPPER(title) LIKE ? OR UPPER(content) LIKE ?";
+            $sql .= "UPPER(title) LIKE UPPER(?) OR UPPER(content) LIKE UPPER(?)";
             $params = array($swid, $search, $search);
         } else if ($searchtype === 2) {
             // Search title.
-            $sql .= "UPPER(title) LIKE ?";
+            $sql .= "UPPER(title) LIKE UPPER(?)";
             $params = array($swid, $search);
         } else if ($searchtype === 3) {
             // Search content.
-            $sql .= "UPPER(content) LIKE ?";
+            $sql .= "UPPER(content) LIKE UPPER(?)";
             $params = array($swid, $search);
         } else {
             // Unknown search type.
