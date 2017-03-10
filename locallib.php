@@ -549,8 +549,8 @@ function socialwiki_parser_link($link, $options = null) {
     $star = '';
 
     if (is_object($link)) { // If the fn is passed a page_socialwiki object as 1st argument.
-        $parsedlink = array('content' => $link->title, 'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='
-            . $link->id, 'new' => false, 'link_info' => array('link' => $link->title, 'pageid' => $link->id, 'new' => false));
+        $parsedlink = array('content' => $link->title, 'new' => false,
+            'url' => $CFG->wwwroot . '/mod/socialwiki/view.php?pageid='. $link->id);
     } else { // Standard case, wikilink shortcut in text.
         $specific = false;
         if (preg_match('/@(([0-9]+)|(\.))/', $link, $matches)) { // Check if getting a specific version.
@@ -574,32 +574,26 @@ function socialwiki_parser_link($link, $options = null) {
             if ($specific) { // Going to a specific page (no search).
                 if ($matches[1] == '.') { // Get the most recent version with the title.
                     $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
-                        . "/mod/socialwiki/view.php?pageid={$page->id}",
-                        'link_info' => array('link' => $link, 'pageid' => $page->id, 'new' => false));
+                        . "/mod/socialwiki/view.php?pageid={$page->id}");
                 } else { // Get the page at the ID.
                     if (socialwiki_get_page($matches[1])) { // Page found and linked.
                         $parsedlink = array('content' => $link . $star, 'new' => false, 'url' => $CFG->wwwroot
-                            . "/mod/socialwiki/view.php?pageid=$matches[1]",
-                            'link_info' => array('link' => $link, 'pageid' => $matches[1], 'new' => false));
+                            . "/mod/socialwiki/view.php?pageid=$matches[1]");
                     } else { // The page wasn't found, do a search instead.
                         $currentpage = optional_param('pageid', 0, PARAM_INT);
                         $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
-                            . "/mod/socialwiki/search.php?searchstring=$link&pageid=$currentpage&id={$PAGE->cm->id}&exact=1",
-                            'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
+                            . "/mod/socialwiki/search.php?id={$PAGE->cm->id}&searchstring=$link&pageid=$currentpage&searchtype=0");
                     }
                 }
             } else { // Make a search for pages based on the title.
                 $currentpage = optional_param('pageid', 0, PARAM_INT);
-                $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot
-                        . '/mod/socialwiki/search.php?searchstring=' . $link . '&pageid=' . $currentpage
-                        . '&id=' . $PAGE->cm->id . '&exact=1', 'new' => false,
-                    'link_info' => array('link' => $link, 'pageid' => -$page->id, 'new' => false));
+                $parsedlink = array('content' => $link, 'new' => false, 'url' => $CFG->wwwroot
+                    . "/mod/socialwiki/search.php?id={$PAGE->cm->id}&searchstring=$link&pageid=$currentpage&searchtype=0");
             }
 
         } else { // A page with that title doesn't exist.
-            $parsedlink = array('content' => $link, 'url' => $CFG->wwwroot . '/mod/socialwiki/create.php?swid='
-                . $swid . '&amp;title=' . urlencode($link) . '&amp;action=new', 'new' => true,
-                'link_info' => array('link' => $link, 'new' => true, 'pageid' => 0));
+            $parsedlink = array('content' => $link, 'new' => true, 'url' => $CFG->wwwroot . '/mod/socialwiki/create.php?swid='
+                . $swid . '&amp;title=' . urlencode($link) . '&amp;action=new');
         }
     }
     return $parsedlink;

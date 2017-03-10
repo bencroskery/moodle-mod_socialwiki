@@ -27,12 +27,10 @@ require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require($CFG->dirroot . '/mod/socialwiki/peer.php');
 
-$id       = optional_param('id', 0, PARAM_INT);           // Course module ID.
-$search   = optional_param('searchstring', "", PARAM_TEXT); // Search string.
-$exact    = optional_param('exact', 0, PARAM_INT);          // If match should be exact (wikilinks).
-$srhtitle = optional_param('searchtitle', 1, PARAM_BOOL);   // Page title should not be searched.
-$srhcont  = optional_param('searchcontent', 1, PARAM_BOOL); // Page content should not be searched.
-$view     = optional_param('view', 0, PARAM_INT);           // Option ID.
+$id     = optional_param('id', 0, PARAM_INT);             // Course module ID.
+$search = optional_param('searchstring', "", PARAM_TEXT); // Search string.
+$type   = optional_param('searchtype', 1, PARAM_BOOL);    // Search type.
+$view   = optional_param('view', 0, PARAM_INT);           // Option ID.
 
 // Checking course module instance.
 if (!$cm = get_coursemodule_from_id('socialwiki', $id)) {
@@ -60,12 +58,7 @@ if ($search == "*") {
 }
 
 $wikipage = new page_socialwiki_search($wiki, $subwiki, $cm, $view);
-
-if ($exact != 0) { // Exact match on page title.
-    $wikipage->set_search_string($search, true, false, true);
-} else {
-    $wikipage->set_search_string($search, $srhtitle, $srhcont, false);
-}
+$wikipage->set_search_string($search, $type);
 
 $wikipage->set_title(get_string('searchresult', 'socialwiki') . $search);
 $wikipage->print_header();

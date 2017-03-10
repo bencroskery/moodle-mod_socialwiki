@@ -79,8 +79,7 @@ class socialwiki_topictable extends socialwiki_table {
         $table = array();
 
         foreach ($this->tlist as $title => $data) {
-            $titlelink = '<a href="search.php?searchstring=' . $title
-                    . '&id=' . $PAGE->cm->id . '&exact=1&option=1">' . $title . '</a>';
+            $titlelink = '<a href="search.php?id=' . $PAGE->cm->id . '&searchstring=' . $title . '&searchtype=0>' . $title . '</a>';
 
             $row = array(
                 'title' => $titlelink,

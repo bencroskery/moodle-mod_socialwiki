@@ -1117,11 +1117,16 @@ class page_socialwiki_search extends page_socialwiki_versions {
     private $searchstring;
 
     /**
-     * 1 for an exact search type.
+     * The seach type.
+     * Options:
+     *   0 - exact title.
+     *   1 - title and content.
+     *   2 - title.
+     *   3 - content.
      *
      * @var int
      */
-    private $exact;
+    private $searchtype;
 
     /**
      * Sets the URL of the page.
@@ -1147,14 +1152,11 @@ class page_socialwiki_search extends page_socialwiki_versions {
      * Sets all search data.
      *
      * @param string $search The string that is searched.
-     * @param bool $searchtitle Whether to search for the page title.
-     * @param bool $searchcontent Whether to search the page content.
-     * @param bool $exactmatch An exact match will only return pages with the exact title.
+     * @param int $type The type of search to be made.
      */
-    public function set_search_string($search, $searchtitle, $searchcontent, $exactmatch = false) {
+    public function set_search_string($search, $type) {
         $this->searchstring = $search;
-        $this->exact = $exactmatch;
-        $type = $exactmatch ? 0 : ($searchtitle ? ($searchcontent ? 1 : 2) : ($searchcontent ? 3 : 4));
+        $this->searchtype = $type;
         $this->searchresult = socialwiki_search($this->subwiki->id, $search, $type);
     }
 
@@ -1164,7 +1166,7 @@ class page_socialwiki_search extends page_socialwiki_versions {
     public function print_content() {
         global $PAGE;
         require_capability('mod/socialwiki:viewpage', $this->modcontext, null, true, 'noviewpagepermission', 'socialwiki');
-        $params = array('searchstring' => $this->searchstring, 'id' => $PAGE->cm->id, 'exact' => $this->exact);
+        $params = array('id' => $PAGE->cm->id, 'searchstring' => $this->searchstring, 'searchtype' => $this->searchtype);
         $this->wikioutput->versions('search', $params, $this->searchresult, $this->view, $this->subwiki->id);
     }
 }

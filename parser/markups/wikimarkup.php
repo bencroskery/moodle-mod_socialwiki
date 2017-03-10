@@ -84,7 +84,6 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
     protected function set_options($options) {
         parent::set_options($options);
 
-        $this->returnvalues['link_count'] = array();
         $this->returnvalues['repeated_sections'] = array();
         $this->returnvalues['toc'] = "";
 
@@ -321,11 +320,6 @@ abstract class socialwiki_markup_parser extends socialgeneric_parser {
             $callbackargs['anchor'] = $anchor;
 
             $link = call_user_func_array($this->linkgeneratorcallback, array($link, $callbackargs));
-            if (isset($link['link_info'])) {
-                $l = $link['link_info']['link'] . ' ' . $link['link_info']['pageid'];
-                unset($link['link_info']['link']);
-                $this->returnvalues['link_count'][$l] = $link['link_info'];
-            }
             return $link;
         }
     }
