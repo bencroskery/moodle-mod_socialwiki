@@ -62,15 +62,7 @@ class MoodleQuickForm_socialwikieditor extends MoodleQuickForm_textarea {
     }
 
     public function tohtml() {
-        return $this->{$this->wikiformat . "Editor"}(parent::toHtml());
-    }
-
-    public function creoleeditor($textarea) {
-        return $this->printwikieditor($textarea);
-    }
-
-    public function nwikieditor($textarea) {
-        return $this->printwikieditor($textarea);
+        return $this->printwikieditor(parent::toHtml());
     }
 
     private function printwikieditor($textarea) {

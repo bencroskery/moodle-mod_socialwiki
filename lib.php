@@ -42,11 +42,10 @@
  * @param stdClass $wiki The wiki object.
  * @return int The id of the newly inserted wiki record
  * */
-function socialwiki_add_instance($wiki) {
+function socialwiki_add_instance(stdClass $wiki) {
     global $DB;
 
-    $wiki->timemodified = time();
-    // May have to add extra stuff in here.
+    $wiki->timecreated = $wiki->timemodified = time();
     if (empty($wiki->forceformat)) {
         $wiki->forceformat = 0;
     }
