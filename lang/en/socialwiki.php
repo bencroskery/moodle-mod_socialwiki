@@ -215,6 +215,10 @@ Social Wikis have many uses, such as
 $string['create'] = 'Create';
 $string['modulename_link'] = 'mod/socialwiki/view';
 $string['modulenameplural'] = 'Social Wikis';
+$string['navExplore'] = 'Explore';
+$string['navPages'] = 'Pages';
+$string['navPeople'] = 'People';
+$string['navManage'] = 'My Stuff';
 $string['navigation'] = 'Navigation';
 $string['navigationfrom'] = 'This page comes from';
 $string['navigationfrom_help'] = 'The wiki pages linking to this page';

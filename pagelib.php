@@ -1188,8 +1188,8 @@ class page_socialwiki_home extends page_socialwiki {
 
     const EXPLORE_TAB = 0;
     const TOPICS_TAB  = 1;
-    const REVIEW_TAB  = 2;
-    const PEOPLE_TAB  = 3;
+    const PEOPLE_TAB  = 2;
+    const REVIEW_TAB  = 3;
 
     /**
      * Creates a new home page.
@@ -1284,8 +1284,8 @@ class page_socialwiki_home extends page_socialwiki {
         $navlinks = array(
             "Explore" => "home.php?id={$PAGE->cm->id}&tabid=" . self::EXPLORE_TAB,
             "Pages"   => "home.php?id={$PAGE->cm->id}&tabid=" . self::TOPICS_TAB,
-            "Manage"  => "home.php?id={$PAGE->cm->id}&tabid=" . self::REVIEW_TAB,
             "People"  => "home.php?id={$PAGE->cm->id}&tabid=" . self::PEOPLE_TAB,
+            "Manage"  => "home.php?id={$PAGE->cm->id}&tabid=" . self::REVIEW_TAB,
         );
 
         $count = 0;
@@ -1295,7 +1295,7 @@ class page_socialwiki_home extends page_socialwiki {
             if ($count++ === $this->tab) {
                 $selected = $label;
             }
-            $tabs[] = new tabobject($label, $link, $label);
+            $tabs[] = new tabobject($label, $link, get_string("nav$label", 'socialwiki'));
         }
 
         return $this->wikioutput->tabtree($tabs, $selected, null);
@@ -1885,6 +1885,10 @@ class page_socialwiki_viewuserpages extends page_socialwiki {
 
             $row1 = new html_table_row(array(get_string('networkdistance', 'socialwiki').':', $peer->depth, $followbtn));
             $row1->cells[2]->rowspan = 3;
+
+            // Convert to percentage.
+            $peer->followsim = round($peer->followsim * 100 ) . '%';
+            $peer->likesim = round($peer->followsim * 100 ) . '%';
 
             $table->data[] = $row1;
             $table->data[] = array(get_string('followsim', 'socialwiki').':', $peer->followsim);
