@@ -37,6 +37,8 @@ $("#socialwiki-like").on('click', function (e) {
             $like.toggleClass('liked');
             $like.find("span").text(data);
         }
+    }).fail(function() {
+        alert("Could not send like.");
     });
 });
 
