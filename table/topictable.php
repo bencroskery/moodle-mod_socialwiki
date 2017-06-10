@@ -43,7 +43,7 @@ class socialwiki_topictable extends socialwiki_table {
      *
      * @param int $uid The current uid (userid).
      * @param int $swid The current subwikiid.
-     * @param list $list Description
+     * @param stdClass[] $list Description
      * @param string $type Table header options.
      */
     public function __construct($uid, $swid, $list, $type) {
@@ -79,7 +79,7 @@ class socialwiki_topictable extends socialwiki_table {
         $table = array();
 
         foreach ($this->tlist as $title => $data) {
-            $titlelink = '<a href="search.php?id=' . $PAGE->cm->id . '&searchstring=' . $title . '&searchtype=0>' . $title . '</a>';
+            $titlelink = '<a href="search.php?id=' . $PAGE->cm->id . '&searchstring=' . $title . '&searchtype=0">' . $title . '</a>';
 
             $row = array(
                 'title' => $titlelink,
