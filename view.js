@@ -24,7 +24,7 @@
 $("#socialwiki-like").on('click', function (e) {
     e.preventDefault();
     var $like = $(this);
-    if ($like.attr('href') == '') {
+    if ($like.attr('href') === '') {
         return;
     }
     $.get("like.ajax.php" + options, function (data) {
@@ -42,11 +42,15 @@ $("#socialwiki-like").on('click', function (e) {
 
 $("#navigator").on('change', function() {
     $(this).find('option[value=' + this.value + ']').insertAfter($(this).find('option:eq(1)'));
+    $(".wikipage").fadeTo("fast", 0.3);
     $.get("like.ajax.php" + options + "&navi=" + this.value, function (data) {
         if (data !== 'error') {
             $(".socialwiki-contributors").remove();
             $(".wikipage").replaceWith(data);
         }
+    }).fail(function() {
+        alert("Could not load updated content.");
+        $(".wikipage").stop(true).fadeTo("fast", 1);
     });
 });
 
