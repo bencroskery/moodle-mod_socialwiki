@@ -27,7 +27,7 @@ require($CFG->dirroot . '/mod/socialwiki/locallib.php');
 require($CFG->dirroot . '/mod/socialwiki/pagelib.php');
 require($CFG->dirroot . '/mod/socialwiki/peer.php');
 
-$id     = optional_param('id', 0, PARAM_INT);             // Course module ID.
+$id     = required_param('id', PARAM_INT);                       // Course module ID.
 $search = optional_param('searchstring', "", PARAM_TEXT); // Search string.
 $type   = optional_param('searchtype', 1, PARAM_BOOL);    // Search type.
 $view   = optional_param('view', 0, PARAM_INT);           // Option ID.
